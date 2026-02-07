@@ -45,12 +45,12 @@ export default function SignIn() {
         localStorage.setItem('plantpulse_user', JSON.stringify(user));
         localStorage.setItem('auth_token', token);
 
-        toast.success('Welcome back!');
+        toast.success('Добре дошли отново!');
         navigate(createPageUrl('Dashboard'));
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.message || 'An error occurred. Please try again.');
+      toast.error(error.message || 'Възникна грешка. Моля, опитайте отново.');
     } finally {
       setIsLoading(false);
     }
@@ -155,7 +155,7 @@ export default function SignIn() {
               transition={{ delay: 0.2 }}
               className="text-3xl font-bold text-slate-800 tracking-tight"
             >
-              Welcome Back
+              Добре дошли отново
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -163,7 +163,7 @@ export default function SignIn() {
               transition={{ delay: 0.3 }}
               className="text-slate-500 mt-2"
             >
-              Sign in to monitor your plants
+              Влезте, за да наблюдавате вашите растения
             </motion.p>
           </div>
 
@@ -175,15 +175,15 @@ export default function SignIn() {
           >
             <Card className="border-slate-100 shadow-xl backdrop-blur-sm bg-white/80">
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-2xl font-bold text-slate-800">Login</CardTitle>
+                <CardTitle className="text-2xl font-bold text-slate-800">Вход</CardTitle>
                 <CardDescription>
-                  Enter your credentials to access your account
+                  Въведете вашите данни за достъп
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Имейл</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -199,7 +199,7 @@ export default function SignIn() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Парола</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -233,21 +233,21 @@ export default function SignIn() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Signing in...
+                        Влизане...
                       </>
                     ) : (
-                      'Sign In'
+                      'Вход'
                     )}
                   </Button>
 
                   <div className="text-center pt-4 border-t border-slate-100">
                     <p className="text-sm text-slate-600">
-                      Don't have an account?{' '}
+                      Нямате акаунт?{' '}
                       <Link
                         to={createPageUrl('Register')}
                         className="text-emerald-600 hover:text-emerald-700 font-semibold hover:underline"
                       >
-                        Create one
+                        Създайте такъв
                       </Link>
                     </p>
                   </div>
@@ -264,7 +264,7 @@ export default function SignIn() {
             className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"
           >
             <p className="text-xs text-blue-600 text-center">
-              💡 <strong>Demo:</strong> demo@plantpulse.com / demo123 (Or create new account!)
+              💡 <strong>Демо:</strong> demo@plantpulse.com / demo123 (Или създайте нов акаунт!)
             </p>
           </motion.div>
         </motion.div>

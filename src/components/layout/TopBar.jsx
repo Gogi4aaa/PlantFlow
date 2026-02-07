@@ -132,20 +132,20 @@ export default function TopBar({ onMenuClick }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="p-3 border-b border-slate-100">
-                <p className="font-semibold text-slate-800">{user?.full_name || 'User'}</p>
+                <p className="font-semibold text-slate-800">{user?.full_name || 'Потребител'}</p>
                 <p className="text-xs text-slate-500">{user?.email || ''}</p>
               </div>
               <DropdownMenuItem className="cursor-pointer"
                 onClick={() => navigate('/profile')}>
                 <User className="w-4 h-4 mr-2" />
-                My Profile
+                Моят профил
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={handleLogout}
                 className="cursor-pointer text-red-600 focus:text-red-600"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                Изход
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

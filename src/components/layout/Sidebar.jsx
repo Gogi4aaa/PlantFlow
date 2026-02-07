@@ -13,9 +13,9 @@ import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, page: 'Dashboard' },
-  { name: 'Analytics', icon: BarChart3, page: 'Analytics' },
-  { name: 'Settings', icon: Settings, page: 'Settings' }
+  { name: 'Табло', icon: LayoutDashboard, page: 'Dashboard' },
+  { name: 'Анализи', icon: BarChart3, page: 'Analytics' },
+  { name: 'Настройки', icon: Settings, page: 'Settings' }
 ];
 
 export default function Sidebar({ isOpen, setIsOpen }) {
@@ -93,8 +93,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 <Leaf className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-emerald-800">System Active</p>
-                <p className="text-xs text-emerald-600">All sensors online</p>
+                <p className="text-sm font-medium text-emerald-800">Системата е активна</p>
+                <p className="text-xs text-emerald-600">Всички сензори работят</p>
               </div>
             </div>
           </div>

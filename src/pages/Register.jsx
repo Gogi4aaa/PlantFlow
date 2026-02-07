@@ -39,12 +39,12 @@ export default function Register() {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error('Паролите не съвпадат');
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error('Паролата трябва да е поне 6 символа');
       return;
     }
 
@@ -66,12 +66,12 @@ export default function Register() {
         localStorage.setItem('plantpulse_user', JSON.stringify(user));
         localStorage.setItem('auth_token', token);
 
-        toast.success('Account created successfully!');
+        toast.success('Акаунтът е създаден успешно!');
         navigate(createPageUrl('Dashboard'));
       }
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error(error.message || 'An error occurred. Please try again.');
+      toast.error(error.message || 'Възникна грешка. Моля, опитайте отново.');
     } finally {
       setIsLoading(false);
     }
@@ -177,7 +177,7 @@ export default function Register() {
               transition={{ delay: 0.2 }}
               className="text-3xl font-bold text-slate-800 tracking-tight"
             >
-              Join PlantPulse
+              Присъединете се към PlantPulse
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -185,7 +185,7 @@ export default function Register() {
               transition={{ delay: 0.3 }}
               className="text-slate-500 mt-2"
             >
-              Create your account to start monitoring
+              Създайте акаунт, за да започнете наблюдението
             </motion.p>
           </div>
 
@@ -197,15 +197,15 @@ export default function Register() {
           >
             <Card className="border-slate-100 shadow-xl backdrop-blur-sm bg-white/80">
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-2xl font-bold text-slate-800">Create Account</CardTitle>
+                <CardTitle className="text-2xl font-bold text-slate-800">Създаване на акаунт</CardTitle>
                 <CardDescription>
-                  Enter your information to get started
+                  Въведете информацията си, за да започнете
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="full_name">Full Name</Label>
+                    <Label htmlFor="full_name">Пълно име</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -221,7 +221,7 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Имейл</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -237,7 +237,7 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Парола</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -264,7 +264,7 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Label htmlFor="confirmPassword">Потвърдете паролата</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -298,24 +298,24 @@ export default function Register() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Creating account...
+                        Създаване...
                       </>
                     ) : (
                       <>
                         <CheckCircle className="w-5 h-5 mr-2" />
-                        Create Account
+                        Създай акаунт
                       </>
                     )}
                   </Button>
 
                   <div className="text-center pt-4 border-t border-slate-100">
                     <p className="text-sm text-slate-600">
-                      Already have an account?{' '}
+                      Вече имате акаунт?{' '}
                       <Link
                         to={createPageUrl('SignIn')}
                         className="text-emerald-600 hover:text-emerald-700 font-semibold hover:underline"
                       >
-                        Sign in
+                        Вход
                       </Link>
                     </p>
                   </div>
@@ -332,7 +332,7 @@ export default function Register() {
             className="mt-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl"
           >
             <p className="text-xs text-emerald-600 text-center">
-              🔒 Your data is secure and encrypted
+              🔒 Вашите данни са защитени и криптирани
             </p>
           </motion.div>
         </motion.div>
