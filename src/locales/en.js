@@ -1,0 +1,293 @@
+export const en = {
+    translation: {
+        common: {
+            appName: 'PlantFlow',
+            appSubtitle: 'IoT Plant Monitor',
+            loading: 'Loading...',
+            error: 'An error occurred',
+            success: 'Success',
+            save: 'Save',
+            cancel: 'Cancel',
+            delete: 'Delete',
+            edit: 'Edit',
+            add: 'Add',
+            back: 'Back',
+            language: 'Language',
+            ui: {
+                close: 'Close',
+                previous: 'Previous',
+                next: 'Next',
+                more: 'More',
+                switchLanguage: 'Switch Language',
+                previousSlide: 'Previous slide',
+                nextSlide: 'Next slide',
+            },
+            metrics: {
+                moisture: 'Moisture',
+                temperature: 'Temp',
+                humidity: 'Humidity',
+                light: 'Light',
+            },
+        },
+        landing: {
+            nav: {
+                features: 'Features',
+                howItWorks: 'How it Works',
+                pricing: 'Pricing',
+                testimonials: 'Testimonials',
+                login: 'Login',
+                getStarted: 'Get Started',
+            },
+            hero: {
+                title: 'Intelligent Care for Your Plants',
+                subtitle: 'Monitor moisture, light, and temperature in real-time. Automated care for your home garden.',
+                earlyAccess: 'Now available in Early Access',
+                cta: 'Start Free Trial',
+                learnMore: 'See How It Works',
+            },
+            features: {
+                title: 'Why Choose PlantFlow?',
+                subtitle: 'Everything you need to keep your plants happy and healthy.',
+                remote: {
+                    title: 'Remote Monitoring',
+                    desc: 'Check on your plants from anywhere in the world with our top-rated mobile app.',
+                },
+                automation: {
+                    title: 'Smart Automation',
+                    desc: 'Set rules to automatically water your plants when soil moisture drops too low.',
+                },
+                protection: {
+                    title: 'Plant Protection',
+                    desc: 'Get instant alerts if temperature or humidity levels go outside safe ranges.',
+                },
+            },
+            product: {
+                title: 'The Brain Behind the Bloom',
+                description: 'Connect your plants to the digital world with our precision sensors. Measure soil moisture, light levels, temperature, and humidity with lab-grade accuracy.',
+                list: {
+                    0: 'Real-time soil moisture monitoring',
+                    1: 'Ambient light and temperature tracking',
+                    2: 'Integration with automated watering systems',
+                    3: 'Instant notifications on your smartphone',
+                },
+            },
+            testimonials: {
+                title: 'Loved by Plant Parents',
+                subtitle: 'Join thousands of happy users who trust PlantFlow.',
+                0: {
+                    quote: "I used to kill every plant I owned. PlantFlow changed everything. My Fiddle Leaf Fig is finally thriving!",
+                    author: "Sarah J.",
+                    role: "Urban Gardener"
+                },
+                1: {
+                    quote: "The automation features save me so much time. I can travel for weeks without worrying about watering.",
+                    author: "Michael K.",
+                    role: "Travel Blogger"
+                },
+                2: {
+                    quote: "Incredible design and build quality. The app is intuitive and the sensors are extremely accurate.",
+                    author: "Elena R.",
+                    role: "Botanist"
+                }
+            },
+            pricing: {
+                title: 'Simple, Transparent Pricing',
+                subtitle: 'Choose the plan that fits your indoor garden.',
+                starter: {
+                    title: 'Starter',
+                    desc: 'Perfect for beginners with a few house plants.',
+                    features: {
+                        0: 'Up to 5 sensors',
+                        1: 'Basic analytics',
+                        2: 'Email support',
+                        3: 'Mobile app access'
+                    },
+                    cta: 'Choose Starter'
+                },
+                pro: {
+                    title: 'Pro',
+                    desc: 'For serious plant lovers and collectors.',
+                    badge: 'MOST POPULAR',
+                    features: {
+                        0: 'Up to 20 sensors',
+                        1: 'Advanced analytics',
+                        2: 'Priority support',
+                        3: 'Automation rules',
+                        4: 'Data export'
+                    },
+                    cta: 'Choose Pro'
+                },
+                enterprise: {
+                    title: 'Enterprise',
+                    desc: 'For commercial greenhouses and nurseries.',
+                    features: {
+                        0: 'Unlimited sensors',
+                        1: 'Custom integration',
+                        2: '24/7 phone support',
+                        3: 'Multi-user access',
+                        4: 'API access'
+                    },
+                    cta: 'Contact Us'
+                }
+            },
+            cta: {
+                title: 'Ready to Transform Your Garden?',
+                subtitle: 'Join the PlantFlow community today and give your plants the care they deserve.',
+                button: 'Get Started for Free',
+            },
+            footer: {
+                copyright: '© {{year}} PlantFlow Inc. All rights reserved.',
+            },
+            links: {
+                product: 'Product',
+                features: 'Features',
+                pricing: 'Pricing',
+                company: 'Company',
+                about: 'About',
+                blog: 'Blog',
+                careers: 'Careers',
+                legal: 'Legal',
+                privacy: 'Privacy',
+                terms: 'Terms',
+            }
+        },
+        auth: {
+            login: {
+                title: 'Welcome Back',
+                subtitle: 'Sign in to monitor your plants',
+                email: 'Email',
+                password: 'Password',
+                emailPlaceholder: 'your@email.com',
+                passwordPlaceholder: '••••••••',
+                submit: 'Sign In',
+                submitting: 'Signing in...',
+                noAccount: "Don't have an account?",
+                register: 'Create one',
+                success: 'Welcome back!',
+            },
+            register: {
+                title: 'Join PlantFlow',
+                subtitle: 'Create your account to start monitoring',
+                fullName: 'Full Name',
+                fullNamePlaceholder: 'John Doe',
+                email: 'Email',
+                emailPlaceholder: 'your@email.com',
+                password: 'Password',
+                passwordPlaceholder: '••••••••',
+                confirmPassword: 'Confirm Password',
+                confirmPasswordPlaceholder: '••••••••',
+                submit: 'Create Account',
+                submitting: 'Creating account...',
+                hasAccount: 'Already have an account?',
+                login: 'Sign in',
+                success: 'Account created successfully!',
+                passwordsMismatch: 'Passwords do not match',
+                passwordTooShort: 'Password must be at least 6 characters',
+            },
+            accessRestricted: {
+                title: 'Access Restricted',
+                description: 'You are not registered to use this application. Please contact the app administrator to request access.',
+                message: 'If you believe this is an error, you can:',
+                verify: 'Verify you are logged in with the correct account',
+                contact: 'Contact the app administrator for access',
+                retry: 'Try logging out and back in again',
+            },
+        },
+        dashboard: {
+            nav: {
+                dashboard: 'Dashboard',
+                analytics: 'Analytics',
+                settings: 'Settings',
+                profile: 'My Profile',
+                logout: 'Logout',
+                systemActive: 'System Active',
+                sensorsOnline: 'All sensors online',
+            },
+            notifications: {
+                title: 'Notifications',
+                lowMoisture: 'Low Soil Moisture',
+                wateringNeeded: 'needs watering',
+                pumpActivated: 'Pump Activated',
+                wateringCompleted: 'Auto-watering completed',
+                sensorCalibrated: 'Sensor Calibrated',
+                sensorRecalibrated: 'Light sensor recalibrated',
+                ago: {
+                    minutes: 'mins ago',
+                    hours: 'hours ago',
+                },
+            },
+            header: {
+                title: 'My Garden',
+                subtitle: 'Overview of your connected plants',
+                addPlant: 'Add Plant Device',
+            },
+            stats: {
+                totalPlants: 'Plants in Your Garden',
+            },
+            plants: {
+                title: 'My Plants',
+                liveStatus: 'Live Status',
+                noData: 'No sensor data waiting...',
+                emptyTitle: 'Start Your Plant Journey',
+                emptyDescription: 'Add your first plant device to begin monitoring soil moisture, temperature, humidity, and light in real-time',
+                addFirst: 'Add Your First Plant',
+            },
+            actions: {
+                analytics: {
+                    title: 'View Analytics',
+                    description: 'Track growth trends and patterns',
+                },
+                settings: {
+                    title: 'Settings',
+                    description: 'Manage devices and preferences',
+                },
+            },
+            addDevice: {
+                title: 'Add New Plant Device',
+                editTitle: 'Edit Plant Device',
+                subtitle: 'Add a new IoT device to monitor your plant. Each device monitors one plant.',
+                editSubtitle: 'Update the plant and device information below.',
+                plantName: 'Plant Name',
+                plantNamePlaceholder: 'e.g. Monstera',
+                plantSpecies: 'Plant Species',
+                plantSpeciesPlaceholder: 'e.g. Swiss Cheese Plant',
+                serialNumber: 'Device Serial Number',
+                serialNumberPlaceholder: 'e.g. PP-2024-A7B3C9D2',
+                location: 'Location',
+                locationPlaceholder: 'e.g. Living Room',
+                submit: 'Add Plant Device',
+                update: 'Update Plant Device',
+                success: 'Plant device added successfully! 🌱',
+                error: 'Failed to add device',
+            },
+        },
+        profile: {
+            header: {
+                title: 'My Profile',
+                subtitle: 'Manage your account settings',
+            },
+            personalInfo: {
+                title: 'Personal Information',
+                subtitle: 'Update your personal details',
+                fullName: 'Full Name',
+                fullNamePlaceholder: 'John Doe',
+                email: 'Email',
+                emailPlaceholder: 'john@example.com',
+                changePassword: 'Change Password',
+                newPassword: 'New Password',
+                confirmNewPassword: 'Confirm New Password',
+                passwordPlaceholder: 'Enter new password',
+                confirmNewPasswordPlaceholder: 'Confirm new password',
+            },
+            buttons: {
+                save: 'Save Changes',
+                saving: 'Saving...',
+            },
+            messages: {
+                loadError: 'Failed to load profile',
+                success: 'Profile updated successfully',
+                error: 'Failed to update profile',
+            },
+        },
+    },
+};

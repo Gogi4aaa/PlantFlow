@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Leaf, Shield, Smartphone, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import heroBg from '../assets/station_in_field.png';
 import productShot from '../assets/product_sensor_closeup.png';
 
 export default function LandingPage() {
+    const { t } = useTranslation();
     return (
         <div className="min-h-screen bg-white text-slate-900 font-sans">
             {/* Navigation */}
@@ -17,19 +20,20 @@ export default function LandingPage() {
                             </span>
                         </div>
                         <div className="hidden md:flex items-center space-x-8">
-                            <a href="#features" className="text-slate-600 hover:text-emerald-600 transition-colors">Функции</a>
-                            <a href="#pricing" className="text-slate-600 hover:text-emerald-600 transition-colors">Цени</a>
-                            <a href="#testimonials" className="text-slate-600 hover:text-emerald-600 transition-colors">Отзиви</a>
+                            <a href="#features" className="text-slate-600 hover:text-emerald-600 transition-colors">{t('landing.nav.features')}</a>
+                            <a href="#pricing" className="text-slate-600 hover:text-emerald-600 transition-colors">{t('landing.nav.pricing')}</a>
+                            <a href="#testimonials" className="text-slate-600 hover:text-emerald-600 transition-colors">{t('landing.nav.testimonials')}</a>
                         </div>
                         <div className="flex items-center space-x-4">
+                            <LanguageSwitcher />
                             <Link to="/signin" className="text-slate-600 hover:text-emerald-600 font-medium">
-                                Вход
+                                {t('landing.nav.login')}
                             </Link>
                             <Link
                                 to="/register"
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-full font-medium transition-all shadow-lg hover:shadow-emerald-500/30 flex items-center"
                             >
-                                Започни
+                                {t('landing.nav.getStarted')}
                             </Link>
                         </div>
                     </div>
@@ -50,18 +54,15 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
                     <div className="inline-flex items-center px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 font-medium text-sm mb-8 animate-fade-in-up">
                         <span className="flex h-2 w-2 rounded-full bg-emerald-500 mr-2"></span>
-                        Вече достъпно с ранен достъп
+                        {t('landing.hero.earlyAccess')}
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-slate-900 leading-tight">
-                        Интелигентна грижа за вашите <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-400">
-                            растения
-                        </span>
+                        {t('landing.hero.title')}
                     </h1>
 
                     <p className="mt-4 max-w-2xl mx-auto text-xl text-slate-600 mb-10 leading-relaxed">
-                        Наблюдавайте, автоматизирайте и процъфтявайте. PlantFlow ви дава данни в реално време за здравето на вашите растения, директно от джоба ви. Никога повече не губете растение.
+                        {t('landing.hero.subtitle')}
                     </p>
 
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -69,13 +70,13 @@ export default function LandingPage() {
                             to="/register"
                             className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-bold text-lg shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all flex items-center justify-center transform hover:-translate-y-1"
                         >
-                            Започнете безплатен пробен период <ArrowRight className="ml-2 h-5 w-5" />
+                            {t('landing.hero.cta')} <ArrowRight className="ml-2 h-5 w-5" />
                         </Link>
                         <a
                             href="#product"
                             className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
                         >
-                            Вижте как работи
+                            {t('landing.hero.learnMore')}
                         </a>
                     </div>
                 </div>
@@ -95,24 +96,19 @@ export default function LandingPage() {
                         </div>
                         <div className="order-1 lg:order-2">
                             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-slate-900">
-                                Мозъкът зад цъфтежа
+                                {t('landing.product.title')}
                             </h2>
                             <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                                Свържете растенията си с дигиталния свят с нашите прецизни сензори. Измервайте влажността на почвата, нивата на светлина, температурата и влажността с лабораторна точност.
+                                {t('landing.product.description')}
                             </p>
 
                             <ul className="space-y-4">
-                                {[
-                                    "Мониторинг на влажността на почвата в реално време",
-                                    "Проследяване на околната светлина и температура",
-                                    "Интеграция с автоматизирани системи за поливане",
-                                    "Незабавни известия на вашия смартфон"
-                                ].map((item, index) => (
+                                {[0, 1, 2, 3].map((index) => (
                                     <li key={index} className="flex items-center text-slate-700">
                                         <div className="flex-shrink-0 h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
                                             <Check className="h-4 w-4 text-emerald-600" />
                                         </div>
-                                        {item}
+                                        {t(`landing.product.list.${index}`)}
                                     </li>
                                 ))}
                             </ul>
@@ -125,26 +121,26 @@ export default function LandingPage() {
             <section id="features" className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Защо да изберете PlantFlow?</h2>
-                        <p className="text-xl text-slate-600">Всичко, от което се нуждаете, за да поддържате растенията си щастливи и здрави.</p>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{t('landing.features.title')}</h2>
+                        <p className="text-xl text-slate-600">{t('landing.features.subtitle')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
                             {
                                 icon: <Smartphone className="h-8 w-8 text-white" />,
-                                title: "Дистанционно наблюдение",
-                                desc: "Проверявайте растенията си от всяка точка на света с нашето най-добро мобилно приложение."
+                                title: t('landing.features.remote.title'),
+                                desc: t('landing.features.remote.desc')
                             },
                             {
                                 icon: <Zap className="h-8 w-8 text-white" />,
-                                title: "Интелигентна автоматизация",
-                                desc: "Задайте правила за автоматично поливане на растенията, когато влажността на почвата спадне твърде ниско."
+                                title: t('landing.features.automation.title'),
+                                desc: t('landing.features.automation.desc')
                             },
                             {
                                 icon: <Shield className="h-8 w-8 text-white" />,
-                                title: "Защита на растенията",
-                                desc: "Получавайте незабавни известия, ако нивата на температурата или влажността излязат извън безопасния диапазон."
+                                title: t('landing.features.protection.title'),
+                                desc: t('landing.features.protection.desc')
                             }
                         ].map((feature, index) => (
                             <div key={index} className="bg-slate-50 p-8 rounded-2xl hover:shadow-xl transition-shadow border border-slate-100 group">
@@ -169,38 +165,22 @@ export default function LandingPage() {
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">Любимо на любителите на растения</h2>
-                        <p className="text-emerald-200 text-lg">Присъединете се към хиляди щастливи потребители, които се доверяват на PlantFlow.</p>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.testimonials.title')}</h2>
+                        <p className="text-emerald-200 text-lg">{t('landing.testimonials.subtitle')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[
-                            {
-                                quote: "Преди убивах всяко растение, което притежавах. PlantFlow промени всичко. Моят фикус най-накрая процъфтява!",
-                                author: "Сара Дж.",
-                                role: "Градски градинар"
-                            },
-                            {
-                                quote: "Функциите за автоматизация ми спестяват толкова много време. Мога да пътувам със седмици, без да се притеснявам за поливането.",
-                                author: "Майкъл К.",
-                                role: "Травъл блогър"
-                            },
-                            {
-                                quote: "Невероятен дизайн и качество на изработката. Приложението е интуитивно, а сензорите са изключително точни.",
-                                author: "Елена Р.",
-                                role: "Ботаник"
-                            }
-                        ].map((testimonial, index) => (
+                        {[0, 1, 2].map((index) => (
                             <div key={index} className="bg-emerald-800/50 backdrop-blur-sm p-8 rounded-2xl border border-emerald-700">
                                 <div className="flex text-emerald-400 mb-4">
                                     {[...Array(5)].map((_, i) => (
                                         <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
                                     ))}
                                 </div>
-                                <p className="text-lg mb-6 leading-relaxed">"{testimonial.quote}"</p>
+                                <p className="text-lg mb-6 leading-relaxed">"{t(`landing.testimonials.${index}.quote`)}"</p>
                                 <div>
-                                    <p className="font-bold">{testimonial.author}</p>
-                                    <p className="text-emerald-300 text-sm">{testimonial.role}</p>
+                                    <p className="font-bold">{t(`landing.testimonials.${index}.author`)}</p>
+                                    <p className="text-emerald-300 text-sm">{t(`landing.testimonials.${index}.role`)}</p>
                                 </div>
                             </div>
                         ))}
@@ -212,69 +192,69 @@ export default function LandingPage() {
             <section id="pricing" className="py-24 bg-slate-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Просто, прозрачно ценообразуване</h2>
-                        <p className="text-xl text-slate-600">Изберете плана, който отговаря на вашата вътрешна градина.</p>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{t('landing.pricing.title')}</h2>
+                        <p className="text-xl text-slate-600">{t('landing.pricing.subtitle')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                         {/* Starter */}
                         <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-2">Начален</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('landing.pricing.starter.title')}</h3>
                             <div className="text-4xl font-bold text-slate-900 mb-6">50 лв.<span className="text-lg text-slate-500 font-normal">/мес</span></div>
-                            <p className="text-slate-600 mb-8">Перфектен за начинаещи с няколко стайни растения.</p>
+                            <p className="text-slate-600 mb-8">{t('landing.pricing.starter.desc')}</p>
 
                             <ul className="space-y-4 mb-8 flex-1">
-                                {["До 5 сензора", "Основни анализи", "Поддръжка по имейл", "Достъп до мобилно приложение"].map((item, i) => (
-                                    <li key={i} className="flex items-center text-slate-700">
+                                {[0, 1, 2, 3].map((index) => (
+                                    <li key={index} className="flex items-center text-slate-700">
                                         <Check className="h-5 w-5 text-emerald-500 mr-3" />
-                                        {item}
+                                        {t(`landing.pricing.starter.features.${index}`)}
                                     </li>
                                 ))}
                             </ul>
 
                             <button className="w-full py-3 px-6 rounded-xl border-2 border-slate-200 text-slate-700 font-bold hover:border-emerald-500 hover:text-emerald-600 transition-colors">
-                                Избери Начален
+                                {t('landing.pricing.starter.cta')}
                             </button>
                         </div>
 
                         {/* Pro */}
                         <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-emerald-500 relative flex flex-col transform md:-translate-y-4">
-                            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">НАЙ-ПОПУЛЯРЕН</div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-2">Про</h3>
+                            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">{t('landing.pricing.pro.badge')}</div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('landing.pricing.pro.title')}</h3>
                             <div className="text-4xl font-bold text-slate-900 mb-6">100 лв.<span className="text-lg text-slate-500 font-normal">/мес</span></div>
-                            <p className="text-slate-600 mb-8">За сериозни любители на растения и колекционери.</p>
+                            <p className="text-slate-600 mb-8">{t('landing.pricing.pro.desc')}</p>
 
                             <ul className="space-y-4 mb-8 flex-1">
-                                {["До 20 сензора", "Разширени анализи", "Приоритетна поддръжка", "Правила за автоматизация", "Експорт на данни"].map((item, i) => (
-                                    <li key={i} className="flex items-center text-slate-700">
+                                {[0, 1, 2, 3, 4].map((index) => (
+                                    <li key={index} className="flex items-center text-slate-700">
                                         <Check className="h-5 w-5 text-emerald-500 mr-3" />
-                                        {item}
+                                        {t(`landing.pricing.pro.features.${index}`)}
                                     </li>
                                 ))}
                             </ul>
 
                             <button className="w-full py-3 px-6 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition-colors shadow-lg hover:shadow-emerald-500/30">
-                                Избери Про
+                                {t('landing.pricing.pro.cta')}
                             </button>
                         </div>
 
                         {/* Enterprise */}
                         <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-2">Enterprise</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('landing.pricing.enterprise.title')}</h3>
                             <div className="text-4xl font-bold text-slate-900 mb-6">400 лв.<span className="text-lg text-slate-500 font-normal">/мес</span></div>
-                            <p className="text-slate-600 mb-8">За търговски оранжерии и разсадници.</p>
+                            <p className="text-slate-600 mb-8">{t('landing.pricing.enterprise.desc')}</p>
 
                             <ul className="space-y-4 mb-8 flex-1">
-                                {["Неограничени сензори", "Персонализирана интеграция", "24/7 поддръжка по телефона", "Многопотребителски достъп", "API достъп"].map((item, i) => (
-                                    <li key={i} className="flex items-center text-slate-700">
+                                {[0, 1, 2, 3, 4].map((index) => (
+                                    <li key={index} className="flex items-center text-slate-700">
                                         <Check className="h-5 w-5 text-emerald-500 mr-3" />
-                                        {item}
+                                        {t(`landing.pricing.enterprise.features.${index}`)}
                                     </li>
                                 ))}
                             </ul>
 
                             <button className="w-full py-3 px-6 rounded-xl border-2 border-slate-200 text-slate-700 font-bold hover:border-emerald-500 hover:text-emerald-600 transition-colors">
-                                Свържете се с нас
+                                {t('landing.pricing.enterprise.cta')}
                             </button>
                         </div>
                     </div>
@@ -288,15 +268,15 @@ export default function LandingPage() {
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-900 opacity-10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
 
-                        <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">Готови ли сте да трансформирате градината си?</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">{t('landing.cta.title')}</h2>
                         <p className="text-emerald-50 text-xl mb-10 max-w-2xl mx-auto relative z-10">
-                            Присъединете се към общността на PlantFlow днес и дайте на растенията си грижата, която заслужават.
+                            {t('landing.cta.subtitle')}
                         </p>
                         <Link
                             to="/register"
                             className="inline-block px-10 py-5 bg-white text-emerald-600 rounded-full font-bold text-xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 relative z-10"
                         >
-                            Започнете безплатно
+                            {t('landing.cta.button')}
                         </Link>
                     </div>
                 </div>
@@ -311,7 +291,7 @@ export default function LandingPage() {
                             <span className="ml-2 text-xl font-bold text-white">PlantFlow</span>
                         </div>
                         <div className="text-sm">
-                            &copy; {new Date().getFullYear()} PlantFlow Inc. Всички права запазени.
+                            {t('landing.footer.copyright', { year: new Date().getFullYear() })}
                         </div>
                     </div>
                 </div>

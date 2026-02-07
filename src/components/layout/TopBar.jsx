@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { createPageUrl } from '@/utils';
 import {
   Menu,
@@ -20,6 +22,7 @@ import {
 import { cn } from '@/lib/utils';
 
 export default function TopBar({ onMenuClick }) {
+  const { t, i18n } = useTranslation();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -58,7 +61,7 @@ export default function TopBar({ onMenuClick }) {
           <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500">
             <Clock className="w-4 h-4" />
             <span className="font-mono">
-              {currentTime.toLocaleTimeString('en-US', {
+              {currentTime.toLocaleTimeString(i18n.language, {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true
@@ -69,6 +72,7 @@ export default function TopBar({ onMenuClick }) {
 
         {/* Right side - Status indicators */}
         <div className="flex items-center gap-2 sm:gap-4">
+          <LanguageSwitcher />
           {/* Notifications */}
           {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -138,14 +142,14 @@ export default function TopBar({ onMenuClick }) {
               <DropdownMenuItem className="cursor-pointer"
                 onClick={() => navigate('/profile')}>
                 <User className="w-4 h-4 mr-2" />
-                Моят профил
+                {t('dashboard.nav.profile')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={handleLogout}
                 className="cursor-pointer text-red-600 focus:text-red-600"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Изход
+                {t('dashboard.nav.logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

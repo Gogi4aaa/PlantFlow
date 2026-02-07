@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Leaf,
@@ -21,6 +22,7 @@ import AddDeviceDialog from '@/components/devices/AddDeviceDialog';
 import { api } from '@/api/api';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -50,10 +52,10 @@ export default function Dashboard() {
       queryClient.invalidateQueries({ queryKey: ['devices'] });
       setDialogOpen(false);
       setDialogOpen(false);
-      toast.success('Устройство добавено успешно! 🌱');
+      toast.success(t('dashboard.addDevice.success'));
     },
     onError: (error) => {
-      toast.error('Неуспешно добавяне на устройство: ' + error.message);
+      toast.error(t('dashboard.addDevice.error') + ': ' + error.message);
     }
   });
 
@@ -78,10 +80,10 @@ export default function Dashboard() {
       >
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">
-            Моята градина
+            {t('dashboard.header.title')}
           </h1>
           <p className="text-slate-500 mt-1">
-            Преглед на вашите свързани растения
+            {t('dashboard.header.subtitle')}
           </p>
         </div>
         <Button
@@ -89,7 +91,7 @@ export default function Dashboard() {
           className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-200"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Добави растение
+          {t('dashboard.header.addPlant')}
         </Button>
       </motion.div>
 
@@ -104,7 +106,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-slate-800">{stats.totalPlants}</p>
-                  <p className="text-slate-600">Растения във вашата градина</p>
+                  <p className="text-slate-600">{t('dashboard.stats.totalPlants')}</p>
                 </div>
               </div>
             </CardContent>
@@ -115,7 +117,7 @@ export default function Dashboard() {
       {/* My Plants Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-800">Моите растения</h2>
+          <h2 className="text-xl font-semibold text-slate-800">{t('dashboard.plants.title')}</h2>
         </div>
 
         {isLoading ? (
@@ -159,7 +161,7 @@ export default function Dashboard() {
                       {/* Status Overlay */}
                       <div className="absolute bottom-3 left-4 right-4 text-white">
                         <h3 className="font-bold text-xl mb-1 shadow-sm">
-                          {device.plant_name || 'Неименувано растение'}
+                          {device.plant_name || t('dashboard.plants.unnamed', 'Unnamed Plant')}
                         </h3>
                         <p className="text-sm opacity-90 shadow-sm flex items-center gap-1">
                           {device.location && <span>📍 {device.location}</span>}
@@ -168,7 +170,7 @@ export default function Dashboard() {
                     </div>
 
                     <CardContent className="p-5">
-                      <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Статус на живо</h4>
+                      <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">{t('dashboard.plants.liveStatus')}</h4>
 
                       {device.current_reading ? (
                         <div className="grid grid-cols-2 gap-4">
@@ -191,7 +193,7 @@ export default function Dashboard() {
                         </div>
                       ) : (
                         <div className="text-center py-2 text-slate-400 text-sm bg-slate-50 rounded-lg">
-                          Няма данни от сензора...
+                          {t('dashboard.plants.noData')}
                         </div>
                       )}
 
@@ -211,16 +213,16 @@ export default function Dashboard() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-100 to-green-100 flex items-center justify-center shadow-lg">
                 <Leaf className="w-10 h-10 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">Започнете вашето пътешествие</h3>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">{t('dashboard.plants.emptyTitle')}</h3>
               <p className="text-slate-600 mb-6 max-w-md mx-auto">
-                Добавете първото си устройство, за да започнете да наблюдавате влажността на почвата, температурата, влажността и светлината в реално време
+                {t('dashboard.plants.emptyDescription')}
               </p>
               <Button
                 onClick={() => setDialogOpen(true)}
                 className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-200"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Добави първото си растение
+                {t('dashboard.plants.addFirst')}
               </Button>
             </CardContent>
           </Card>
@@ -239,9 +241,9 @@ export default function Dashboard() {
                       <div className="p-3 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl group-hover:scale-110 transition-transform">
                         <BarChart3 className="w-6 h-6 text-emerald-600" />
                       </div>
-                      <h3 className="text-lg font-semibold text-slate-800">Виж анализи</h3>
+                      <h3 className="text-lg font-semibold text-slate-800">{t('dashboard.actions.analytics.title')}</h3>
                     </div>
-                    <p className="text-sm text-slate-600">Проследявайте тенденциите на растеж</p>
+                    <p className="text-sm text-slate-600">{t('dashboard.actions.analytics.description')}</p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-emerald-400 opacity-50" />
                 </div>
@@ -260,9 +262,9 @@ export default function Dashboard() {
                       <div className="p-3 bg-slate-200 rounded-xl group-hover:scale-110 transition-transform">
                         <SettingsIcon className="w-6 h-6 text-slate-700" />
                       </div>
-                      <h3 className="text-lg font-semibold text-slate-800">Настройки</h3>
+                      <h3 className="text-lg font-semibold text-slate-800">{t('dashboard.actions.settings.title')}</h3>
                     </div>
-                    <p className="text-sm text-slate-600">Управление на устройства и предпочитания</p>
+                    <p className="text-sm text-slate-600">{t('dashboard.actions.settings.description')}</p>
                   </div>
                   <SettingsIcon className="w-8 h-8 text-slate-400 opacity-50" />
                 </div>

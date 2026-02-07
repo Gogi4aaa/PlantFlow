@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Save, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { api } from '@/api/api';
 import { toast } from 'sonner';
 
 export default function Profile() {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +39,7 @@ export default function Profile() {
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
-            toast.error('Failed to load profile data');
+            toast.error(t('profile.messages.loadError'));
         } finally {
             setIsLoading(false);
         }
@@ -47,7 +49,7 @@ export default function Profile() {
         e.preventDefault();
 
         if (formData.password && formData.password !== formData.confirmPassword) {
-            toast.error('Passwords do not match');
+            toast.error(t('auth.register.passwordsMismatch'));
             return;
         }
 
@@ -65,7 +67,7 @@ export default function Profile() {
             const response = await api.auth.updateProfile(updateData);
 
             if (response && response.success) {
-                toast.success('Profile updated successfully');
+                toast.success(t('profile.messages.success'));
                 // Update local storage user data if needed for top bar
                 const currentUser = JSON.parse(localStorage.getItem('plantpulse_user') || '{}');
                 const updatedUser = { ...currentUser, ...response.data };
@@ -80,7 +82,7 @@ export default function Profile() {
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            toast.error(error.message || 'Failed to update profile');
+            toast.error(error.message || t('profile.messages.error'));
         } finally {
             setIsSaving(false);
         }
@@ -98,8 +100,8 @@ export default function Profile() {
         <div className="p-6 space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">My Profile</h1>
-                    <p className="text-slate-500">Manage your account settings and preferences</p>
+                    <h1 className="text-2xl font-bold text-slate-800">{t('profile.header.title')}</h1>
+                    <p className="text-slate-500">{t('profile.header.subtitle')}</p>
                 </div>
             </div>
 
@@ -110,15 +112,15 @@ export default function Profile() {
             >
                 <Card className="max-w-2xl border-slate-100 shadow-sm">
                     <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
+                        <CardTitle>{t('profile.personalInfo.title')}</CardTitle>
                         <CardDescription>
-                            Update your personal details here.
+                            {t('profile.personalInfo.subtitle')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="fullName">Full Name</Label>
+                                <Label htmlFor="fullName">{t('profile.personalInfo.fullName')}</Label>
                                 <div className="relative">
                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                     <Input
@@ -126,13 +128,13 @@ export default function Profile() {
                                         value={formData.full_name}
                                         onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                                         className="pl-9"
-                                        placeholder="John Doe"
+                                        placeholder={t('profile.personalInfo.fullNamePlaceholder')}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email Address</Label>
+                                <Label htmlFor="email">{t('profile.personalInfo.email')}</Label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                     <Input
@@ -141,16 +143,16 @@ export default function Profile() {
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         className="pl-9"
-                                        placeholder="john@example.com"
+                                        placeholder={t('profile.personalInfo.emailPlaceholder')}
                                     />
                                 </div>
                             </div>
 
                             <div className="pt-4 border-t border-slate-100">
-                                <h3 className="text-sm font-medium text-slate-800 mb-4">Change Password</h3>
+                                <h3 className="text-sm font-medium text-slate-800 mb-4">{t('profile.personalInfo.changePassword')}</h3>
                                 <div className="grid gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="newPassword">New Password</Label>
+                                        <Label htmlFor="newPassword">{t('profile.personalInfo.newPassword')}</Label>
                                         <div className="relative">
                                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                             <Input
@@ -159,7 +161,7 @@ export default function Profile() {
                                                 value={formData.password}
                                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                                 className="pl-9 pr-9"
-                                                placeholder="Leave blank to keep current"
+                                                placeholder={t('profile.personalInfo.passwordPlaceholder')}
                                             />
                                             <button
                                                 type="button"
@@ -181,7 +183,7 @@ export default function Profile() {
                                             animate={{ opacity: 1, height: 'auto' }}
                                             className="space-y-2"
                                         >
-                                            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                                            <Label htmlFor="confirmPassword">{t('profile.personalInfo.confirmNewPassword')}</Label>
                                             <div className="relative">
                                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                                 <Input
@@ -190,7 +192,7 @@ export default function Profile() {
                                                     value={formData.confirmPassword}
                                                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                                     className="pl-9"
-                                                    placeholder="Confirm new password"
+                                                    placeholder={t('profile.personalInfo.confirmNewPasswordPlaceholder')}
                                                 />
                                             </div>
                                         </motion.div>
@@ -207,12 +209,12 @@ export default function Profile() {
                                     {isSaving ? (
                                         <>
                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                            Saving...
+                                            {t('profile.buttons.saving')}
                                         </>
                                     ) : (
                                         <>
                                             <Save className="w-4 h-4 mr-2" />
-                                            Save Changes
+                                            {t('profile.buttons.save')}
                                         </>
                                     )}
                                 </Button>

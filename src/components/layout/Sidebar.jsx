@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -12,14 +13,15 @@ import {
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-  { name: 'Табло', icon: LayoutDashboard, page: 'Dashboard' },
-  { name: 'Анализи', icon: BarChart3, page: 'Analytics' },
-  { name: 'Настройки', icon: Settings, page: 'Settings' }
-];
-
 export default function Sidebar({ isOpen, setIsOpen }) {
+  const { t } = useTranslation();
   const location = useLocation();
+
+  const navItems = useMemo(() => [
+    { name: t('dashboard.nav.dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
+    { name: t('dashboard.nav.analytics'), icon: BarChart3, page: 'Analytics' },
+    { name: t('dashboard.nav.settings'), icon: Settings, page: 'Settings' }
+  ], [t]);
   const currentPath = location.pathname;
 
   return (
@@ -48,7 +50,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </div>
             <div>
               <h1 className="font-bold text-slate-800 text-lg tracking-tight">PlantPulse</h1>
-              <p className="text-xs text-slate-400">IoT Plant Monitor</p>
+              <p className="text-xs text-slate-400">{t('common.appSubtitle')}</p>
             </div>
           </Link>
         </div>
@@ -93,8 +95,8 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 <Leaf className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-emerald-800">Системата е активна</p>
-                <p className="text-xs text-emerald-600">Всички сензори работят</p>
+                <p className="text-sm font-medium text-emerald-800">{t('dashboard.nav.systemActive')}</p>
+                <p className="text-xs text-emerald-600">{t('dashboard.nav.sensorsOnline')}</p>
               </div>
             </div>
           </div>

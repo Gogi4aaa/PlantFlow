@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Droplets, Sun, Thermometer, Heart } from 'lucide-react';
@@ -8,6 +9,7 @@ import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 
 export default function PlantCard({ plant, index }) {
+  const { t } = useTranslation();
   const healthColors = {
     excellent: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     good: 'bg-green-100 text-green-700 border-green-200',
@@ -25,13 +27,13 @@ export default function PlantCard({ plant, index }) {
         <div className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-100/50 hover:border-emerald-200 hover:-translate-y-1">
           {/* Plant Image */}
           <div className="relative h-40 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-emerald-50 to-green-50">
-            <img 
-              src={plant.image} 
+            <img
+              src={plant.image}
               alt={plant.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-            <Badge 
+            <Badge
               className={cn(
                 'absolute top-3 right-3 border',
                 healthColors[plant.health]
@@ -41,7 +43,7 @@ export default function PlantCard({ plant, index }) {
               {plant.health}
             </Badge>
           </div>
-          
+
           {/* Plant Info */}
           <div className="space-y-3">
             <div>
@@ -50,7 +52,7 @@ export default function PlantCard({ plant, index }) {
               </h3>
               <p className="text-sm text-slate-400">{plant.species}</p>
             </div>
-            
+
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100">
               <div className="text-center">
@@ -66,26 +68,26 @@ export default function PlantCard({ plant, index }) {
                 <p className="text-xs text-slate-500">{plant.temp}°C</p>
               </div>
             </div>
-            
+
             {/* Water Level */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Soil Moisture</span>
+                <span className="text-slate-500">{t('common.metrics.moisture')}</span>
                 <span className={cn(
                   'font-medium',
-                  plant.moisture >= 60 ? 'text-emerald-600' : 
-                  plant.moisture >= 30 ? 'text-amber-600' : 'text-red-600'
+                  plant.moisture >= 60 ? 'text-emerald-600' :
+                    plant.moisture >= 30 ? 'text-amber-600' : 'text-red-600'
                 )}>
                   {plant.moisture}%
                 </span>
               </div>
-              <Progress 
-                value={plant.moisture} 
+              <Progress
+                value={plant.moisture}
                 className="h-1.5 bg-slate-100"
               />
             </div>
           </div>
-          
+
           {/* Hover indicator */}
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-green-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
         </div>
