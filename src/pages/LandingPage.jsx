@@ -200,7 +200,7 @@ export default function LandingPage() {
                         {/* Starter */}
                         <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col">
                             <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('landing.pricing.starter.title')}</h3>
-                            <div className="text-4xl font-bold text-slate-900 mb-6">50 лв.<span className="text-lg text-slate-500 font-normal">/мес</span></div>
+                            <div className="text-4xl font-bold text-slate-900 mb-6">25 €<span className="text-lg text-slate-500 font-normal">/мес</span></div>
                             <p className="text-slate-600 mb-8">{t('landing.pricing.starter.desc')}</p>
 
                             <ul className="space-y-4 mb-8 flex-1">
@@ -221,7 +221,7 @@ export default function LandingPage() {
                         <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-emerald-500 relative flex flex-col transform md:-translate-y-4">
                             <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">{t('landing.pricing.pro.badge')}</div>
                             <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('landing.pricing.pro.title')}</h3>
-                            <div className="text-4xl font-bold text-slate-900 mb-6">100 лв.<span className="text-lg text-slate-500 font-normal">/мес</span></div>
+                            <div className="text-4xl font-bold text-slate-900 mb-6">50 €<span className="text-lg text-slate-500 font-normal">/мес</span></div>
                             <p className="text-slate-600 mb-8">{t('landing.pricing.pro.desc')}</p>
 
                             <ul className="space-y-4 mb-8 flex-1">
@@ -241,7 +241,7 @@ export default function LandingPage() {
                         {/* Enterprise */}
                         <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col">
                             <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('landing.pricing.enterprise.title')}</h3>
-                            <div className="text-4xl font-bold text-slate-900 mb-6">400 лв.<span className="text-lg text-slate-500 font-normal">/мес</span></div>
+                            <div className="text-4xl font-bold text-slate-900 mb-6">200 €<span className="text-lg text-slate-500 font-normal">/мес</span></div>
                             <p className="text-slate-600 mb-8">{t('landing.pricing.enterprise.desc')}</p>
 
                             <ul className="space-y-4 mb-8 flex-1">

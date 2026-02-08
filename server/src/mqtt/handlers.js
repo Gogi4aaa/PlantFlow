@@ -1,32 +1,46 @@
 import SensorReading from '../models/SensorReading.js';
 import Device from '../models/Device.js';
+import Alert from '../models/Alert.js';
 
 /**
  * Handle incoming sensor data from MQTT
  */
-export async function handleSensorData(topic, message, topicPrefix) {
+export async function handleSensorData(topic, message, topicPrefix, io) {
     try {
-        // Extract device ID from topic
-        // Topic format: plantflow/devices/{deviceId}/sensors
-        const topicParts = topic.split('/');
-        const deviceIdIndex = topicParts.indexOf('devices') + 1;
-
-        if (deviceIdIndex === 0 || deviceIdIndex >= topicParts.length) {
-            console.error('❌ Invalid topic format:', topic);
-            return;
-        }
-
-        const deviceId = topicParts[deviceIdIndex];
-
-        // Parse message payload
+        // Parse message payload first to check for deviceId in data
         let data;
         try {
-            data = JSON.parse(message.toString());
+            // Fix invalid JSON (e.g. "nan")
+            const rawMessage = message.toString();
+            const sanitizedMessage = rawMessage.replace(/:\s*nan/gi, ':null');
+
+            data = JSON.parse(sanitizedMessage);
+            // console.log('📥 Sensor data received:', data);
         } catch (parseError) {
             console.error('❌ Failed to parse MQTT message:', parseError);
             console.error('   Message:', message.toString());
             return;
         }
+
+        let deviceId = data.deviceId || data.device_id;
+
+        // If not in payload, try to extract from topic
+        if (!deviceId) {
+            // Topic format: plantflow/devices/{deviceId}/sensors
+            const topicParts = topic.split('/');
+            const deviceIdIndex = topicParts.indexOf('devices') + 1;
+
+            if (deviceIdIndex > 0 && deviceIdIndex < topicParts.length) {
+                deviceId = topicParts[deviceIdIndex];
+            }
+        }
+
+        if (!deviceId) {
+            console.error('❌ Could not determine device ID from topic or payload. Topic:', topic, 'Data:', data);
+            return;
+        }
+
+
 
         // Validate data structure
         if (!isValidSensorData(data)) {
@@ -53,27 +67,134 @@ export async function handleSensorData(topic, message, topicPrefix) {
             }
         }
 
+        // Update Device Last Seen
+        await Device.updateLastSeen(deviceId);
+
+        // Update Pump Status if present
+        if (data.pump !== undefined) {
+            const normalizedPump = normalizePumpStatus(data.pump);
+            if (normalizedPump) {
+                await Device.updatePumpStatus(deviceId, normalizedPump);
+                data.pump = normalizedPump; // Update so it emits correctly
+            }
+        }
+
         // Store sensor reading
         const reading = {
             device_id: deviceId,
             temperature: data.temperature,
             air_humidity: data.air_humidity || data.humidity,
-            soil_moisture: data.soil_moisture || data.moisture,
+            soil_moisture: data.soil_moisture || data.moisture || data.soilMoisture, // Added soilMoisture support
             light: data.light,
             timestamp: data.timestamp || null
         };
 
-        await SensorReading.create(reading);
+        const savedReading = await SensorReading.create(reading);
+
+        // Check for Alerts
+        await checkAndCreateAlerts(deviceId, reading, io);
+
+        // Emit real-time update via Socket.IO
+        if (io) {
+            io.emit('sensor-update', {
+                deviceId,
+                reading: savedReading,
+                pumpStatus: data.pump // Emit pump status with sensor update
+            });
+            // Also emit device status update to show it's online
+            io.emit('device-status', {
+                deviceId,
+                status: 'ONLINE',
+                pumpStatus: data.pump, // Emit pump status
+                lastSeen: new Date()
+            });
+        }
 
         console.log(`📊 Sensor data stored for device '${deviceId}':`, {
             temperature: reading.temperature,
             air_humidity: reading.air_humidity,
             soil_moisture: reading.soil_moisture,
-            light: reading.light
+            light: reading.light,
+            pump: data.pump
         });
 
     } catch (error) {
         console.error('❌ Error handling sensor data:', error);
+    }
+}
+
+/**
+ * Check sensor data for alerts and create them if necessary
+ */
+async function checkAndCreateAlerts(deviceId, reading, io) {
+    // Define Alert Rules
+    const rules = [
+        {
+            code: 'LOW_MOISTURE',
+            condition: (r) => r.soil_moisture !== undefined && r.soil_moisture < 20,
+            type: 'CRITICAL',
+            message: (r) => `Low soil moisture detected: ${r.soil_moisture}%`
+        },
+        {
+            code: 'HIGH_TEMP',
+            condition: (r) => r.temperature !== undefined && r.temperature > 35,
+            type: 'WARNING',
+            message: (r) => `High temperature detected: ${r.temperature}°C`
+        },
+        {
+            code: 'LOW_TEMP',
+            condition: (r) => r.temperature !== undefined && r.temperature < 5,
+            type: 'WARNING',
+            message: (r) => `Low temperature detected: ${r.temperature}°C`
+        }
+    ];
+
+    for (const rule of rules) {
+        try {
+            // Check if there is an active alert for this rule
+            const activeAlert = await Alert.findActive(deviceId, rule.code);
+            const conditionMet = rule.condition(reading);
+
+            if (conditionMet) {
+                // Condition is BAD
+                if (!activeAlert) {
+                    // Create NEW alert
+                    const message = rule.message(reading);
+                    const newAlert = await Alert.create({
+                        device_id: deviceId,
+                        type: rule.type,
+                        message: message,
+                        code: rule.code
+                    });
+
+                    if (io) {
+                        io.emit('alert', {
+                            deviceId,
+                            alert: newAlert
+                        });
+                    }
+                    console.log(`🚨 Alert created for device ${deviceId}: ${message}`);
+                }
+                // If activeAlert exists, we do nothing (suppress duplicate)
+            } else {
+                // Condition is GOOD (or undefined)
+                if (activeAlert) {
+                    // Resolve EXISTING alert
+                    await Alert.resolve(activeAlert.id);
+
+                    if (io) {
+                        io.emit('alert-resolved', {
+                            deviceId,
+                            alertId: activeAlert.id,
+                            code: rule.code
+                        });
+                    }
+                    console.log(`✅ Alert resolved for device ${deviceId}: ${rule.code}`);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to process alert rule:', err);
+        }
     }
 }
 
@@ -97,11 +218,53 @@ function isValidSensorData(data) {
 /**
  * Handle device status updates (optional)
  */
-export function handleDeviceStatus(topic, message) {
+/**
+ * Handle device status updates
+ * Payload: { "deviceId":"...", "pump":"ON", "mode":"MANUAL" }
+ */
+export async function handleDeviceStatus(topic, message, io) {
     try {
         const data = JSON.parse(message.toString());
         console.log('📱 Device status update:', data);
-        // You can extend this to track device online/offline status
+
+        const { deviceId, pump, mode } = data;
+
+        if (deviceId) {
+            // Update last seen
+            await Device.updateLastSeen(deviceId);
+
+            // Update Pump Status
+            if (pump !== undefined) {
+                const normalizedPump = normalizePumpStatus(pump);
+                if (normalizedPump) {
+                    await Device.updatePumpStatus(deviceId, normalizedPump);
+                    // Update the variable for emission if needed, though 'pump' is const in destructuring, 
+                    // we'll just use normalizedPump in emission if we were reconstructing the object, 
+                    // but strict 'pump' usage below suggests we might want to emit normalized values.
+                    // However, for handleDeviceStatus, we'll leave the emission as is or assume frontend handles it?
+                    // Better to just update DB strictly here.
+                }
+            }
+
+            // Emit to frontend
+            if (io) {
+                io.emit('device-status', {
+                    deviceId,
+                    status: 'ONLINE',
+                    pumpStatus: pump,
+                    mode: mode,
+                    lastSeen: new Date()
+                });
+
+                // Also emit as sensor-update-like event if needed for some UI components
+                if (pump) {
+                    io.emit('pump-update', {
+                        deviceId,
+                        pumpStatus: pump
+                    });
+                }
+            }
+        }
     } catch (error) {
         console.error('❌ Error handling device status:', error);
     }
@@ -111,3 +274,22 @@ export default {
     handleSensorData,
     handleDeviceStatus
 };
+
+/**
+ * Helper to normalize pump status to "ON" or "OFF"
+ */
+function normalizePumpStatus(val) {
+    if (val === undefined || val === null) return null;
+
+    // Check for ON values
+    if (val === true || val === 1 || val === '1' || String(val).toUpperCase() === 'ON') {
+        return 'ON';
+    }
+
+    // Check for OFF values
+    if (val === false || val === 0 || val === '0' || String(val).toUpperCase() === 'OFF') {
+        return 'OFF';
+    }
+
+    return String(val); // Return as string if it's something else
+}

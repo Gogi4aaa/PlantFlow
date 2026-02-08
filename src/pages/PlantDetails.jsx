@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { io } from 'socket.io-client';
+import { toast } from 'sonner';
 import {
   ArrowLeft,
   Droplets,
@@ -23,7 +25,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { createPageUrl } from '@/utils';
 import AreaChartComponent from '@/components/charts/AreaChartComponent';
 import PumpControl from '@/components/ui/PumpControl';
 import { cn } from '@/lib/utils';
@@ -39,13 +40,19 @@ const DEFAULT_RANGES = {
 
 export default function PlantDetails() {
   const [pumpOn, setPumpOn] = useState(false);
-  const [alerts, setAlerts] = useState({
+  const [deviceAlerts, setDeviceAlerts] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const [isOnline, setIsOnline] = useState(false);
+
+  // Settings
+  const [settings, setSettings] = useState({
     lowMoisture: true,
     autoWatering: true,
     lightReminder: false
   });
 
   const { id: deviceId } = useParams();
+  const queryClient = useQueryClient();
 
   // Fetch device details
   const { data: deviceResponse, isLoading: isDeviceLoading, isError, error } = useQuery({
@@ -60,6 +67,123 @@ export default function PlantDetails() {
     queryFn: () => api.sensors.getChartData(deviceId, 24, 60),
     enabled: !!deviceId
   });
+
+  // Fetch existing alerts
+  const { data: alertsResponse } = useQuery({
+    queryKey: ['device', deviceId, 'alerts'],
+    queryFn: () => api.alerts.getByDevice(deviceId),
+    enabled: !!deviceId
+  });
+  // Update local alerts state when fetched
+  useEffect(() => {
+    if (alertsResponse?.data) {
+      setDeviceAlerts(alertsResponse.data);
+    }
+  }, [alertsResponse]);
+
+  // Sync pump status with initial device data
+  useEffect(() => {
+    if (deviceResponse?.data) {
+      setPumpOn(deviceResponse.data.pump_status === 'ON');
+    }
+  }, [deviceResponse]);
+
+  // Initialize Socket.IO
+  useEffect(() => {
+    // Only connect if we have a device ID
+    if (!deviceId) return;
+
+    const newSocket = io('http://localhost:3001');
+
+    newSocket.on('connect', () => {
+      console.log('Connected to socket server');
+    });
+
+    // Listen for sensor updates
+    newSocket.on('sensor-update', (data) => {
+      if (data.deviceId === deviceId) {
+        // Update device data in React Query cache
+        queryClient.setQueryData(['device', deviceId], (oldData) => {
+          if (!oldData || !oldData.data) return oldData;
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              current_reading: {
+                ...oldData.data.current_reading,
+                ...data.reading
+              }
+            }
+          };
+        });
+
+        // Update pump status if included in sensor update
+        if (data.pumpStatus) {
+          setPumpOn(data.pumpStatus === 'ON');
+        }
+
+        // Also update chart data potentially, but for now just live readings
+        toast.info('New sensor reading received');
+      }
+    });
+
+    // Listen for alerts
+    newSocket.on('alert', (data) => {
+      if (data.deviceId === deviceId) {
+        // Check if alert with same code already exists to prevent duplicate visuals if re-delivery happens
+        // though backend shouldn't send duplicate 'alert' events for active ones.
+        // But purely for UI safety:
+        toast.error(data.alert.message);
+        setDeviceAlerts(prev => [data.alert, ...prev.filter(a => a.code !== data.alert.code)]);
+      }
+    });
+
+    // Listen for resolved alerts
+    newSocket.on('alert-resolved', (data) => {
+      if (data.deviceId === deviceId) {
+        setDeviceAlerts(prev => prev.filter(alert => alert.id !== data.alertId));
+        toast.success(`Alert resolved: ${data.code}`);
+      }
+    });
+
+    // Listen for device status
+    newSocket.on('device-status', (data) => {
+      if (data.deviceId === deviceId) {
+        setIsOnline(data.status === 'ONLINE');
+
+        // Update pump status if included in device status
+        if (data.pumpStatus) {
+          setPumpOn(data.pumpStatus === 'ON');
+        }
+      }
+    });
+
+    // Listen for pump updates
+    newSocket.on('pump-update', (data) => {
+      if (data.deviceId === deviceId && data.pumpStatus) {
+        setPumpOn(data.pumpStatus === 'ON');
+      }
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [deviceId, queryClient]);
+
+  // Handle Pump Toggle
+  const handlePumpToggle = async (newState) => {
+    try {
+      setPumpOn(newState);
+      await api.devices.togglePump(deviceId, newState ? 'ON' : 'OFF');
+      toast.success(`Pump turned ${newState ? 'ON' : 'OFF'}`);
+    } catch (err) {
+      console.error('Failed to toggle pump:', err);
+      toast.error('Failed to toggle pump');
+      setPumpOn(!newState); // Revert UI
+    }
+  };
 
   const device = deviceResponse?.data;
   const rawChartData = chartResponse?.data || [];
@@ -133,7 +257,7 @@ export default function PlantDetails() {
           <p className="text-slate-600 mb-6 max-w-md mx-auto">
             {error?.message || "There was a problem connecting to the sensor device."}
           </p>
-          <Link to={createPageUrl('Plants')}>
+          <Link to={"/dashboard"}>
             <Button>Back to Plants</Button>
           </Link>
         </div>
@@ -147,7 +271,7 @@ export default function PlantDetails() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <p className="text-slate-600 mb-4">Plant device not found</p>
-          <Link to={createPageUrl('Plants')}>
+          <Link to={"/dashboard"}>
             <Button>Back to Plants</Button>
           </Link>
         </div>
@@ -160,7 +284,7 @@ export default function PlantDetails() {
   return (
     <div className="space-y-6 w-full mx-auto">
       {/* Back Button */}
-      <Link to={createPageUrl('Plants')}>
+      <Link to={"/dashboard"}>
         <Button variant="ghost" className="gap-2 text-slate-600 hover:text-slate-800">
           <ArrowLeft className="w-4 h-4" />
           Back to Plants
@@ -194,6 +318,11 @@ export default function PlantDetails() {
             <Heart className="w-3 h-3 mr-1" />
             {plant.health}
           </Badge>
+          {isOnline && (
+            <Badge className="absolute top-4 left-4 bg-green-500 text-white border-0">
+              Online
+            </Badge>
+          )}
         </div>
 
         {/* Plant Info */}
@@ -316,10 +445,32 @@ export default function PlantDetails() {
             ))}
           </div>
 
+          {/* Alerts Section */}
+          {deviceAlerts.length > 0 && (
+            <Card className="border-red-100 bg-red-50">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2 text-red-700">
+                  <AlertTriangle className="w-4 h-4" />
+                  Active Alerts
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {deviceAlerts.slice(0, 3).map((alert, idx) => (
+                    <li key={idx} className="text-sm text-red-600 flex items-center justify-between">
+                      <span>{alert.message}</span>
+                      <span className="text-xs opacity-70">{new Date(alert.created_at).toLocaleTimeString()}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Pump Control */}
           <PumpControl
             isOn={pumpOn}
-            onToggle={() => setPumpOn(!pumpOn)}
+            onToggle={() => handlePumpToggle(!pumpOn)}
             lastActivated={plant.careSchedule.lastWatered}
           />
         </TabsContent>
@@ -394,8 +545,8 @@ export default function PlantDetails() {
                     <p className="text-sm text-slate-500">{setting.desc}</p>
                   </div>
                   <Switch
-                    checked={alerts[setting.key]}
-                    onCheckedChange={(checked) => setAlerts({ ...alerts, [setting.key]: checked })}
+                    checked={settings[setting.key]}
+                    onCheckedChange={(checked) => setSettings({ ...settings, [setting.key]: checked })}
                   />
                 </div>
               ))}

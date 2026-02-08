@@ -2,6 +2,7 @@ import express from 'express';
 import devicesRouter from './devices.js';
 import sensorsRouter from './sensors.js';
 import authRouter from './auth.js';
+import alertsRouter from './alerts.js';
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.get('/health', (req, res) => {
 router.use('/devices', devicesRouter);
 router.use('/sensors', sensorsRouter);
 router.use('/auth', authRouter);
+router.use('/alerts', alertsRouter);
 
 export default router;

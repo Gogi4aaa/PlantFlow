@@ -62,6 +62,10 @@ export const api = {
         delete: (id) => request(`/devices/${id}`, {
             method: 'DELETE',
         }),
+        togglePump: (id, state) => request(`/devices/${id}/pump`, {
+            method: 'POST',
+            body: JSON.stringify({ state })
+        }),
     },
 
     // Sensor endpoints
@@ -75,5 +79,10 @@ export const api = {
             request(`/sensors/${deviceId}/stats?hours=${hours}`),
         getChartData: (deviceId, hours = 24, interval = 60) =>
             request(`/sensors/${deviceId}/chart?hours=${hours}&interval=${interval}`),
+    },
+
+    // Alert endpoints
+    alerts: {
+        getByDevice: (deviceId, limit = 10) => request(`/alerts/${deviceId}?limit=${limit}`),
     },
 };

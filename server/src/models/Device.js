@@ -18,7 +18,8 @@ class Device {
                     plantName: plant_name,
                     plantSpecies: plant_species || null,
                     location: location || null,
-                    plantImage: plant_image || null
+                    plantImage: plant_image || null,
+                    userId: deviceData.user_id || null
                 }
             });
             return this._toSnakeCase(device);
@@ -51,9 +52,16 @@ class Device {
     /**
    * Find all devices with latest reading
    */
-    static async findAll() {
+    static async findAll(userId = null) {
         const prisma = getDatabase();
+
+        const where = {};
+        if (userId) {
+            where.userId = userId;
+        }
+
         const devices = await prisma.device.findMany({
+            where,
             include: {
                 sensorReadings: {
                     take: 1,
@@ -123,6 +131,64 @@ class Device {
     }
 
     /**
+     * Update device last seen timestamp
+     */
+    static async updateLastSeen(id) {
+        const prisma = getDatabase();
+
+        try {
+            await prisma.device.update({
+                where: { id },
+                data: { lastSeenAt: new Date() }
+            });
+            return true;
+        } catch (error) {
+            console.error(`Failed to update last seen for device ${id}:`, error);
+            return false;
+        }
+    }
+
+    /**
+     * Update device pump status
+     */
+    static async updatePumpStatus(id, status) {
+        const prisma = getDatabase();
+
+        try {
+            await prisma.device.update({
+                where: { id },
+                data: { pumpStatus: status }
+            });
+            return true;
+        } catch (error) {
+            console.error(`Failed to update pump status for device ${id}:`, error);
+            return false;
+        }
+    }
+
+    /**
+
+    /**
+     * Assign device to a user
+     */
+    static async assignToUser(deviceId, userId) {
+        const prisma = getDatabase();
+
+        try {
+            const device = await prisma.device.update({
+                where: { id: deviceId },
+                data: { userId }
+            });
+            return this._toSnakeCase(device);
+        } catch (error) {
+            if (error.code === 'P2025') {
+                throw new Error(`Device with ID '${deviceId}' not found`);
+            }
+            throw error;
+        }
+    }
+
+    /**
      * Convert Prisma camelCase to snake_case
      */
     static _toSnakeCase(device) {
@@ -131,9 +197,11 @@ class Device {
         const obj = {
             id: device.id,
             plant_name: device.plantName,
-            plant_species: device.plantSpecies,
             location: device.location,
             plant_image: device.plantImage,
+            last_seen_at: device.lastSeenAt,
+            pump_status: device.pumpStatus,
+            user_id: device.userId,
             created_at: device.createdAt,
             updated_at: device.updatedAt
         };
