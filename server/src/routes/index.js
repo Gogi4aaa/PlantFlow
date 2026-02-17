@@ -3,6 +3,8 @@ import devicesRouter from './devices.js';
 import sensorsRouter from './sensors.js';
 import authRouter from './auth.js';
 import alertsRouter from './alerts.js';
+import analyticsRouter from './analytics.js';
+import adminRouter from './admin.js';
 
 const router = express.Router();
 
@@ -20,5 +22,7 @@ router.use('/devices', devicesRouter);
 router.use('/sensors', sensorsRouter);
 router.use('/auth', authRouter);
 router.use('/alerts', alertsRouter);
+router.use('/analytics', analyticsRouter);
+router.use('/admin', adminRouter);
 
 export default router;

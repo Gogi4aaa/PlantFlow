@@ -8,7 +8,10 @@ import {
   BarChart3,
   Settings,
   Sprout,
-  ChevronLeft
+  ChevronLeft,
+  Users,
+  AlertTriangle,
+  Shield
 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
@@ -17,10 +20,27 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   const { t } = useTranslation();
   const location = useLocation();
 
+  // Get user role
+  const userRole = useMemo(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('plantpulse_user') || '{}');
+      return user.role;
+    } catch {
+      return null;
+    }
+  }, []);
+
   const navItems = useMemo(() => [
     { name: t('dashboard.nav.dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
     { name: t('dashboard.nav.analytics'), icon: BarChart3, page: 'Analytics' },
     { name: t('dashboard.nav.settings'), icon: Settings, page: 'Settings' }
+  ], [t]);
+
+  const adminNavItems = useMemo(() => [
+    { name: t('admin.nav.dashboard', 'Admin Dashboard'), icon: Shield, page: 'admin', path: '/admin' },
+    { name: t('admin.nav.users', 'Users'), icon: Users, page: 'admin/users', path: '/admin/users' },
+    { name: t('admin.nav.devices', 'Devices'), icon: Leaf, page: 'admin/devices', path: '/admin/devices' },
+    { name: t('admin.nav.alerts', 'Alerts'), icon: AlertTriangle, page: 'admin/alerts', path: '/admin/alerts' }
   ], [t]);
   const currentPath = location.pathname;
 
@@ -85,6 +105,46 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </Link>
             );
           })}
+
+          {/* Admin Section */}
+          {userRole === 'ADMIN' && (
+            <>
+              <div className="my-4 border-t border-purple-100" />
+              <div className="px-4 py-2">
+                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wider">
+                  {t('admin.nav.section', 'Administration')}
+                </p>
+              </div>
+              {adminNavItems.map((item) => {
+                const isActive = currentPath === item.path;
+                return (
+                  <Link
+                    key={item.page}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
+                      isActive
+                        ? 'bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700'
+                        : 'text-slate-600 hover:bg-purple-50/50 hover:text-slate-800'
+                    )}
+                  >
+                    <item.icon className={cn(
+                      'w-5 h-5 transition-colors',
+                      isActive ? 'text-purple-600' : 'text-slate-400'
+                    )} />
+                    <span className="font-medium">{item.name}</span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeIndicatorAdmin"
+                        className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-500"
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </>
+          )}
         </nav>
 
         {/* Footer */}

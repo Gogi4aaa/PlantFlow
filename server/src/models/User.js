@@ -89,6 +89,88 @@ class User {
         const { password, ...safeUser } = user;
         return safeUser;
     }
+
+    /**
+     * List users with pagination and filters (Admin only)
+     */
+    static async list({ page = 1, limit = 10, search = '', role = null } = {}) {
+        const prisma = getDatabase();
+        const skip = (page - 1) * limit;
+
+        const where = {};
+
+        // Search filter
+        if (search) {
+            where.OR = [
+                { email: { contains: search } },
+                { fullName: { contains: search } }
+            ];
+        }
+
+        // Role filter
+        if (role) {
+            where.role = role;
+        }
+
+        const [users, total] = await Promise.all([
+            prisma.user.findMany({
+                where,
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    _count: {
+                        select: { devices: true }
+                    }
+                }
+            }),
+            prisma.user.count({ where })
+        ]);
+
+        return {
+            users: users.map(user => this._sanitize(user)),
+            total,
+            page,
+            pages: Math.ceil(total / limit)
+        };
+    }
+
+    /**
+     * Delete user and all associated data (Admin only)
+     */
+    static async delete(id) {
+        const prisma = getDatabase();
+
+        // Prisma will cascade delete related devices, sensor readings, and alerts
+        await prisma.user.delete({
+            where: { id }
+        });
+
+        return true;
+    }
+
+    /**
+     * Count total users
+     */
+    static async count() {
+        const prisma = getDatabase();
+        return prisma.user.count();
+    }
+
+    /**
+     * Get users created in the last N days
+     */
+    static async getRecentUsers(days = 7) {
+        const prisma = getDatabase();
+        const since = new Date();
+        since.setDate(since.getDate() - days);
+
+        return prisma.user.count({
+            where: {
+                createdAt: { gte: since }
+            }
+        });
+    }
 }
 
 export default User;

@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import {
   BarChart,
   Bar,
   LineChart,
   Line,
-  PieChart,
-  Pie,
-  Cell,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -23,7 +24,8 @@ import {
   Sun,
   Wind,
   Download,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,66 +38,176 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/components/ui/use-toast';
 
-// Mock data generators
-const generateDailyData = () => {
-  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
-  return hours.map(hour => ({
-    time: hour,
-    moisture: 30 + Math.random() * 50,
-    temperature: 18 + Math.random() * 10,
-    humidity: 40 + Math.random() * 40,
-    light: Math.random() > 0.3 ? 3000 + Math.random() * 12000 : 0
-  }));
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+// Helper to export data as CSV
+const exportToCSV = (data, filename) => {
+  if (!data || data.length === 0) return;
+
+  const headers = Object.keys(data[0]);
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => headers.map(header => row[header] ?? '').join(','))
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
 };
 
-const generateWeeklyData = () => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  return days.map(day => ({
-    day,
-    avgMoisture: 40 + Math.random() * 30,
-    avgTemp: 20 + Math.random() * 6,
-    avgLight: 5000 + Math.random() * 5000,
-    wateringEvents: Math.floor(Math.random() * 3)
-  }));
+// Format timestamp for display
+const formatTimestamp = (timestamp, period) => {
+  const date = new Date(timestamp);
+  switch (period) {
+    case 'day':
+      return format(date, 'HH:mm');
+    case 'week':
+      return format(date, 'EEE HH:mm');
+    case 'month':
+      return format(date, 'MMM d');
+    case 'year':
+      return format(date, 'MMM yyyy');
+    default:
+      return format(date, 'MMM d HH:mm');
+  }
 };
-
-const generateMonthlyData = () => {
-  return Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    moisture: 35 + Math.random() * 40,
-    temperature: 19 + Math.random() * 8
-  }));
-};
-
-const plantHealthData = [
-  { name: 'Excellent', value: 2, color: '#10B981' },
-  { name: 'Good', value: 2, color: '#34D399' },
-  { name: 'Moderate', value: 1, color: '#F59E0B' },
-  { name: 'Poor', value: 1, color: '#EF4444' }
-];
-
-const waterUsageData = [
-  { month: 'Jan', usage: 120 },
-  { month: 'Feb', usage: 98 },
-  { month: 'Mar', usage: 145 },
-  { month: 'Apr', usage: 167 },
-  { month: 'May', usage: 189 },
-  { month: 'Jun', usage: 210 }
-];
 
 export default function Analytics() {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [timeRange, setTimeRange] = useState('week');
-  const dailyData = generateDailyData();
-  const weeklyData = generateWeeklyData();
-  const monthlyData = generateMonthlyData();
+  const [loading, setLoading] = useState(true);
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [error, setError] = useState(null);
 
-  const stats = [
-    { label: 'Avg. Moisture', value: '58%', change: '+5%', icon: Droplets, color: 'blue' },
-    { label: 'Avg. Temperature', value: '23.5°C', change: '-0.5°C', icon: Thermometer, color: 'red' },
-    { label: 'Avg. Light', value: '8.2k lux', change: '+12%', icon: Sun, color: 'amber' },
-    { label: 'Avg. Humidity', value: '62%', change: '+3%', icon: Wind, color: 'purple' }
-  ];
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}/analytics?period=${timeRange}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('plantpulse_user');
+        window.location.href = '/signin';
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch analytics');
+      }
+
+      const result = await response.json();
+      setAnalyticsData(result.data);
+    } catch (err) {
+      console.error('Error fetching analytics:', err);
+      setError(err.message);
+      toast({
+        title: t('common.error'),
+        description: t('analytics.fetchError'),
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [timeRange]);
+
+  const handleExport = () => {
+    if (!analyticsData?.chartData) return;
+
+    const exportData = analyticsData.chartData.map(item => ({
+      timestamp: item.timestamp,
+      temperature: item.temperature?.toFixed(2) || '',
+      humidity: item.humidity?.toFixed(2) || '',
+      moisture: item.moisture?.toFixed(2) || '',
+      light: item.light?.toFixed(2) || ''
+    }));
+
+    const filename = `plantflow-analytics-${timeRange}-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    exportToCSV(exportData, filename);
+
+    toast({
+      title: t('analytics.exportSuccess'),
+      description: t('analytics.exportSuccessDesc')
+    });
+  };
+
+  const stats = analyticsData?.stats ? [
+    {
+      label: t('analytics.avgMoisture'),
+      value: `${analyticsData.stats.avgMoisture?.toFixed(1) || 0}%`,
+      min: `${analyticsData.stats.minMoisture?.toFixed(1) || 0}%`,
+      max: `${analyticsData.stats.maxMoisture?.toFixed(1) || 0}%`,
+      icon: Droplets,
+      color: 'blue'
+    },
+    {
+      label: t('analytics.avgTemperature'),
+      value: `${analyticsData.stats.avgTemperature?.toFixed(1) || 0}°C`,
+      min: `${analyticsData.stats.minTemperature?.toFixed(1) || 0}°C`,
+      max: `${analyticsData.stats.maxTemperature?.toFixed(1) || 0}°C`,
+      icon: Thermometer,
+      color: 'red'
+    },
+    {
+      label: t('analytics.avgLight'),
+      value: `${(analyticsData.stats.avgLight || 0).toFixed(0)} lux`,
+      min: `${(analyticsData.stats.minLight || 0).toFixed(0)} lux`,
+      max: `${(analyticsData.stats.maxLight || 0).toFixed(0)} lux`,
+      icon: Sun,
+      color: 'amber'
+    },
+    {
+      label: t('analytics.avgHumidity'),
+      value: `${analyticsData.stats.avgHumidity?.toFixed(1) || 0}%`,
+      min: `${analyticsData.stats.minHumidity?.toFixed(1) || 0}%`,
+      max: `${analyticsData.stats.maxHumidity?.toFixed(1) || 0}%`,
+      icon: Wind,
+      color: 'purple'
+    }
+  ] : [];
+
+  const chartData = analyticsData?.chartData?.map(item => ({
+    time: formatTimestamp(item.timestamp, timeRange),
+    temperature: item.temperature,
+    humidity: item.humidity,
+    moisture: item.moisture,
+    light: item.light
+  })) || [];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{t('analytics.error')}</p>
+          <Button onClick={fetchAnalytics}>{t('analytics.retry')}</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -107,10 +219,10 @@ export default function Analytics() {
       >
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">
-            Analytics
+            {t('analytics.title')}
           </h1>
           <p className="text-slate-500 mt-1">
-            Insights and trends from your plant data
+            {t('analytics.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -120,18 +232,18 @@ export default function Analytics() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="day">Today</SelectItem>
-              <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">This Month</SelectItem>
-              <SelectItem value="year">This Year</SelectItem>
+              <SelectItem value="day">{t('analytics.periods.today')}</SelectItem>
+              <SelectItem value="week">{t('analytics.periods.thisWeek')}</SelectItem>
+              <SelectItem value="month">{t('analytics.periods.thisMonth')}</SelectItem>
+              <SelectItem value="year">{t('analytics.periods.thisYear')}</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon">
-            <RefreshCw className="w-4 h-4" />
+          <Button variant="outline" size="icon" onClick={fetchAnalytics} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
-          <Button variant="outline" className="hidden sm:flex">
+          <Button variant="outline" className="hidden sm:flex" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
-            Export
+            {t('analytics.export')}
           </Button>
         </div>
       </motion.div>
@@ -148,13 +260,9 @@ export default function Analytics() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <stat.icon className={`w-5 h-5 text-${stat.color}-500`} />
-                <Badge 
-                  variant="outline" 
-                  className={stat.change.startsWith('+') ? 'text-emerald-600 border-emerald-200 bg-emerald-50' : 'text-red-600 border-red-200 bg-red-50'}
-                >
-                  <TrendingUp className="w-3 h-3 mr-1" />
-                  {stat.change}
-                </Badge>
+                <div className="text-xs text-slate-400">
+                  {stat.min} - {stat.max}
+                </div>
               </div>
               <p className="text-2xl font-bold text-slate-800 mt-3">{stat.value}</p>
               <p className="text-sm text-slate-500">{stat.label}</p>
@@ -166,9 +274,8 @@ export default function Analytics() {
       {/* Main Charts */}
       <Tabs defaultValue="environment" className="w-full">
         <TabsList className="bg-slate-100 p-1 rounded-xl">
-          <TabsTrigger value="environment" className="rounded-lg">Environment</TabsTrigger>
-          <TabsTrigger value="watering" className="rounded-lg">Watering</TabsTrigger>
-          <TabsTrigger value="health" className="rounded-lg">Plant Health</TabsTrigger>
+          <TabsTrigger value="environment" className="rounded-lg">{t('analytics.tabs.environment')}</TabsTrigger>
+          <TabsTrigger value="moisture" className="rounded-lg">{t('analytics.tabs.moisture')}</TabsTrigger>
         </TabsList>
 
         {/* Environment Tab */}
@@ -182,12 +289,12 @@ export default function Analytics() {
             >
               <Card className="border-slate-100">
                 <CardHeader>
-                  <CardTitle className="text-base">Temperature & Humidity Trends</CardTitle>
+                  <CardTitle className="text-base">{t('analytics.charts.tempHumidity')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={dailyData.filter((_, i) => i % 2 === 0)}>
+                      <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
                         <XAxis dataKey="time" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
@@ -200,8 +307,8 @@ export default function Analytics() {
                           }}
                         />
                         <Legend />
-                        <Line type="monotone" dataKey="temperature" stroke="#EF4444" strokeWidth={2} dot={false} name="Temperature (°C)" />
-                        <Line type="monotone" dataKey="humidity" stroke="#8B5CF6" strokeWidth={2} dot={false} name="Humidity (%)" />
+                        <Line type="monotone" dataKey="temperature" stroke="#EF4444" strokeWidth={2} dot={false} name={t('common.metrics.temperature') + ' (°C)'} />
+                        <Line type="monotone" dataKey="humidity" stroke="#8B5CF6" strokeWidth={2} dot={false} name={t('common.metrics.humidity') + ' (%)'} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -217,12 +324,18 @@ export default function Analytics() {
             >
               <Card className="border-slate-100">
                 <CardHeader>
-                  <CardTitle className="text-base">Light Intensity (24h)</CardTitle>
+                  <CardTitle className="text-base">{t('analytics.charts.light')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={dailyData.filter((_, i) => i % 2 === 0)}>
+                      <AreaChart data={chartData}>
+                        <defs>
+                          <linearGradient id="lightGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
                         <XAxis dataKey="time" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
@@ -233,10 +346,10 @@ export default function Analytics() {
                             borderRadius: '12px',
                             boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
                           }}
-                          formatter={(value) => [`${value.toFixed(0)} lux`, 'Light']}
+                          formatter={(value) => [`${value?.toFixed(0) || 0} lux`, t('common.metrics.light')]}
                         />
-                        <Bar dataKey="light" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                      </BarChart>
+                        <Area type="monotone" dataKey="light" stroke="#F59E0B" strokeWidth={2} fill="url(#lightGradient)" />
+                      </AreaChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
@@ -244,151 +357,42 @@ export default function Analytics() {
             </motion.div>
           </div>
 
-          {/* Soil Moisture Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="border-slate-100">
-              <CardHeader>
-                <CardTitle className="text-base">Soil Moisture (30 days)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={monthlyData}>
-                      <defs>
-                        <linearGradient id="moistureGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                      <XAxis dataKey="day" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: 'none',
-                          borderRadius: '12px',
-                          boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
-                        }}
-                        formatter={(value) => [`${value.toFixed(1)}%`, 'Moisture']}
-                      />
-                      <Line type="monotone" dataKey="moisture" stroke="#3B82F6" strokeWidth={2} dot={false} fill="url(#moistureGradient)" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
         </TabsContent>
 
-        {/* Watering Tab */}
-        <TabsContent value="watering" className="mt-6 space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-slate-100">
-              <CardHeader>
-                <CardTitle className="text-base">Weekly Watering Events</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={weeklyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                      <XAxis dataKey="day" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
-                      <Tooltip />
-                      <Bar dataKey="wateringEvents" fill="#3B82F6" radius={[4, 4, 0, 0]} name="Watering Events" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-slate-100">
-              <CardHeader>
-                <CardTitle className="text-base">Monthly Water Usage (ml)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={waterUsageData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                      <XAxis dataKey="month" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
-                      <Tooltip />
-                      <Bar dataKey="usage" fill="#06B6D4" radius={[4, 4, 0, 0]} name="Water (ml)" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Health Tab */}
-        <TabsContent value="health" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-slate-100">
-              <CardHeader>
-                <CardTitle className="text-base">Plant Health Distribution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-72 flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={plantHealthData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {plantHealthData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-slate-100">
-              <CardHeader>
-                <CardTitle className="text-base">Health Insights</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="font-medium text-emerald-700">Top Performer</span>
-                  </div>
-                  <p className="text-sm text-slate-600">Monstera has maintained excellent health for 30+ days</p>
-                </div>
-                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 rounded-full bg-amber-500" />
-                    <span className="font-medium text-amber-700">Needs Attention</span>
-                  </div>
-                  <p className="text-sm text-slate-600">Peace Lily soil moisture has been below optimal for 2 days</p>
-                </div>
-                <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500" />
-                    <span className="font-medium text-blue-700">Recommendation</span>
-                  </div>
-                  <p className="text-sm text-slate-600">Consider moving Snake Plant closer to window for better growth</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Moisture Tab */}
+        <TabsContent value="moisture" className="mt-6">
+          <Card className="border-slate-100">
+            <CardHeader>
+              <CardTitle className="text-base">{t('analytics.charts.moisture')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="moistureGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                    <XAxis dataKey="time" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                      }}
+                      formatter={(value) => [`${value?.toFixed(1) || 0}%`, t('common.metrics.moisture')]}
+                    />
+                    <Area type="monotone" dataKey="moisture" stroke="#3B82F6" strokeWidth={2} fill="url(#moistureGradient)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

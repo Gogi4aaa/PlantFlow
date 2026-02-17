@@ -136,8 +136,17 @@ export default function TopBar({ onMenuClick }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="p-3 border-b border-slate-100">
-                <p className="font-semibold text-slate-800">{user?.full_name || 'Потребител'}</p>
-                <p className="text-xs text-slate-500">{user?.email || ''}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-slate-800">{user?.full_name || 'User'}</p>
+                    <p className="text-xs text-slate-500">{user?.email || ''}</p>
+                  </div>
+                  {user?.role === 'ADMIN' && (
+                    <span className="px-2 py-1 bg-purple-100 text-purple-700 text-[10px] font-bold rounded uppercase">
+                      Admin
+                    </span>
+                  )}
+                </div>
               </div>
               <DropdownMenuItem className="cursor-pointer"
                 onClick={() => navigate('/profile')}>

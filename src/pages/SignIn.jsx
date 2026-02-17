@@ -49,7 +49,11 @@ export default function SignIn() {
         localStorage.setItem('auth_token', token);
 
         toast.success(t('auth.login.success'));
-        navigate(createPageUrl('Dashboard'));
+        if (user.role === 'ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate(createPageUrl('Dashboard'));
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
