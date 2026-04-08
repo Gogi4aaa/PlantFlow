@@ -118,4 +118,45 @@ router.get('/me', verifyToken, async (req, res, next) => {
     }
 });
 
+/**
+ * Update current user
+ * PUT /api/auth/me
+ */
+router.put('/me', verifyToken, async (req, res, next) => {
+    try {
+        const { email, password, full_name, profile_picture } = req.body;
+
+        // Basic validation
+        if (email === '') {
+            return res.status(400).json({ success: false, error: 'Email cannot be empty' });
+        }
+
+        if (password && password.length < 6) {
+            return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
+        }
+
+        // Check if email is taken by another user
+        if (email) {
+            const existingUser = await User.findByEmailWithPassword(email);
+            if (existingUser && existingUser.id !== req.user.id) {
+                return res.status(400).json({ success: false, error: 'Email already in use' });
+            }
+        }
+
+        const updatedUser = await User.update(req.user.id, {
+            email,
+            password,
+            full_name,
+            profile_picture
+        });
+
+        res.json({
+            success: true,
+            data: updatedUser
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 export default router;

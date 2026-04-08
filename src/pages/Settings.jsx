@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 // import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -25,7 +26,8 @@ import {
   AlertTriangle,
   Plus,
   Droplets,
-  User
+  User,
+  ArrowLeft,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -77,6 +79,7 @@ export default function Settings() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDevice, setEditDevice] = useState(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [notifications, setNotifications] = useState({
     lowMoisture: true,
@@ -121,7 +124,7 @@ export default function Settings() {
         ...deviceData,
         last_seen: new Date().toISOString(),
         ip_address: '192.168.1.' + Math.floor(Math.random() * 255),
-        mac_address: 'A4:CF:12:' + Array(3).fill(0).map(() => 
+        mac_address: 'A4:CF:12:' + Array(3).fill(0).map(() =>
           Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase()
         ).join(':')
       };
@@ -184,6 +187,13 @@ export default function Settings() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-emerald-600 transition-colors mb-2 group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+          Back
+        </button>
         <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">
           Settings
         </h1>
@@ -209,7 +219,7 @@ export default function Settings() {
                 Each device monitors one plant with integrated sensors and pump control
               </p>
             </div>
-            <Button 
+            <Button
               onClick={handleAddDevice}
               className="bg-emerald-600 hover:bg-emerald-700"
             >
@@ -274,11 +284,11 @@ export default function Settings() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
-                  <div 
+                  <div
                     className="w-20 h-20 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg"
-                    style={{ 
-                      background: user?.avatar_color 
-                        ? `linear-gradient(135deg, ${user.avatar_color}, ${user.avatar_color}dd)` 
+                    style={{
+                      background: user?.avatar_color
+                        ? `linear-gradient(135deg, ${user.avatar_color}, ${user.avatar_color}dd)`
                         : 'linear-gradient(135deg, #10B981, #059669)'
                     }}
                   >
@@ -385,7 +395,7 @@ export default function Settings() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Temperature Unit</Label>
-                  <Select 
+                  <Select
                     value={preferences.temperatureUnit}
                     onValueChange={(value) => setPreferences({ ...preferences, temperatureUnit: value })}
                   >
@@ -400,7 +410,7 @@ export default function Settings() {
                 </div>
                 <div className="space-y-2">
                   <Label>Language</Label>
-                  <Select 
+                  <Select
                     value={preferences.language}
                     onValueChange={(value) => setPreferences({ ...preferences, language: value })}
                   >

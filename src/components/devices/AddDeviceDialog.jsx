@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,6 +21,7 @@ import {
 import { Loader2 } from 'lucide-react';
 
 export default function AddDeviceDialog({ open, onOpenChange, onSubmit, isLoading, editDevice }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState(editDevice || {
     plant_name: '',
     plant_species: '',
@@ -69,49 +71,49 @@ export default function AddDeviceDialog({ open, onOpenChange, onSubmit, isLoadin
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editDevice ? 'Edit Plant Device' : 'Add New Plant Device'}</DialogTitle>
+          <DialogTitle>{editDevice ? t('dashboard.addDevice.editTitle') : t('dashboard.addDevice.title')}</DialogTitle>
           <DialogDescription>
-            {editDevice 
-              ? 'Update the plant and device information below.' 
-              : 'Add a new IoT device to monitor your plant. Each device monitors one plant.'}
+            {editDevice
+              ? t('dashboard.addDevice.editSubtitle')
+              : t('dashboard.addDevice.subtitle')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="plant_name">Plant Name</Label>
+              <Label htmlFor="plant_name">{t('dashboard.addDevice.plantName')}</Label>
               <Input
                 id="plant_name"
-                placeholder="e.g., Monstera Deliciosa"
+                placeholder={t('dashboard.addDevice.plantNamePlaceholder')}
                 value={formData.plant_name}
                 onChange={(e) => setFormData({ ...formData, plant_name: e.target.value })}
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="plant_species">Plant Species</Label>
+              <Label htmlFor="plant_species">{t('dashboard.addDevice.plantSpecies')}</Label>
               <Input
                 id="plant_species"
-                placeholder="e.g., Swiss Cheese Plant"
+                placeholder={t('dashboard.addDevice.plantSpeciesPlaceholder')}
                 value={formData.plant_species}
                 onChange={(e) => setFormData({ ...formData, plant_species: e.target.value })}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="serial_number">Device Serial Number</Label>
+              <Label htmlFor="serial_number">{t('dashboard.addDevice.serialNumber')}</Label>
               <Input
                 id="serial_number"
-                placeholder="e.g., PP-2024-A7B3C9D2"
+                placeholder={t('dashboard.addDevice.serialNumberPlaceholder')}
                 value={formData.serial_number}
                 onChange={(e) => setFormData({ ...formData, serial_number: e.target.value })}
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{t('dashboard.addDevice.location')}</Label>
               <Input
                 id="location"
-                placeholder="e.g., Living Room, Garden"
+                placeholder={t('dashboard.addDevice.locationPlaceholder')}
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               />
@@ -124,11 +126,11 @@ export default function AddDeviceDialog({ open, onOpenChange, onSubmit, isLoadin
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isLoading} className="bg-emerald-600 hover:bg-emerald-700">
               {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {editDevice ? 'Update Plant Device' : 'Add Plant Device'}
+              {editDevice ? t('dashboard.addDevice.update') : t('dashboard.addDevice.submit')}
             </Button>
           </DialogFooter>
         </form>

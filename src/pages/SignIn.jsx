@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { Sprout, Mail, Lock, Loader2, Eye, EyeOff, Leaf, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +13,7 @@ import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 
 export default function SignIn() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +48,16 @@ export default function SignIn() {
         localStorage.setItem('plantpulse_user', JSON.stringify(user));
         localStorage.setItem('auth_token', token);
 
-        toast.success('Welcome back!');
-        navigate(createPageUrl('Dashboard'));
+        toast.success(t('auth.login.success'));
+        if (user.role === 'ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate(createPageUrl('Dashboard'));
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.message || 'An error occurred. Please try again.');
+      toast.error(error.message || t('common.error'));
     } finally {
       setIsLoading(false);
     }
@@ -128,6 +135,10 @@ export default function SignIn() {
         <Droplets className="w-10 h-10 text-blue-300" />
       </motion.div>
 
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <div className="w-full max-w-md relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -136,6 +147,7 @@ export default function SignIn() {
         >
           {/* Logo */}
           <div className="text-center mb-8">
+            <Link to={"/"}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -155,7 +167,7 @@ export default function SignIn() {
               transition={{ delay: 0.2 }}
               className="text-3xl font-bold text-slate-800 tracking-tight"
             >
-              Welcome Back
+              {t('auth.login.title')}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -163,8 +175,10 @@ export default function SignIn() {
               transition={{ delay: 0.3 }}
               className="text-slate-500 mt-2"
             >
-              Sign in to monitor your plants
-            </motion.p>
+              {t('auth.login.subtitle')}
+             
+            </motion.p> 
+            </Link>
           </div>
 
           {/* Login Card */}
@@ -175,15 +189,15 @@ export default function SignIn() {
           >
             <Card className="border-slate-100 shadow-xl backdrop-blur-sm bg-white/80">
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-2xl font-bold text-slate-800">Login</CardTitle>
+                <CardTitle className="text-2xl font-bold text-slate-800">{t('auth.login.submit')}</CardTitle>
                 <CardDescription>
-                  Enter your credentials to access your account
+                  {t('auth.login.subtitle')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('auth.login.email')}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -199,7 +213,7 @@ export default function SignIn() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t('auth.login.password')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -233,39 +247,27 @@ export default function SignIn() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Signing in...
+                        {t('auth.login.submitting')}
                       </>
                     ) : (
-                      'Sign In'
+                      t('auth.login.submit')
                     )}
                   </Button>
 
                   <div className="text-center pt-4 border-t border-slate-100">
                     <p className="text-sm text-slate-600">
-                      Don't have an account?{' '}
+                      {t('auth.login.noAccount')}{' '}
                       <Link
                         to={createPageUrl('Register')}
                         className="text-emerald-600 hover:text-emerald-700 font-semibold hover:underline"
                       >
-                        Create one
+                        {t('auth.login.register')}
                       </Link>
                     </p>
                   </div>
                 </form>
               </CardContent>
             </Card>
-          </motion.div>
-
-          {/* Demo credentials hint */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"
-          >
-            <p className="text-xs text-blue-600 text-center">
-              💡 <strong>Demo:</strong> demo@plantpulse.com / demo123 (Or create new account!)
-            </p>
           </motion.div>
         </motion.div>
       </div>

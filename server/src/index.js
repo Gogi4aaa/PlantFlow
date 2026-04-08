@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import { initDatabase, closeDatabase } from './database/db.js';
 import { initMqttClient, closeMqttClient } from './mqtt/client.js';
 import routes from './routes/index.js';
@@ -11,6 +13,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 dotenv.config();
 
 const app = express();
+const httpServer = createServer(app);
 const PORT = process.env.PORT || 3001;
 
 // Middleware
@@ -21,6 +24,22 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+// Socket.IO Setup
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log(`🔌 New client connected: ${socket.id}`);
+
+    socket.on('disconnect', () => {
+        console.log(`❌ Client disconnected: ${socket.id}`);
+    });
+});
 
 // Routes
 app.use('/api', routes);
@@ -45,7 +64,8 @@ async function startServer() {
             brokerUrl: process.env.MQTT_BROKER_URL || 'mqtt://b232cd0f56484dd0894b913bf3fac481.s1.eu.hivemq.cloud:8883',
             username: process.env.MQTT_USERNAME,
             password: process.env.MQTT_PASSWORD,
-            topicPrefix: process.env.MQTT_TOPIC_PREFIX || 'plantflow/devices'
+            topicPrefix: process.env.MQTT_TOPIC_PREFIX || 'plantflow/devices',
+            io: io // Pass Socket.IO instance
         });
     } catch (error) {
         console.error('Failed to initialize MQTT client:', error);
@@ -53,7 +73,7 @@ async function startServer() {
     }
 
     // Start server
-    const server = app.listen(PORT, () => {
+    const server = httpServer.listen(PORT, () => {
         console.log('');
         console.log('🌱 ================================ 🌱');
         console.log('   PlantFlow API Server Started');

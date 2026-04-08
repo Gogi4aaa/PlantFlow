@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { Sprout, Mail, Lock, User, Loader2, Eye, EyeOff, Leaf, Droplets, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +17,7 @@ const avatarColors = [
 ];
 
 export default function Register() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -39,12 +42,12 @@ export default function Register() {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(t('auth.register.passwordsMismatch'));
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error(t('auth.register.passwordTooShort'));
       return;
     }
 
@@ -66,12 +69,12 @@ export default function Register() {
         localStorage.setItem('plantpulse_user', JSON.stringify(user));
         localStorage.setItem('auth_token', token);
 
-        toast.success('Account created successfully!');
+        toast.success(t('auth.register.success'));
         navigate(createPageUrl('Dashboard'));
       }
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error(error.message || 'An error occurred. Please try again.');
+      toast.error(error.message || t('common.error'));
     } finally {
       setIsLoading(false);
     }
@@ -150,6 +153,10 @@ export default function Register() {
         <Droplets className="w-10 h-10 text-blue-300" />
       </motion.div>
 
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <div className="w-full max-w-md relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -158,6 +165,7 @@ export default function Register() {
         >
           {/* Logo */}
           <div className="text-center mb-8">
+            <Link to={"/"}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -177,7 +185,7 @@ export default function Register() {
               transition={{ delay: 0.2 }}
               className="text-3xl font-bold text-slate-800 tracking-tight"
             >
-              Join PlantPulse
+              {t('auth.register.title')}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -185,8 +193,9 @@ export default function Register() {
               transition={{ delay: 0.3 }}
               className="text-slate-500 mt-2"
             >
-              Create your account to start monitoring
+              {t('auth.register.subtitle')}
             </motion.p>
+            </Link>
           </div>
 
           {/* Register Card */}
@@ -197,15 +206,15 @@ export default function Register() {
           >
             <Card className="border-slate-100 shadow-xl backdrop-blur-sm bg-white/80">
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-2xl font-bold text-slate-800">Create Account</CardTitle>
+                <CardTitle className="text-2xl font-bold text-slate-800">{t('auth.register.submit')}</CardTitle>
                 <CardDescription>
-                  Enter your information to get started
+                  {t('auth.register.subtitle')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="full_name">Full Name</Label>
+                    <Label htmlFor="full_name">{t('auth.register.fullName')}</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -221,7 +230,7 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('auth.register.email')}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -237,7 +246,7 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t('auth.register.password')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -264,7 +273,7 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Label htmlFor="confirmPassword">{t('auth.register.confirmPassword')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
@@ -298,24 +307,24 @@ export default function Register() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Creating account...
+                        {t('auth.register.submitting')}
                       </>
                     ) : (
                       <>
                         <CheckCircle className="w-5 h-5 mr-2" />
-                        Create Account
+                        {t('auth.register.submit')}
                       </>
                     )}
                   </Button>
 
                   <div className="text-center pt-4 border-t border-slate-100">
                     <p className="text-sm text-slate-600">
-                      Already have an account?{' '}
+                      {t('auth.register.hasAccount')}{' '}
                       <Link
                         to={createPageUrl('SignIn')}
                         className="text-emerald-600 hover:text-emerald-700 font-semibold hover:underline"
                       >
-                        Sign in
+                        {t('auth.register.login')}
                       </Link>
                     </p>
                   </div>
@@ -324,17 +333,6 @@ export default function Register() {
             </Card>
           </motion.div>
 
-          {/* Security note */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl"
-          >
-            <p className="text-xs text-emerald-600 text-center">
-              🔒 Your data is secure and encrypted
-            </p>
-          </motion.div>
         </motion.div>
       </div>
     </div>
