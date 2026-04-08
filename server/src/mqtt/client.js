@@ -19,16 +19,17 @@ export function initMqttClient(config) {
         rejectUnauthorized: false,  // Allow self-signed certificates
     };
 
-    // Add credentials if provided
     if (username) {
         options.username = username;
         options.password = password;
     }
 
-    console.log(`🔌 Connecting to MQTT broker: ${brokerUrl}`);
-    client = mqtt.connect(brokerUrl, options);
+    // Use WebSocket URL instead of raw MQTT
+    const wsUrl = `wss://b232cd0f56484dd0894b913bf3fac481.s1.eu.hivemq.cloud:8884/mqtt`;
+    
+    console.log(`🔌 Connecting to MQTT broker via WebSocket: ${wsUrl}`);
+    client = mqtt.connect(wsUrl, options);
 
-    // Connection event handlers
     client.on('connect', () => {
         console.log('✅ Connected to MQTT broker');
 
@@ -57,15 +58,10 @@ export function initMqttClient(config) {
         console.log('🔄 Reconnecting to MQTT broker...');
     });
 
-    client.on('offline', () => {
-        console.log('📴 MQTT client offline');
-    });
-
     client.on('close', () => {
         console.log('🔌 MQTT connection closed');
     });
 
-    // Message handler
     client.on('message', (topic, message) => {
         try {
             if (topic.endsWith('/state')) {

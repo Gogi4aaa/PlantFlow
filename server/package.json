@@ -2,11 +2,13 @@
     "name": "plantflow-server",
     "version": "1.0.0",
     "description": "REST API server for PlantFlow with MQTT integration",
-    "main": "src/index.js",
+    "main": "function.js",
     "type": "module",
     "scripts": {
         "start": "node src/index.js",
         "dev": "node --watch src/index.js",
+        "deploy": "gcloud functions deploy plantflow-api --gen2 --runtime nodejs20 --region europe-west3 --source . --entry-point plantflow --trigger-http --allow-unauthenticated --memory 512MB --timeout 60s --env-vars-file .env.yaml",
+        "postinstall": "prisma generate",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "prisma": {

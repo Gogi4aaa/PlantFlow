@@ -61,7 +61,7 @@ async function startServer() {
     // Initialize MQTT client
     try {
         initMqttClient({
-            brokerUrl: process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883',
+            brokerUrl: process.env.MQTT_BROKER_URL || 'mqtt://b232cd0f56484dd0894b913bf3fac481.s1.eu.hivemq.cloud:8883',
             username: process.env.MQTT_USERNAME,
             password: process.env.MQTT_PASSWORD,
             topicPrefix: process.env.MQTT_TOPIC_PREFIX || 'plantflow/devices',
@@ -106,7 +106,7 @@ async function startServer() {
         closeMqttClient();
 
         // Close database
-        closeDatabase();
+        await closeDatabase();
 
         console.log('👋 Goodbye!');
         process.exit(0);

@@ -9,10 +9,10 @@ export async function initDatabase() {
     try {
         prisma = new PrismaClient();
         await prisma.$connect();
-        console.log('✅ Connected to MySQL database via Prisma');
+        console.log('Connected to MySQL database via Prisma');
         return prisma;
     } catch (error) {
-        console.error('❌ Failed to connect to database:', error);
+        console.error('Failed to connect to database:', error);
         throw error;
     }
 }

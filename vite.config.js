@@ -2,23 +2,13 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    allowedHosts: true
-  },
+  base: './', // ← Add this line - makes paths relative
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-    extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json']
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        '.js': 'jsx',
-      },
+      "@": path.resolve(__dirname, "./src"),
     },
   },
-}) 
+})
