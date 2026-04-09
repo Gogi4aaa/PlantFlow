@@ -12,7 +12,6 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check authentication
   useEffect(() => {
     const checkAuth = () => {
       const user = localStorage.getItem('plantpulse_user');
@@ -28,48 +27,33 @@ export default function Layout({ children }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:bg-[#0F172A] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center animate-pulse shadow-lg shadow-green-500/20">
             <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
           </div>
-          <p className="text-slate-600 font-medium">Loading PlantPulse...</p>
+          <p className="text-slate-600 dark:text-slate-400 font-medium">Loading PlantFlow...</p>
         </div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/40">
-      <div className="">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/40 dark:bg-[#0F172A]">
+      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-        <div className="flex-1 min-h-screen flex flex-col lg:ml-0">
-          <TopBar
-            onMenuClick={() => setSidebarOpen(true)}
-          />
-
-          <main className="flex-1 p-4 lg:p-6 overflow-auto">
-            {children}
-          </main>
-        </div>
+      <div className="flex-1 min-h-screen flex flex-col lg:ml-[280px]">
+        <TopBar onMenuClick={() => setSidebarOpen(true)} />
+        <main className="flex-1 p-4 lg:p-6 overflow-auto">
+          {children}
+        </main>
       </div>
 
       <Toaster position="top-right" richColors />
-
-      <style>{`
-        :root {
-          --color-primary: #10B981;
-          --color-primary-light: #34D399;
-          --color-emerald: #059669;
-        }
-      `}</style>
     </div>
   );
 }

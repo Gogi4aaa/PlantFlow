@@ -136,7 +136,7 @@ export default function Profile() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center p-12">
-                <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+                <Loader2 className="w-8 h-8 animate-spin text-emerald-500 dark:text-green-400" />
             </div>
         );
     }
@@ -145,15 +145,15 @@ export default function Profile() {
         <div className="max-w-2xl mx-auto p-6 space-y-6">
             <button
                 onClick={() => navigate('/dashboard')}
-                className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-emerald-600 transition-colors group"
+                className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
             >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                 Back to Dashboard
             </button>
 
             <div>
-                <h1 className="text-2xl font-bold text-slate-800">{t('profile.header.title')}</h1>
-                <p className="text-slate-500">{t('profile.header.subtitle')}</p>
+                <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('profile.header.title')}</h1>
+                <p className="text-slate-500 dark:text-slate-400">{t('profile.header.subtitle')}</p>
             </div>
 
             <motion.div
@@ -161,10 +161,10 @@ export default function Profile() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
             >
-                <Card className="border-slate-100 shadow-sm">
+                <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07] shadow-sm dark:shadow-none">
                     <CardHeader>
-                        <CardTitle>{t('profile.personalInfo.title')}</CardTitle>
-                        <CardDescription>{t('profile.personalInfo.subtitle')}</CardDescription>
+                        <CardTitle className="text-slate-800 dark:text-white">{t('profile.personalInfo.title')}</CardTitle>
+                        <CardDescription className="text-slate-500 dark:text-slate-400">{t('profile.personalInfo.subtitle')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -176,10 +176,10 @@ export default function Profile() {
                                         <img
                                             src={avatarPreview}
                                             alt="Profile"
-                                            className="w-20 h-20 rounded-full object-cover ring-4 ring-emerald-100 shadow-md"
+                                            className="w-20 h-20 rounded-full object-cover ring-4 ring-emerald-100 dark:ring-green-500/20 shadow-md"
                                         />
                                     ) : (
-                                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-2xl font-bold shadow-md ring-4 ring-emerald-100">
+                                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-2xl font-bold shadow-md ring-4 ring-emerald-100 dark:ring-green-500/20">
                                             {initials}
                                         </div>
                                     )}
@@ -187,7 +187,7 @@ export default function Profile() {
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                                        className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
                                     >
                                         <Camera className="w-6 h-6 text-white" />
                                     </button>
@@ -200,12 +200,12 @@ export default function Profile() {
                                     />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-slate-700">Profile Photo</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">Click the photo to upload a new one</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Profile Photo</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Click the photo to upload a new one</p>
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="mt-2 text-xs text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-2"
+                                        className="mt-2 text-xs text-emerald-600 dark:text-green-400 hover:text-emerald-700 dark:hover:text-green-300 font-medium underline underline-offset-2 cursor-pointer"
                                     >
                                         Change photo
                                     </button>
@@ -214,14 +214,14 @@ export default function Profile() {
 
                             {/* Full Name */}
                             <div className="space-y-2">
-                                <Label htmlFor="fullName">{t('profile.personalInfo.fullName')}</Label>
+                                <Label htmlFor="fullName" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.fullName')}</Label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                     <Input
                                         id="fullName"
                                         value={formData.full_name}
                                         onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                                        className="pl-9"
+                                        className="pl-9 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-emerald-300 dark:focus:border-green-500/40"
                                         placeholder={t('profile.personalInfo.fullNamePlaceholder')}
                                     />
                                 </div>
@@ -229,40 +229,40 @@ export default function Profile() {
 
                             {/* Email */}
                             <div className="space-y-2">
-                                <Label htmlFor="email">{t('profile.personalInfo.email')}</Label>
+                                <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.email')}</Label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                     <Input
                                         id="email"
                                         type="email"
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="pl-9"
+                                        className="pl-9 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-emerald-300 dark:focus:border-green-500/40"
                                         placeholder={t('profile.personalInfo.emailPlaceholder')}
                                     />
                                 </div>
                             </div>
 
                             {/* Password */}
-                            <div className="pt-4 border-t border-slate-100">
-                                <h3 className="text-sm font-medium text-slate-800 mb-4">{t('profile.personalInfo.changePassword')}</h3>
+                            <div className="pt-4 border-t border-slate-100 dark:border-white/[0.06]">
+                                <h3 className="text-sm font-medium text-slate-800 dark:text-slate-200 mb-4">{t('profile.personalInfo.changePassword')}</h3>
                                 <div className="grid gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="newPassword">{t('profile.personalInfo.newPassword')}</Label>
+                                        <Label htmlFor="newPassword" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.newPassword')}</Label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                             <Input
                                                 id="newPassword"
                                                 type={showPassword ? 'text' : 'password'}
                                                 value={formData.password}
                                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                                className="pl-9 pr-9"
+                                                className="pl-9 pr-9 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-emerald-300 dark:focus:border-green-500/40"
                                                 placeholder={t('profile.personalInfo.passwordPlaceholder')}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
                                             >
                                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
@@ -275,15 +275,15 @@ export default function Profile() {
                                             animate={{ opacity: 1, height: 'auto' }}
                                             className="space-y-2"
                                         >
-                                            <Label htmlFor="confirmPassword">{t('profile.personalInfo.confirmNewPassword')}</Label>
+                                            <Label htmlFor="confirmPassword" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.confirmNewPassword')}</Label>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                                 <Input
                                                     id="confirmPassword"
                                                     type="password"
                                                     value={formData.confirmPassword}
                                                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                                    className="pl-9"
+                                                    className="pl-9 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-emerald-300 dark:focus:border-green-500/40"
                                                     placeholder={t('profile.personalInfo.confirmNewPasswordPlaceholder')}
                                                 />
                                             </div>
@@ -296,7 +296,7 @@ export default function Profile() {
                                 <Button
                                     type="submit"
                                     disabled={isSaving}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    className="bg-emerald-600 dark:bg-green-500 hover:bg-emerald-700 dark:hover:bg-green-400 text-white shadow-lg shadow-emerald-200 dark:shadow-green-500/20 cursor-pointer"
                                 >
                                     {isSaving ? (
                                         <>

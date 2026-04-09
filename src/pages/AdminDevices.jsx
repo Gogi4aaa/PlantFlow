@@ -49,116 +49,116 @@ export default function AdminDevices() {
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-1">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg shadow-emerald-200">
+                    <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-green-500/20">
                         <Leaf className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">Device Management</h1>
-                        <p className="text-slate-500 text-sm">Manage all registered plant monitoring devices</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Device Management</h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">Manage all registered plant monitoring devices</p>
                     </div>
                 </div>
             </motion.div>
 
             {/* Search */}
-            <div className="flex flex-col md:flex-row gap-3 p-4 rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="flex flex-col md:flex-row gap-3 p-4 rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none">
                 <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                     <Input
                         placeholder="Search devices by name or ID..."
                         value={searchTerm}
                         onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                        className="pl-10"
+                        className="pl-10 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600"
                     />
                 </div>
-                <span className="hidden md:flex items-center text-sm text-slate-400 whitespace-nowrap">
+                <span className="hidden md:flex items-center text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">
                     {totalDevices} devices total
                 </span>
             </div>
 
             {/* Devices Table */}
-            <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100">
-                    <h2 className="font-semibold text-slate-800">All Devices ({totalDevices})</h2>
+            <div className="rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.06]">
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200">All Devices ({totalDevices})</h2>
                 </div>
 
                 {isLoading ? (
                     <div className="flex items-center justify-center py-16">
-                        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-4 border-emerald-500 dark:border-green-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : devices.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+                    <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
                         <Leaf className="w-12 h-12 mb-3 opacity-30" />
-                        <p className="font-medium text-slate-600">No devices found</p>
+                        <p className="font-medium text-slate-600 dark:text-slate-400">No devices found</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-slate-100 bg-slate-50">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Device</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Owner</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Last Seen</th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                                <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03]">
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Device</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Owner</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Location</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Last Seen</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
+                            <tbody className="divide-y divide-slate-50 dark:divide-white/[0.04]">
                                 {devices.map((device) => {
                                     const online = isOnline(device.lastSeenAt);
                                     return (
-                                        <tr key={device.id} className="hover:bg-slate-50 transition-colors">
+                                        <tr key={device.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                                        <Leaf className="w-4 h-4 text-emerald-600" />
+                                                    <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-green-500/10 border border-transparent dark:border-green-500/20 flex items-center justify-center flex-shrink-0">
+                                                        <Leaf className="w-4 h-4 text-emerald-600 dark:text-green-400" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-medium text-slate-800">{device.plantName || 'Unnamed Plant'}</p>
-                                                        <p className="text-xs text-slate-400 font-mono">{device.id}</p>
+                                                        <p className="font-medium text-slate-800 dark:text-slate-200">{device.plantName || 'Unnamed Plant'}</p>
+                                                        <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">{device.id}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm">
-                                                {device.user?.fullName || device.user?.email || <span className="text-slate-400 italic">No owner</span>}
+                                            <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">
+                                                {device.user?.fullName || device.user?.email || <span className="text-slate-400 dark:text-slate-600 italic">No owner</span>}
                                             </td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm">
-                                                {device.location || <span className="text-slate-300">—</span>}
+                                            <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">
+                                                {device.location || <span className="text-slate-300 dark:text-slate-600">—</span>}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {online ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 border border-emerald-200 dark:border-green-500/20">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-green-400" />
                                                         Online
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/[0.08]">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
                                                         Offline
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm">
+                                            <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">
                                                 <div className="flex items-center gap-1.5">
                                                     <Clock className="w-3.5 h-3.5" />
-                                                    {device.lastSeenAt ? new Date(device.lastSeenAt).toLocaleString() : <span className="text-slate-400">Never</span>}
+                                                    {device.lastSeenAt ? new Date(device.lastSeenAt).toLocaleString() : <span className="text-slate-400 dark:text-slate-600">Never</span>}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <Link
                                                         to={createPageUrl('plant-details') + `/${device.id}`}
-                                                        className="p-2 hover:bg-emerald-100 rounded-lg transition-colors group"
+                                                        className="p-2 hover:bg-emerald-100 dark:hover:bg-green-500/10 rounded-lg transition-colors group"
                                                         title="View Details"
                                                     >
-                                                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                                                        <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
                                                     </Link>
                                                     <button
                                                         onClick={() => setDeleteDevice(device)}
-                                                        className="p-2 hover:bg-red-100 rounded-lg transition-colors group"
+                                                        className="p-2 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer"
                                                         title="Delete Device"
                                                     >
-                                                        <Trash2 className="w-4 h-4 text-slate-400 group-hover:text-red-500" />
+                                                        <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 dark:group-hover:text-red-400" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -172,12 +172,14 @@ export default function AdminDevices() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 p-4 border-t border-slate-100">
-                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+                    <div className="flex justify-center items-center gap-2 p-4 border-t border-slate-100 dark:border-white/[0.06]">
+                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
-                        <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
-                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                        <span className="text-sm text-slate-500 dark:text-slate-400">Page {page} of {totalPages}</span>
+                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                             <ChevronRight className="w-4 h-4" />
                         </Button>
                     </div>
@@ -186,15 +188,16 @@ export default function AdminDevices() {
 
             {/* Delete Dialog */}
             <Dialog open={!!deleteDevice} onOpenChange={() => setDeleteDevice(null)}>
-                <DialogContent>
+                <DialogContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08]">
                     <DialogHeader>
-                        <DialogTitle className="text-red-600">Delete Device</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-red-600 dark:text-red-400">Delete Device</DialogTitle>
+                        <DialogDescription className="text-slate-500 dark:text-slate-400">
                             Are you sure you want to delete <strong>{deleteDevice?.plantName}</strong> ({deleteDevice?.id})? This will delete all associated sensor data and alerts.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setDeleteDevice(null)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setDeleteDevice(null)}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Cancel</Button>
                         <Button variant="destructive" onClick={() => deleteMutation.mutate(deleteDevice.id)} disabled={deleteMutation.isPending}>
                             {deleteMutation.isPending ? 'Deleting...' : 'Delete Device'}
                         </Button>

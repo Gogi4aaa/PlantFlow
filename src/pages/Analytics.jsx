@@ -196,7 +196,7 @@ export default function Analytics() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-600 dark:text-green-400" />
       </div>
     );
   }
@@ -205,7 +205,7 @@ export default function Analytics() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{t('analytics.error')}</p>
+          <p className="text-red-600 dark:text-red-400 mb-4">{t('analytics.error')}</p>
           <Button onClick={fetchAnalytics}>{t('analytics.retry')}</Button>
         </div>
       </div>
@@ -223,35 +223,36 @@ export default function Analytics() {
         <div>
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-emerald-600 transition-colors mb-2 group"
+            className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors mb-2 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             Back
           </button>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
             {t('analytics.title')}
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 dark:text-slate-400 mt-1">
             {t('analytics.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-36 bg-white">
+            <SelectTrigger className="w-36 bg-white dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
               <Calendar className="w-4 h-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
               <SelectItem value="day">{t('analytics.periods.today')}</SelectItem>
               <SelectItem value="week">{t('analytics.periods.thisWeek')}</SelectItem>
               <SelectItem value="month">{t('analytics.periods.thisMonth')}</SelectItem>
               <SelectItem value="year">{t('analytics.periods.thisYear')}</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon" onClick={fetchAnalytics} disabled={loading}>
+          <Button variant="outline" size="icon" onClick={fetchAnalytics} disabled={loading}
+            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
-          <Button variant="outline" className="hidden sm:flex" onClick={handleExport}>
+          <Button variant="outline" className="hidden sm:flex border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
             {t('analytics.export')}
           </Button>
@@ -266,16 +267,16 @@ export default function Analytics() {
         className="grid grid-cols-2 lg:grid-cols-4 gap-4"
       >
         {stats.map((stat, index) => (
-          <Card key={stat.label} className="border-slate-100">
+          <Card key={stat.label} className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <stat.icon className={`w-5 h-5 text-${stat.color}-500`} />
-                <div className="text-xs text-slate-400">
+                <stat.icon className={`w-5 h-5 text-${stat.color}-500 dark:text-${stat.color}-400`} />
+                <div className="text-xs text-slate-400 dark:text-slate-500">
                   {stat.min} - {stat.max}
                 </div>
               </div>
-              <p className="text-2xl font-bold text-slate-800 mt-3">{stat.value}</p>
-              <p className="text-sm text-slate-500">{stat.label}</p>
+              <p className="text-2xl font-bold text-slate-800 dark:text-white mt-3">{stat.value}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -283,9 +284,13 @@ export default function Analytics() {
 
       {/* Main Charts */}
       <Tabs defaultValue="environment" className="w-full">
-        <TabsList className="bg-slate-100 p-1 rounded-xl">
-          <TabsTrigger value="environment" className="rounded-lg">{t('analytics.tabs.environment')}</TabsTrigger>
-          <TabsTrigger value="moisture" className="rounded-lg">{t('analytics.tabs.moisture')}</TabsTrigger>
+        <TabsList className="bg-slate-100 dark:bg-white/[0.05] p-1 rounded-xl border-0">
+          <TabsTrigger value="environment" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.08] data-[state=active]:text-slate-900 dark:data-[state=active]:text-white text-slate-600 dark:text-slate-400">
+            {t('analytics.tabs.environment')}
+          </TabsTrigger>
+          <TabsTrigger value="moisture" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.08] data-[state=active]:text-slate-900 dark:data-[state=active]:text-white text-slate-600 dark:text-slate-400">
+            {t('analytics.tabs.moisture')}
+          </TabsTrigger>
         </TabsList>
 
         {/* Environment Tab */}
@@ -297,26 +302,27 @@ export default function Analytics() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="border-slate-100">
+              <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
                 <CardHeader>
-                  <CardTitle className="text-base">{t('analytics.charts.tempHumidity')}</CardTitle>
+                  <CardTitle className="text-base text-slate-800 dark:text-white">{t('analytics.charts.tempHumidity')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" vertical={false} />
                         <XAxis dataKey="time" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: 'white',
-                            border: 'none',
+                            backgroundColor: 'var(--tooltip-bg, #1E293B)',
+                            border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '12px',
-                            boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                            boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+                            color: '#E2E8F0',
                           }}
                         />
-                        <Legend />
+                        <Legend wrapperStyle={{ color: '#94A3B8' }} />
                         <Line type="monotone" dataKey="temperature" stroke="#EF4444" strokeWidth={2} dot={false} name={t('common.metrics.temperature') + ' (°C)'} />
                         <Line type="monotone" dataKey="humidity" stroke="#8B5CF6" strokeWidth={2} dot={false} name={t('common.metrics.humidity') + ' (%)'} />
                       </LineChart>
@@ -332,9 +338,9 @@ export default function Analytics() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="border-slate-100">
+              <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
                 <CardHeader>
-                  <CardTitle className="text-base">{t('analytics.charts.light')}</CardTitle>
+                  <CardTitle className="text-base text-slate-800 dark:text-white">{t('analytics.charts.light')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-72">
@@ -346,15 +352,16 @@ export default function Analytics() {
                             <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" vertical={false} />
                         <XAxis dataKey="time" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: 'white',
-                            border: 'none',
+                            backgroundColor: 'var(--tooltip-bg, #1E293B)',
+                            border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '12px',
-                            boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                            boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+                            color: '#E2E8F0',
                           }}
                           formatter={(value) => [`${value?.toFixed(0) || 0} lux`, t('common.metrics.light')]}
                         />
@@ -371,9 +378,9 @@ export default function Analytics() {
 
         {/* Moisture Tab */}
         <TabsContent value="moisture" className="mt-6">
-          <Card className="border-slate-100">
+          <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
             <CardHeader>
-              <CardTitle className="text-base">{t('analytics.charts.moisture')}</CardTitle>
+              <CardTitle className="text-base text-slate-800 dark:text-white">{t('analytics.charts.moisture')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-96">
@@ -385,15 +392,16 @@ export default function Analytics() {
                         <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" vertical={false} />
                     <XAxis dataKey="time" tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'white',
-                        border: 'none',
+                        backgroundColor: 'var(--tooltip-bg, #1E293B)',
+                        border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '12px',
-                        boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+                        color: '#E2E8F0',
                       }}
                       formatter={(value) => [`${value?.toFixed(1) || 0}%`, t('common.metrics.moisture')]}
                     />

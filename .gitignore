@@ -73,6 +73,9 @@ public
 tmp/
 temp/
 
+# Claude Code
+.claude/
+
 # Editor directories and files
 .vscode/
 .idea/

@@ -78,112 +78,112 @@ export default function AdminUsers() {
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-1">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl shadow-lg shadow-blue-200">
+                    <div className="p-2.5 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl shadow-lg shadow-blue-200 dark:shadow-blue-500/20">
                         <Users className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 tracking-tight">User Management</h1>
-                        <p className="text-slate-500 text-sm">Manage all registered users</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">User Management</h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">Manage all registered users</p>
                     </div>
                 </div>
             </motion.div>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-3 p-4 rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="flex flex-col md:flex-row gap-3 p-4 rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none">
                 <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                     <Input
                         placeholder="Search users by name or email..."
                         value={searchTerm}
                         onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                        className="pl-10"
+                        className="pl-10 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600"
                     />
                 </div>
                 <Select value={roleFilter || 'ALL'} onValueChange={(v) => { setRoleFilter(v === 'ALL' ? '' : v); setPage(1); }}>
-                    <SelectTrigger className="w-full md:w-44">
+                    <SelectTrigger className="w-full md:w-44 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
                         <SelectValue placeholder="All Roles" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
                         <SelectItem value="ALL">All Users</SelectItem>
                         <SelectItem value="USER">Users Only</SelectItem>
                         <SelectItem value="ADMIN">Admins Only</SelectItem>
                     </SelectContent>
                 </Select>
-                <span className="hidden md:flex items-center text-sm text-slate-400 whitespace-nowrap">
+                <span className="hidden md:flex items-center text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">
                     {totalUsers} users total
                 </span>
             </div>
 
             {/* Users Table */}
-            <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100">
-                    <h2 className="font-semibold text-slate-800">All Users ({totalUsers})</h2>
+            <div className="rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.06]">
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200">All Users ({totalUsers})</h2>
                 </div>
 
                 {isLoading ? (
                     <div className="flex items-center justify-center py-16">
-                        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-4 border-emerald-500 dark:border-green-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : users.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+                    <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
                         <Users className="w-12 h-12 mb-3 opacity-30" />
-                        <p className="font-medium text-slate-600">No users found</p>
+                        <p className="font-medium text-slate-600 dark:text-slate-400">No users found</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-slate-100 bg-slate-50">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">User</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Role</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Devices</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Joined</th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                                <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03]">
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">User</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Email</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Role</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Devices</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Joined</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
+                            <tbody className="divide-y divide-slate-50 dark:divide-white/[0.04]">
                                 {users.map((user) => {
                                     const initials = (user.fullName || user.email || 'U').charAt(0).toUpperCase();
                                     const avatarGradient = getAvatarColor(user.email || user.id);
                                     return (
-                                        <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                                        <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${avatarGradient} flex items-center justify-center text-white font-semibold text-sm shadow-sm flex-shrink-0`}>
                                                         {initials}
                                                     </div>
-                                                    <span className="font-medium text-slate-800">
-                                                        {user.fullName || <span className="text-slate-400 italic">No name</span>}
+                                                    <span className="font-medium text-slate-800 dark:text-slate-200">
+                                                        {user.fullName || <span className="text-slate-400 dark:text-slate-600 italic">No name</span>}
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm">{user.email}</td>
+                                            <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">{user.email}</td>
                                             <td className="px-6 py-4">
                                                 {user.role === 'ADMIN' ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 border border-emerald-200 dark:border-green-500/20">
                                                         <ShieldCheck className="w-3 h-3" />
                                                         Admin
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20">
                                                         <User className="w-3 h-3" />
                                                         User
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm">{user._count?.devices ?? 0}</td>
-                                            <td className="px-6 py-4 text-slate-500 text-sm">{new Date(user.createdAt).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">{user._count?.devices ?? 0}</td>
+                                            <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">{new Date(user.createdAt).toLocaleDateString()}</td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <button onClick={() => setEditUser(user)} className="p-2 hover:bg-blue-100 rounded-lg transition-colors group" title="Edit User">
-                                                        <Edit className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
+                                                    <button onClick={() => setEditUser(user)} className="p-2 hover:bg-blue-100 dark:hover:bg-blue-500/10 rounded-lg transition-colors group cursor-pointer" title="Edit User">
+                                                        <Edit className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
                                                     </button>
-                                                    <button onClick={() => setChangeRoleUser(user)} className="p-2 hover:bg-emerald-100 rounded-lg transition-colors group" title="Change Role">
-                                                        <Shield className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                                                    <button onClick={() => setChangeRoleUser(user)} className="p-2 hover:bg-emerald-100 dark:hover:bg-green-500/10 rounded-lg transition-colors group cursor-pointer" title="Change Role">
+                                                        <Shield className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
                                                     </button>
-                                                    <button onClick={() => setDeleteUser(user)} className="p-2 hover:bg-red-100 rounded-lg transition-colors group" title="Delete User">
-                                                        <Trash2 className="w-4 h-4 text-slate-400 group-hover:text-red-500" />
+                                                    <button onClick={() => setDeleteUser(user)} className="p-2 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer" title="Delete User">
+                                                        <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 dark:group-hover:text-red-400" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -197,12 +197,14 @@ export default function AdminUsers() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 p-4 border-t border-slate-100">
-                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+                    <div className="flex justify-center items-center gap-2 p-4 border-t border-slate-100 dark:border-white/[0.06]">
+                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
-                        <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
-                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                        <span className="text-sm text-slate-500 dark:text-slate-400">Page {page} of {totalPages}</span>
+                        <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                             <ChevronRight className="w-4 h-4" />
                         </Button>
                     </div>
@@ -211,25 +213,29 @@ export default function AdminUsers() {
 
             {/* Edit User Dialog */}
             <Dialog open={!!editUser} onOpenChange={() => setEditUser(null)}>
-                <DialogContent>
+                <DialogContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08]">
                     <DialogHeader>
-                        <DialogTitle>Edit User</DialogTitle>
-                        <DialogDescription>Update user information</DialogDescription>
+                        <DialogTitle className="text-slate-800 dark:text-white">Edit User</DialogTitle>
+                        <DialogDescription className="text-slate-500 dark:text-slate-400">Update user information</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleUpdateUser}>
                         <div className="space-y-4 py-4">
                             <div>
-                                <label className="text-sm font-medium text-slate-700">Full Name</label>
-                                <Input name="fullName" defaultValue={editUser?.fullName || ''} placeholder="John Doe" className="mt-1" />
+                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</label>
+                                <Input name="fullName" defaultValue={editUser?.fullName || ''} placeholder="John Doe"
+                                    className="mt-1 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100" />
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-slate-700">Email</label>
-                                <Input name="email" type="email" defaultValue={editUser?.email || ''} placeholder="john@example.com" required className="mt-1" />
+                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+                                <Input name="email" type="email" defaultValue={editUser?.email || ''} placeholder="john@example.com" required
+                                    className="mt-1 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100" />
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setEditUser(null)}>Cancel</Button>
-                            <Button type="submit" disabled={updateMutation.isPending}>
+                            <Button type="button" variant="outline" onClick={() => setEditUser(null)}
+                                className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Cancel</Button>
+                            <Button type="submit" disabled={updateMutation.isPending}
+                                className="bg-emerald-600 dark:bg-green-500 hover:bg-emerald-700 dark:hover:bg-green-400 text-white">
                                 {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
                             </Button>
                         </DialogFooter>
@@ -239,36 +245,42 @@ export default function AdminUsers() {
 
             {/* Change Role Dialog */}
             <Dialog open={!!changeRoleUser} onOpenChange={() => setChangeRoleUser(null)}>
-                <DialogContent>
+                <DialogContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08]">
                     <DialogHeader>
-                        <DialogTitle>Change User Role</DialogTitle>
-                        <DialogDescription>Select a new role for <strong>{changeRoleUser?.fullName || changeRoleUser?.email}</strong></DialogDescription>
+                        <DialogTitle className="text-slate-800 dark:text-white">Change User Role</DialogTitle>
+                        <DialogDescription className="text-slate-500 dark:text-slate-400">Select a new role for <strong>{changeRoleUser?.fullName || changeRoleUser?.email}</strong></DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-2">
-                        <Button onClick={() => changeRoleMutation.mutate({ id: changeRoleUser.id, role: 'USER' })} variant="outline" className="w-full justify-start" disabled={changeRoleUser?.role === 'USER' || changeRoleMutation.isPending}>
+                        <Button onClick={() => changeRoleMutation.mutate({ id: changeRoleUser.id, role: 'USER' })} variant="outline"
+                            className="w-full justify-start border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.05]"
+                            disabled={changeRoleUser?.role === 'USER' || changeRoleMutation.isPending}>
                             <User className="w-4 h-4 mr-2" />
                             User — Standard access
                         </Button>
-                        <Button onClick={() => changeRoleMutation.mutate({ id: changeRoleUser.id, role: 'ADMIN' })} variant="outline" className="w-full justify-start" disabled={changeRoleUser?.role === 'ADMIN' || changeRoleMutation.isPending}>
-                            <ShieldCheck className="w-4 h-4 mr-2 text-emerald-600" />
+                        <Button onClick={() => changeRoleMutation.mutate({ id: changeRoleUser.id, role: 'ADMIN' })} variant="outline"
+                            className="w-full justify-start border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.05]"
+                            disabled={changeRoleUser?.role === 'ADMIN' || changeRoleMutation.isPending}>
+                            <ShieldCheck className="w-4 h-4 mr-2 text-emerald-600 dark:text-green-400" />
                             Admin — Full system access
                         </Button>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setChangeRoleUser(null)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setChangeRoleUser(null)}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Cancel</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
             {/* Delete User Dialog */}
             <Dialog open={!!deleteUser} onOpenChange={() => setDeleteUser(null)}>
-                <DialogContent>
+                <DialogContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08]">
                     <DialogHeader>
-                        <DialogTitle className="text-red-600">Delete User</DialogTitle>
-                        <DialogDescription>Are you sure you want to delete <strong>{deleteUser?.fullName || deleteUser?.email}</strong>? This will also delete all their devices and data.</DialogDescription>
+                        <DialogTitle className="text-red-600 dark:text-red-400">Delete User</DialogTitle>
+                        <DialogDescription className="text-slate-500 dark:text-slate-400">Are you sure you want to delete <strong>{deleteUser?.fullName || deleteUser?.email}</strong>? This will also delete all their devices and data.</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setDeleteUser(null)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setDeleteUser(null)}
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Cancel</Button>
                         <Button variant="destructive" onClick={() => deleteMutation.mutate(deleteUser.id)} disabled={deleteMutation.isPending}>
                             {deleteMutation.isPending ? 'Deleting...' : 'Delete User'}
                         </Button>

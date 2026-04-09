@@ -100,15 +100,15 @@ function SensorGaugeCard({ sensor, value, range, hasData }) {
   const displayValue = hasData && value != null ? sensor.displayFn(value) : '—';
 
   let statusLabel = 'No data';
-  let statusColor = 'text-slate-400';
+  let statusColor = 'text-slate-400 dark:text-slate-500';
   if (hasData && value != null && range) {
-    if (value >= range.min && value <= range.max) { statusLabel = 'Optimal'; statusColor = 'text-emerald-600'; }
-    else if (value < range.min) { statusLabel = 'Too low'; statusColor = 'text-amber-600'; }
-    else { statusLabel = 'Too high'; statusColor = 'text-red-600'; }
+    if (value >= range.min && value <= range.max) { statusLabel = 'Optimal'; statusColor = 'text-emerald-600 dark:text-green-400'; }
+    else if (value < range.min) { statusLabel = 'Too low'; statusColor = 'text-amber-600 dark:text-amber-400'; }
+    else { statusLabel = 'Too high'; statusColor = 'text-red-600 dark:text-red-400'; }
   }
 
   return (
-    <Card className="border-slate-100 hover:shadow-md transition-shadow">
+    <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07] hover:shadow-md dark:hover:shadow-none transition-shadow">
       <CardContent className="p-5 flex flex-col items-center gap-3">
         {/* Ring */}
         <div className="relative">
@@ -121,7 +121,7 @@ function SensorGaugeCard({ sensor, value, range, hasData }) {
           {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Icon className="w-4 h-4 mb-0.5" style={{ color: sensor.color }} />
-            <span className={`text-lg font-bold ${hasData ? 'text-slate-800' : 'text-slate-300'}`}>
+            <span className={`text-lg font-bold ${hasData ? 'text-slate-800 dark:text-white' : 'text-slate-300 dark:text-slate-600'}`}>
               {displayValue}
             </span>
           </div>
@@ -129,10 +129,10 @@ function SensorGaugeCard({ sensor, value, range, hasData }) {
 
         {/* Label + status */}
         <div className="text-center">
-          <p className="font-semibold text-slate-700 text-sm">{sensor.label}</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300 text-sm">{sensor.label}</p>
           <p className={`text-xs mt-0.5 font-medium ${statusColor}`}>{statusLabel}</p>
           {range && (
-            <p className="text-[10px] text-slate-400 mt-0.5">
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
               Optimal: {range.min}–{range.max}{sensor.unit}
             </p>
           )}
@@ -146,12 +146,12 @@ function SensorGaugeCard({ sensor, value, range, hasData }) {
 function NoDataState({ message = 'No sensor data yet', sub = 'Readings will appear here once your device connects.' }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
-        <WifiOff className="w-8 h-8 text-slate-300" />
+      <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/[0.06] flex items-center justify-center">
+        <WifiOff className="w-8 h-8 text-slate-300 dark:text-slate-600" />
       </div>
       <div>
-        <p className="font-semibold text-slate-600">{message}</p>
-        <p className="text-sm text-slate-400 mt-1 max-w-xs">{sub}</p>
+        <p className="font-semibold text-slate-600 dark:text-slate-400">{message}</p>
+        <p className="text-sm text-slate-400 dark:text-slate-500 mt-1 max-w-xs">{sub}</p>
       </div>
     </div>
   );
@@ -320,10 +320,10 @@ export default function PlantDetails() {
   if (isDeviceLoading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-8 w-32 bg-slate-200 rounded-lg" />
-        <div className="h-64 bg-slate-200 rounded-3xl" />
+        <div className="h-8 w-32 bg-slate-200 dark:bg-white/[0.06] rounded-lg" />
+        <div className="h-64 bg-slate-200 dark:bg-white/[0.06] rounded-3xl" />
         <div className="grid grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-slate-100 rounded-2xl" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-slate-100 dark:bg-white/[0.04] rounded-2xl" />)}
         </div>
       </div>
     );
@@ -332,14 +332,15 @@ export default function PlantDetails() {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center">
-          <AlertTriangle className="w-8 h-8 text-red-500" />
+        <div className="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-500/10 flex items-center justify-center">
+          <AlertTriangle className="w-8 h-8 text-red-500 dark:text-red-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-800">Failed to load plant</h3>
-          <p className="text-slate-500 mt-1">{error?.message || 'Connection error'}</p>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Failed to load plant</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{error?.message || 'Connection error'}</p>
         </div>
-        <Button onClick={() => navigate('/dashboard')} variant="outline">Back to Plants</Button>
+        <Button onClick={() => navigate('/dashboard')} variant="outline"
+          className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Back to Plants</Button>
       </div>
     );
   }
@@ -349,14 +350,15 @@ export default function PlantDetails() {
   if (!isDeviceLoading && !plant) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center">
-          <AlertTriangle className="w-8 h-8 text-amber-500" />
+        <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center">
+          <AlertTriangle className="w-8 h-8 text-amber-500 dark:text-amber-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-800">Plant not found</h3>
-          <p className="text-slate-500 mt-1">This device may have been removed.</p>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Plant not found</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">This device may have been removed.</p>
         </div>
-        <Button onClick={() => navigate('/dashboard')} variant="outline">Back to Plants</Button>
+        <Button onClick={() => navigate('/dashboard')} variant="outline"
+          className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Back to Plants</Button>
       </div>
     );
   }
@@ -369,7 +371,7 @@ export default function PlantDetails() {
       {/* ── Back button ── */}
       <button
         onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/dashboard')}
-        className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-emerald-600 transition-colors group"
+        className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
         Back
@@ -435,11 +437,11 @@ export default function PlantDetails() {
 
       {/* ── Tabs ── */}
       <Tabs defaultValue="readings" className="w-full">
-        <TabsList className="bg-slate-100 p-1 rounded-xl">
-          <TabsTrigger value="readings" className="rounded-lg gap-1.5">
+        <TabsList className="bg-slate-100 dark:bg-white/[0.05] p-1 rounded-xl border-0">
+          <TabsTrigger value="readings" className="rounded-lg gap-1.5 data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.08] data-[state=active]:text-slate-900 dark:data-[state=active]:text-white text-slate-600 dark:text-slate-400">
             <Activity className="w-3.5 h-3.5" /> Live Readings
           </TabsTrigger>
-          <TabsTrigger value="history" className="rounded-lg gap-1.5">
+          <TabsTrigger value="history" className="rounded-lg gap-1.5 data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.08] data-[state=active]:text-slate-900 dark:data-[state=active]:text-white text-slate-600 dark:text-slate-400">
             <Clock className="w-3.5 h-3.5" /> History
           </TabsTrigger>
         </TabsList>
@@ -467,7 +469,7 @@ export default function PlantDetails() {
               ))}
             </div>
           ) : (
-            <Card className="border-slate-100">
+            <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
               <CardContent className="p-0">
                 <NoDataState
                   message="Waiting for sensor data"
@@ -479,7 +481,7 @@ export default function PlantDetails() {
 
           {/* Last reading time */}
           {hasData && plant.currentReadings?.timestamp && (
-            <p className="text-xs text-slate-400 text-center flex items-center justify-center gap-1.5">
+            <p className="text-xs text-slate-400 dark:text-slate-500 text-center flex items-center justify-center gap-1.5">
               <Clock className="w-3 h-3" />
               Last reading: {new Date(plant.currentReadings.timestamp).toLocaleTimeString()}
             </p>
@@ -487,9 +489,9 @@ export default function PlantDetails() {
 
           {/* Active Alerts */}
           {deviceAlerts.length > 0 && (
-            <Card className="border-red-100 bg-gradient-to-br from-red-50 to-rose-50">
+            <Card className="border-red-100 dark:border-red-500/20 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/[0.08] dark:to-red-600/[0.05]">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-red-700">
+                <CardTitle className="text-base flex items-center gap-2 text-red-700 dark:text-red-400">
                   <AlertTriangle className="w-4 h-4" />
                   Active Alerts ({deviceAlerts.length})
                 </CardTitle>
@@ -497,8 +499,8 @@ export default function PlantDetails() {
               <CardContent className="pt-0">
                 <ul className="space-y-2">
                   {deviceAlerts.slice(0, 3).map((alert, idx) => (
-                    <li key={idx} className="flex items-center justify-between p-3 bg-white/60 rounded-xl text-sm">
-                      <span className="text-red-700 font-medium">{alert.message}</span>
+                    <li key={idx} className="flex items-center justify-between p-3 bg-white/60 dark:bg-white/[0.05] rounded-xl text-sm">
+                      <span className="text-red-700 dark:text-red-400 font-medium">{alert.message}</span>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
                         <span className="text-xs text-red-400">{new Date(alert.created_at).toLocaleTimeString()}</span>
                         <button
@@ -536,9 +538,9 @@ export default function PlantDetails() {
                 const Icon = chart.icon;
                 return (
                   <motion.div key={chart.key} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
-                    <Card className="border-slate-100">
+                    <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm flex items-center gap-2 text-slate-700">
+                        <CardTitle className="text-sm flex items-center gap-2 text-slate-700 dark:text-slate-300">
                           <Icon className="w-4 h-4" style={{ color: chart.color }} />
                           {chart.label}
                         </CardTitle>
@@ -559,7 +561,7 @@ export default function PlantDetails() {
               })}
             </div>
           ) : (
-            <Card className="border-slate-100">
+            <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
               <CardContent className="p-0">
                 <NoDataState
                   message="No historical data yet"
