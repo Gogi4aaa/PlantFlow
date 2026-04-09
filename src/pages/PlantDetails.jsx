@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSocket } from '@/hooks/useSocket';
 import { toast } from 'sonner';
@@ -13,23 +13,19 @@ import {
   Heart,
   Calendar,
   Clock,
-  Settings,
-  Bell,
   AlertTriangle,
-  Leaf,
   WifiOff,
   Activity,
   MapPin,
-  Cpu
+  Cpu,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
 import AreaChartComponent from '@/components/charts/AreaChartComponent';
 import PumpControl from '@/components/ui/PumpControl';
-import { cn } from '@/lib/utils';
 import { api } from '@/api/api';
 import plantBg from '@/assets/plant_bg.png';
 
@@ -187,12 +183,6 @@ export default function PlantDetails() {
   useEffect(() => {
     return () => { if (offlineTimerRef.current) clearTimeout(offlineTimerRef.current); };
   }, []);
-
-  const [settings, setSettings] = useState({
-    lowMoisture: true,
-    autoWatering: true,
-    lightReminder: false
-  });
 
   const { id: deviceId } = useParams();
   const queryClient = useQueryClient();
@@ -452,12 +442,6 @@ export default function PlantDetails() {
           <TabsTrigger value="history" className="rounded-lg gap-1.5">
             <Clock className="w-3.5 h-3.5" /> History
           </TabsTrigger>
-          <TabsTrigger value="care" className="rounded-lg gap-1.5">
-            <Leaf className="w-3.5 h-3.5" /> Care
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-lg gap-1.5">
-            <Settings className="w-3.5 h-3.5" /> Settings
-          </TabsTrigger>
         </TabsList>
 
         {/* ── Live Readings Tab ── */}
@@ -515,7 +499,15 @@ export default function PlantDetails() {
                   {deviceAlerts.slice(0, 3).map((alert, idx) => (
                     <li key={idx} className="flex items-center justify-between p-3 bg-white/60 rounded-xl text-sm">
                       <span className="text-red-700 font-medium">{alert.message}</span>
-                      <span className="text-xs text-red-400">{new Date(alert.created_at).toLocaleTimeString()}</span>
+                      <div className="flex items-center gap-2 shrink-0 ml-2">
+                        <span className="text-xs text-red-400">{new Date(alert.created_at).toLocaleTimeString()}</span>
+                        <button
+                          onClick={() => setDeviceAlerts(prev => prev.filter((_, i) => i !== idx))}
+                          className="text-red-300 hover:text-red-600 transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -578,74 +570,6 @@ export default function PlantDetails() {
           )}
         </TabsContent>
 
-        {/* ── Care Tab ── */}
-        <TabsContent value="care" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { icon: Droplets, color: 'blue', title: 'Watering', last: 'Not tracked', next: 'Not tracked', bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },
-              { icon: Leaf, color: 'green', title: 'Fertilizing', last: 'Not tracked', next: 'Not tracked', bg: 'bg-emerald-50', iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600' },
-              { icon: Sun, color: 'amber', title: 'Light Check', last: 'Not tracked', next: 'Not tracked', bg: 'bg-amber-50', iconBg: 'bg-amber-100', iconColor: 'text-amber-600' },
-              { icon: Wind, color: 'purple', title: 'Misting', last: 'Not tracked', next: 'Not tracked', bg: 'bg-purple-50', iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <Card key={item.title} className={`border-0 ${item.bg}`}>
-                  <CardContent className="p-5">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`p-2.5 ${item.iconBg} rounded-xl`}>
-                        <Icon className={`w-5 h-5 ${item.iconColor}`} />
-                      </div>
-                      <h3 className="font-semibold text-slate-700">{item.title}</h3>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Last</span>
-                        <span className="text-slate-400 italic">{item.last}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Next</span>
-                        <span className="text-slate-400 italic">{item.next}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-          <p className="text-xs text-slate-400 text-center mt-4">
-            Care schedule tracking will be connected to sensor data in a future update.
-          </p>
-        </TabsContent>
-
-        {/* ── Settings Tab ── */}
-        <TabsContent value="settings" className="mt-6">
-          <Card className="border-slate-100">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Bell className="w-4 h-4 text-slate-500" />
-                Alert Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { key: 'lowMoisture', label: 'Low Moisture Alert', desc: 'Notify when soil moisture drops below optimal range' },
-                { key: 'autoWatering', label: 'Auto Watering', desc: 'Automatically activate pump when moisture is low' },
-                { key: 'lightReminder', label: 'Light Reminder', desc: 'Remind to move plant for better light exposure' },
-              ].map(s => (
-                <div key={s.key} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                  <div>
-                    <p className="font-medium text-slate-700 text-sm">{s.label}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{s.desc}</p>
-                  </div>
-                  <Switch
-                    checked={settings[s.key]}
-                    onCheckedChange={(checked) => setSettings({ ...settings, [s.key]: checked })}
-                  />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );

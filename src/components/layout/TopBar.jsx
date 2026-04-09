@@ -11,6 +11,7 @@ import {
   User,
   ChevronRight,
   Shield,
+  Sprout,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -82,10 +83,10 @@ export default function TopBar({ onMenuClick }) {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100 relative">
       <div className="flex items-center justify-between px-4 lg:px-6 h-16">
         {/* Left side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1">
           <Button
             variant="ghost"
             size="icon"
@@ -120,8 +121,18 @@ export default function TopBar({ onMenuClick }) {
           </nav>
         </div>
 
+        {/* Center — PlantFlow logo */}
+        <Link to="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 group">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow shadow-emerald-200">
+            <Sprout className="w-4 h-4 text-white" />
+          </div>
+          <span className="font-bold text-slate-800 text-base tracking-tight group-hover:text-emerald-600 transition-colors">
+            PlantFlow
+          </span>
+        </Link>
+
         {/* Right side */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-end">
           {/* Clock */}
           <div className="hidden md:flex items-center gap-1.5 text-sm text-slate-400">
             <Clock className="w-3.5 h-3.5" />

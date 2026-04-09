@@ -42,7 +42,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'https://plantflow-backend-1026018297722.europe-west3.run.app') + '/api';
 
 // Helper to export data as CSV
 const exportToCSV = (data, filename) => {

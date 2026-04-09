@@ -5,7 +5,6 @@ import Dashboard from "./Dashboard";
 import PlantDetails from "./PlantDetails";
 import Profile from "./Profile";
 import Register from "./Register";
-import Settings from "./Settings";
 import SignIn from "./SignIn";
 import LandingPage from "./LandingPage";
 import AdminDashboard from "./AdminDashboard";
@@ -29,7 +28,6 @@ export default function Pages() {
         <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
         <Route path="/plant-details/:id" element={<Layout><PlantDetails /></Layout>} />
         <Route path="/profile" element={<Layout><Profile /></Layout>} />
-        <Route path="/settings" element={<Layout><Settings /></Layout>} />
 
         {/* Admin routes (dark purple admin layout) */}
         <Route path="/admin" element={

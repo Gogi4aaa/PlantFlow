@@ -508,27 +508,6 @@ export default function Dashboard() {
               </Card>
             </Link>
           </motion.div>
-
-          <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
-            <Link to={createPageUrl('Settings')}>
-              <Card className="border-slate-100 hover:shadow-lg transition-all cursor-pointer group bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="p-3 bg-white/70 rounded-xl group-hover:scale-110 transition-transform shadow-sm">
-                          <SettingsIcon className="w-6 h-6 text-slate-600" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-slate-800">{t('dashboard.actions.settings.title')}</h3>
-                      </div>
-                      <p className="text-sm text-slate-600">{t('dashboard.actions.settings.description')}</p>
-                    </div>
-                    <SettingsIcon className="w-10 h-10 text-slate-300 group-hover:text-slate-400 transition-colors" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
         </div>
       )}
 

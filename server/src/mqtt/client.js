@@ -24,11 +24,8 @@ export function initMqttClient(config) {
         options.password = password;
     }
 
-    // Use WebSocket URL instead of raw MQTT
-    const wsUrl = `wss://b232cd0f56484dd0894b913bf3fac481.s1.eu.hivemq.cloud:8884/mqtt`;
-    
-    console.log(`🔌 Connecting to MQTT broker via WebSocket: ${wsUrl}`);
-    client = mqtt.connect(wsUrl, options);
+    console.log(`🔌 Connecting to MQTT broker: ${brokerUrl}`);
+    client = mqtt.connect(brokerUrl, options);
 
     client.on('connect', () => {
         console.log('✅ Connected to MQTT broker');

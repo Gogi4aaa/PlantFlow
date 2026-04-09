@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Device {
@@ -43,7 +44,7 @@ model SensorReading {
   // Relations
   device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   
-  @@index([deviceId, timestamp(sort: Desc)])
+  @@index([deviceId, timestamp])
   @@map("sensor_readings")
 }
 

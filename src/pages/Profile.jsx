@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { User, Mail, Lock, Save, Loader2, Eye, EyeOff, Camera } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { User, Mail, Lock, Save, Loader2, Eye, EyeOff, Camera, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,6 +33,7 @@ function resizeImage(file, maxSize = 200) {
 
 export default function Profile() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -140,12 +142,18 @@ export default function Profile() {
     }
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-800">{t('profile.header.title')}</h1>
-                    <p className="text-slate-500">{t('profile.header.subtitle')}</p>
-                </div>
+        <div className="max-w-2xl mx-auto p-6 space-y-6">
+            <button
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-emerald-600 transition-colors group"
+            >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                Back to Dashboard
+            </button>
+
+            <div>
+                <h1 className="text-2xl font-bold text-slate-800">{t('profile.header.title')}</h1>
+                <p className="text-slate-500">{t('profile.header.subtitle')}</p>
             </div>
 
             <motion.div
@@ -153,7 +161,7 @@ export default function Profile() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
             >
-                <Card className="max-w-2xl border-slate-100 shadow-sm">
+                <Card className="border-slate-100 shadow-sm">
                     <CardHeader>
                         <CardTitle>{t('profile.personalInfo.title')}</CardTitle>
                         <CardDescription>{t('profile.personalInfo.subtitle')}</CardDescription>

@@ -154,23 +154,17 @@ class SensorReading {
       // Calculate date threshold in Node
       const dateThreshold = new Date(Date.now() - hoursNum * 60 * 60 * 1000);
 
-      // Raw query for time bucket grouping in MySQL
-      // Note: Prisma.sql helper is needed usually, but raw string works with template literal for params
-      // We use DATE_FORMAT or similar logic
-
-      // This is a simplified bucket logic: 
-      // UNIX_TIMESTAMP(timestamp) div (interval * 60) * (interval * 60) gives text bucket start
-
+      // Raw query for time bucket grouping in PostgreSQL
       const result = await prisma.$queryRaw`
-          SELECT 
-            FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(timestamp) / (${intervalNum} * 60)) * (${intervalNum} * 60)) as time_bucket,
+          SELECT
+            to_timestamp(floor(extract(epoch from timestamp) / (${intervalNum} * 60)) * (${intervalNum} * 60)) as time_bucket,
             AVG(temperature) as temperature,
             AVG(air_humidity) as air_humidity,
             AVG(soil_moisture) as soil_moisture,
             AVG(light) as light,
             COUNT(*) as reading_count
-          FROM sensor_readings 
-          WHERE device_id = ${deviceId} 
+          FROM sensor_readings
+          WHERE device_id = ${deviceId}
             AND timestamp >= ${dateThreshold}
           GROUP BY time_bucket
           ORDER BY time_bucket ASC

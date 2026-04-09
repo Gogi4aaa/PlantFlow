@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Leaf,
   BarChart3,
-  Settings,
   Sprout,
   ChevronLeft,
   Users,
@@ -36,7 +35,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   const navItems = useMemo(() => [
     { name: t('dashboard.nav.dashboard'), icon: LayoutDashboard, path: '/dashboard', exact: true },
     { name: t('dashboard.nav.analytics'), icon: BarChart3, path: '/analytics', exact: true },
-    { name: t('dashboard.nav.settings'), icon: Settings, path: '/settings', exact: true },
     { name: t('dashboard.nav.profile', 'Profile'), icon: User, path: '/profile', exact: true },
   ], [t]);
 
@@ -78,12 +76,12 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       >
         {/* Logo */}
         <div className="p-6 border-b border-slate-100">
-          <Link to={createPageUrl('Dashboard')} className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-300">
               <Sprout className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-slate-800 text-lg tracking-tight">PlantPulse</h1>
+              <h1 className="font-bold text-slate-800 text-lg tracking-tight">PlantFlow</h1>
               <p className="text-xs text-slate-400">{t('common.appSubtitle')}</p>
             </div>
           </Link>

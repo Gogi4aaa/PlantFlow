@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://europe-west3-plantflow.cloudfunctions.net/plantflow-api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://plantflow-backend-1026018297722.europe-west3.run.app';
 
 /**
  * Helper to handle fetch requests
@@ -40,8 +40,8 @@ export const api = {
             method: 'POST',
             body: JSON.stringify(data)
         }),
-        me: () => request('/auth/me'),
-        updateProfile: (data) => request('/auth/me', {
+        me: () => request('/api/auth/me'),
+        updateProfile: (data) => request('/api/auth/me', {
             method: 'PUT',
             body: JSON.stringify(data)
         })
@@ -62,7 +62,7 @@ export const api = {
         delete: (id) => request(`/api/devices/${id}`, {
             method: 'DELETE',
         }),
-        togglePump: (id, state) => request(`/devices/${id}/pump`, {
+        togglePump: (id, state) => request(`/api/devices/${id}/pump`, {
             method: 'POST',
             body: JSON.stringify({ state })
         }),
@@ -83,6 +83,6 @@ export const api = {
 
     // Alert endpoints
     alerts: {
-        getByDevice: (deviceId, limit = 10) => request(`/alerts/${deviceId}?limit=${limit}`),
+        getByDevice: (deviceId, limit = 10) => request(`/api/alerts/${deviceId}?limit=${limit}`),
     },
 };
