@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { api } from '@/api/api';
 import { createPageUrl } from '@/utils';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 export default function SignIn() {
   const { t } = useTranslation();
@@ -49,6 +49,7 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 dark:bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden">
+      <Toaster position="top-center" richColors closeButton />
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-emerald-200/20 dark:bg-green-500/[0.05] rounded-full blur-3xl" />

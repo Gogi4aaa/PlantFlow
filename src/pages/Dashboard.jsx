@@ -78,19 +78,20 @@ function PlantCard({ device, index, isLive }) {
       <Card className={`flex flex-col bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07] hover:border-emerald-200 dark:hover:border-white/[0.14] hover:shadow-2xl transition-all duration-300 cursor-pointer group overflow-hidden ${isLive ? 'ring-2 ring-emerald-400/60 dark:ring-1 dark:ring-green-500/40' : ''}`}>
 
         {/* Image */}
-        <div className="relative h-48 overflow-hidden">
-          {device.plant_image ? (
-            <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" style={{ backgroundImage: `url(${device.plant_image})` }} />
-          ) : (
-            <div className="relative w-full h-full overflow-hidden">
-              <img src={plantBg} alt="plant" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-75 dark:brightness-50" />
-              <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">#{index + 1}</span>
-              </div>
+        <div className="relative h-48 overflow-hidden bg-slate-100 dark:bg-[#0F172A]">
+          <img
+            src={device.plant_image || plantBg}
+            alt={device.plant_name || 'plant'}
+            className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${!device.plant_image ? 'brightness-[0.55] dark:brightness-[0.35] saturate-[0.8]' : ''}`}
+          />
+
+          {!device.plant_image && (
+            <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+              <span className="text-white font-bold text-xs">#{index + 1}</span>
             </div>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 dark:from-[#1E293B] via-black/10 dark:via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
 
           {isLive && (
             <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500 dark:bg-green-500/20 dark:border dark:border-green-500/30 text-white dark:text-green-400 text-xs font-semibold backdrop-blur-sm shadow-lg">

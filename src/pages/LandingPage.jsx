@@ -23,7 +23,6 @@ export default function LandingPage() {
                         </div>
                         <div className="hidden md:flex items-center gap-8">
                             <a href="#features" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.features')}</a>
-                            <a href="#pricing" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.pricing')}</a>
                             <a href="#testimonials" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.testimonials')}</a>
                         </div>
                         <div className="flex items-center gap-3">
@@ -113,14 +112,13 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="relative order-2 lg:order-1">
-                            <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/10 to-green-500/10 rounded-2xl blur-2xl" />
-                            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-white/[0.08] shadow-2xl">
+                            <div className="absolute -inset-6 bg-gradient-to-r from-emerald-500/15 to-green-500/15 dark:from-emerald-500/10 dark:to-green-500/10 rounded-3xl blur-3xl" />
+                            <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/[0.1] shadow-[0_20px_60px_-10px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] ring-1 ring-black/5 dark:ring-white/[0.04]">
                                 <img
                                     src={productShot}
                                     alt="PlantFlow Sensor"
-                                    className="w-full hover:scale-[1.02] transition-transform duration-500"
+                                    className="w-full hover:scale-[1.02] transition-transform duration-500 block"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-50/40 dark:from-[#0B1120]/40 to-transparent" />
                             </div>
                         </div>
                         <div className="order-1 lg:order-2">

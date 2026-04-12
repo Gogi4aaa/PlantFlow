@@ -126,6 +126,17 @@ export const adminApi = {
         return response.json();
     },
 
+    getAdminAnalytics: async (period = 'week') => {
+        const response = await fetch(`${API_BASE}/api/admin/analytics?period=${period}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Failed to fetch admin analytics');
+        return response.json();
+    },
+
     deleteAlert: async (id) => {
         const response = await fetch(`${API_BASE}/api/admin/alerts/${id}`, {
             method: 'DELETE',

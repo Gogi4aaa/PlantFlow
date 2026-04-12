@@ -67,10 +67,15 @@ export default function TopBar({ onMenuClick }) {
   }, []);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('plantpulse_user');
-    if (userStr) {
-      try { setUser(JSON.parse(userStr)); } catch { }
-    }
+    const loadUser = () => {
+      const userStr = localStorage.getItem('plantpulse_user');
+      if (userStr) {
+        try { setUser(JSON.parse(userStr)); } catch { }
+      }
+    };
+    loadUser();
+    window.addEventListener('plantflow:profileUpdate', loadUser);
+    return () => window.removeEventListener('plantflow:profileUpdate', loadUser);
   }, []);
 
   const handleLogout = () => {

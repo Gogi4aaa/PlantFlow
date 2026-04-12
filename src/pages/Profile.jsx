@@ -117,6 +117,7 @@ export default function Profile() {
                     profile_picture: response.data.profile_picture ?? avatarPreview,
                 };
                 localStorage.setItem('plantpulse_user', JSON.stringify(updatedUser));
+                window.dispatchEvent(new CustomEvent('plantflow:profileUpdate'));
 
                 setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
             }

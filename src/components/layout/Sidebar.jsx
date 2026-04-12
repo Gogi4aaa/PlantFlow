@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -13,9 +13,18 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const user = useMemo(() => {
+  const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('plantpulse_user') || '{}'); }
     catch { return {}; }
+  });
+
+  useEffect(() => {
+    const loadUser = () => {
+      try { setUser(JSON.parse(localStorage.getItem('plantpulse_user') || '{}')); }
+      catch { }
+    };
+    window.addEventListener('plantflow:profileUpdate', loadUser);
+    return () => window.removeEventListener('plantflow:profileUpdate', loadUser);
   }, []);
 
   const navItems = useMemo(() => [

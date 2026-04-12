@@ -16,9 +16,13 @@ const app = express();
 const httpServer = createServer(app);
 const PORT = process.env.PORT || 3001;
 
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+    .split(',')
+    .map(o => o.trim());
+
 // Middleware
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
     credentials: true
 }));
 app.use(express.json());
@@ -28,7 +32,7 @@ app.use(morgan('dev'));
 // Socket.IO Setup
 const io = new Server(httpServer, {
     cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+        origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
         methods: ["GET", "POST"]
     }
 });

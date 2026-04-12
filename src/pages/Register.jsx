@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/api/api';
 import { createPageUrl } from '@/utils';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 const avatarColors = [
   '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899', '#06B6D4'
@@ -83,6 +83,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 dark:bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden">
+      <Toaster position="top-center" richColors closeButton />
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-emerald-200/20 dark:bg-green-500/[0.05] rounded-full blur-3xl" />

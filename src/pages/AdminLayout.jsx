@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster } from 'sonner';
 import {
-    LayoutDashboard, Users, Leaf, AlertTriangle, Shield,
+    LayoutDashboard, Users, Leaf, AlertTriangle, Shield, BarChart3,
     ChevronLeft, ChevronRight, Menu, LogOut, Clock, User, ArrowLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,7 @@ const adminNavItems = [
     { name: 'Users', icon: Users, path: '/admin/users' },
     { name: 'Devices', icon: Leaf, path: '/admin/devices' },
     { name: 'Alerts', icon: AlertTriangle, path: '/admin/alerts' },
+    { name: 'Analytics', icon: BarChart3, path: '/admin/analytics' },
 ];
 
 export default function AdminLayout({ children }) {
@@ -49,7 +50,7 @@ export default function AdminLayout({ children }) {
 
     const isActive = (item) => item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
 
-    const breadcrumbMap = { '/admin': 'Overview', '/admin/users': 'Users', '/admin/devices': 'Devices', '/admin/alerts': 'Alerts' };
+    const breadcrumbMap = { '/admin': 'Overview', '/admin/users': 'Users', '/admin/devices': 'Devices', '/admin/alerts': 'Alerts', '/admin/analytics': 'Analytics' };
     const currentSection = breadcrumbMap[location.pathname] || 'Admin';
 
     return (
@@ -153,7 +154,7 @@ export default function AdminLayout({ children }) {
             </motion.aside>
 
             {/* Main content */}
-            <div className="min-h-screen flex flex-col">
+            <div>
                 {/* Top bar */}
                 <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#0F172A]/80 backdrop-blur-xl border-b border-slate-100 dark:border-white/[0.06]">
                     <div className="flex items-center justify-between px-4 lg:px-6 h-16">
@@ -227,7 +228,7 @@ export default function AdminLayout({ children }) {
                 <main className="flex-1 p-4 lg:p-6">{children}</main>
             </div>
 
-            <Toaster position="top-right" richColors />
+            <Toaster position="top-right" richColors closeButton />
         </div>
     );
 }

@@ -3,6 +3,7 @@ import { verifyToken, isAdmin } from '../middleware/auth.js';
 import User from '../models/User.js';
 import Device from '../models/Device.js';
 import Alert from '../models/Alert.js';
+import SensorReading from '../models/SensorReading.js';
 import { getDatabase } from '../database/db.js';
 
 const router = express.Router();
@@ -332,6 +333,71 @@ router.delete('/alerts/:id', async (req, res, next) => {
         res.json({
             success: true,
             message: 'Alert deleted successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * GET /api/admin/analytics?period=week
+ * Analytics for all plants across all users
+ */
+router.get('/analytics', async (req, res, next) => {
+    try {
+        const { period = 'week' } = req.query;
+        const prisma = getDatabase();
+
+        let hours;
+        switch (period) {
+            case 'day':   hours = 24;   break;
+            case 'week':  hours = 168;  break;
+            case 'month': hours = 720;  break;
+            case 'year':  hours = 8760; break;
+            default:      hours = 168;
+        }
+
+        const devices = await prisma.device.findMany({
+            orderBy: { createdAt: 'desc' },
+            include: {
+                user: { select: { id: true, email: true, fullName: true } }
+            }
+        });
+
+        const deviceAnalytics = await Promise.all(
+            devices.map(async (device) => {
+                const rawStats = await SensorReading.getStats(device.id, hours);
+                return {
+                    device: {
+                        id: device.id,
+                        plantName: device.plantName,
+                        plantSpecies: device.plantSpecies,
+                        location: device.location,
+                        isOnline: device.isOnline,
+                    },
+                    user: {
+                        id: device.user.id,
+                        email: device.user.email,
+                        fullName: device.user.fullName,
+                    },
+                    stats: rawStats ? {
+                        avgTemperature: rawStats.avg_temperature,
+                        avgHumidity:    rawStats.avg_air_humidity,
+                        avgMoisture:    rawStats.avg_soil_moisture,
+                        avgLight:       rawStats.avg_light,
+                        minTemperature: rawStats.min_temperature,
+                        maxTemperature: rawStats.max_temperature,
+                        minMoisture:    rawStats.min_soil_moisture,
+                        maxMoisture:    rawStats.max_soil_moisture,
+                        count:          rawStats.count,
+                    } : null
+                };
+            })
+        );
+
+        res.json({
+            success: true,
+            data: { deviceAnalytics, period, totalDevices: devices.length }
         });
     } catch (error) {
         next(error);

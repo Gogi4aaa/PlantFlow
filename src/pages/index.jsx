@@ -11,6 +11,7 @@ import AdminDashboard from "./AdminDashboard";
 import AdminUsers from "./AdminUsers";
 import AdminDevices from "./AdminDevices";
 import AdminAlerts from "./AdminAlerts";
+import AdminAnalytics from "./AdminAnalytics";
 import AdminRoute from "@/components/auth/AdminRoute";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -48,6 +49,11 @@ export default function Pages() {
         <Route path="/admin/alerts" element={
           <AdminRoute>
             <AdminLayout><AdminAlerts /></AdminLayout>
+          </AdminRoute>
+        } />
+        <Route path="/admin/analytics" element={
+          <AdminRoute>
+            <AdminLayout><AdminAnalytics /></AdminLayout>
           </AdminRoute>
         } />
       </Routes>

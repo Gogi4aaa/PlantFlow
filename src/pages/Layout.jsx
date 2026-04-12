@@ -46,14 +46,14 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/40 dark:bg-[#0F172A]">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      <div className="flex-1 min-h-screen flex flex-col lg:ml-[280px]">
+      <div>
         <TopBar onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
           {children}
         </main>
       </div>
 
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-right" richColors closeButton />
     </div>
   );
 }
