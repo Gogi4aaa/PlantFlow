@@ -71,14 +71,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </div>
             <div>
               <h1 className="font-bold text-slate-800 dark:text-white text-lg tracking-tight">PlantFlow</h1>
-              <p className="text-xs text-slate-400 dark:text-slate-500">{t('common.appSubtitle')}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-400">{t('common.appSubtitle')}</p>
             </div>
           </Link>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 mb-3">
+          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-widest px-3 mb-3">
             {t('dashboard.nav.section', 'My Garden')}
           </p>
           {navItems.map((item) => {
@@ -97,7 +97,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               >
                 <item.icon className={cn(
                   'w-5 h-5 flex-shrink-0 transition-colors',
-                  active ? 'text-emerald-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-slate-300'
+                  active ? 'text-emerald-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-slate-300'
                 )} />
                 <span className="font-medium text-sm">{item.name}</span>
                 {active && <motion.div layoutId="activeIndicator" className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-green-400" />}
@@ -108,7 +108,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           {user?.role === 'ADMIN' && (
             <>
               <div className="my-4 border-t border-slate-100 dark:border-white/[0.06]" />
-              <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 mb-3">
+              <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-widest px-3 mb-3">
                 {t('admin.nav.section', 'Administration')}
               </p>
               {adminNavItems.map((item) => {
@@ -127,7 +127,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   >
                     <item.icon className={cn(
                       'w-5 h-5 flex-shrink-0 transition-colors',
-                      active ? 'text-emerald-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-slate-300'
+                      active ? 'text-emerald-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-slate-300'
                     )} />
                     <span className="font-medium text-sm">{item.name}</span>
                     {active && <motion.div layoutId="activeIndicatorAdmin" className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-green-400" />}
@@ -153,13 +153,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{user?.full_name || 'User'}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-500 truncate">{user?.email || ''}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email || ''}</p>
               </div>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 group text-sm cursor-pointer"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 group text-sm cursor-pointer"
           >
             <LogOut className="w-4 h-4 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors" />
             <span className="font-medium">{t('dashboard.nav.logout', 'Sign Out')}</span>

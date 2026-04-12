@@ -146,7 +146,7 @@ export default function Profile() {
         <div className="max-w-2xl mx-auto p-6 space-y-6">
             <button
                 onClick={() => navigate('/dashboard')}
-                className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
+                className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
             >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                 Back to Dashboard
@@ -202,7 +202,7 @@ export default function Profile() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Profile Photo</p>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Click the photo to upload a new one</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-400 mt-0.5">Click the photo to upload a new one</p>
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
@@ -217,7 +217,7 @@ export default function Profile() {
                             <div className="space-y-2">
                                 <Label htmlFor="fullName" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.fullName')}</Label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
                                     <Input
                                         id="fullName"
                                         value={formData.full_name}
@@ -232,7 +232,7 @@ export default function Profile() {
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.email')}</Label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
                                     <Input
                                         id="email"
                                         type="email"
@@ -251,7 +251,7 @@ export default function Profile() {
                                     <div className="space-y-2">
                                         <Label htmlFor="newPassword" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.newPassword')}</Label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
                                             <Input
                                                 id="newPassword"
                                                 type={showPassword ? 'text' : 'password'}
@@ -263,7 +263,7 @@ export default function Profile() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
                                             >
                                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
@@ -278,7 +278,7 @@ export default function Profile() {
                                         >
                                             <Label htmlFor="confirmPassword" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.confirmNewPassword')}</Label>
                                             <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
                                                 <Input
                                                     id="confirmPassword"
                                                     type="password"

@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Shield, Smartphone, Zap, Sprout, Wifi, Activity, Leaf } from 'lucide-react';
+import { ArrowRight, Check, Shield, Smartphone, Zap, Sprout, Wifi, Activity, Leaf, Mail, Code2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
 import heroBg from '../assets/station_in_field.png';
 import productShot from '../assets/product_sensor_closeup.png';
+import creatorPhoto from '../assets/creator.png';
 
 export default function LandingPage() {
     const { t } = useTranslation();
     return (
-        <div className="min-h-screen bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 font-sans">
+        <div className="min-h-screen bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 font-sans scroll-smooth">
 
             {/* Navigation */}
             <nav className="fixed w-full z-50 bg-white/80 dark:bg-[#0F172A]/80 backdrop-blur-xl border-b border-slate-100 dark:border-white/[0.06]">
@@ -22,8 +23,10 @@ export default function LandingPage() {
                             <span className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">PlantFlow</span>
                         </div>
                         <div className="hidden md:flex items-center gap-8">
+                            <a href="#product" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.product')}</a>
                             <a href="#features" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.features')}</a>
                             <a href="#testimonials" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.testimonials')}</a>
+                            <a href="#about" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.about')}</a>
                         </div>
                         <div className="flex items-center gap-3">
                             <ThemeToggle />
@@ -89,9 +92,9 @@ export default function LandingPage() {
                     {/* Stats row */}
                     <div className="flex flex-wrap justify-center gap-8 mt-16">
                         {[
-                            { icon: Wifi, value: '99.9%', label: 'Uptime' },
-                            { icon: Activity, value: '<5s', label: 'Real-time latency' },
-                            { icon: Sprout, value: '500+', label: 'Plants monitored' },
+                            { icon: Wifi, value: '99.9%', label: t('landing.hero.stats.uptime') },
+                            { icon: Activity, value: '<5s', label: t('landing.hero.stats.latency') },
+                            { icon: Sprout, value: '500+', label: t('landing.hero.stats.plants') },
                         ].map((stat, i) => (
                             <div key={i} className="flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-emerald-50 dark:bg-green-500/10 border border-emerald-100 dark:border-green-500/20">
@@ -99,7 +102,7 @@ export default function LandingPage() {
                                 </div>
                                 <div className="text-left">
                                     <p className="text-slate-900 dark:text-white font-bold text-lg leading-none">{stat.value}</p>
-                                    <p className="text-slate-500 dark:text-slate-500 text-xs mt-0.5">{stat.label}</p>
+                                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{stat.label}</p>
                                 </div>
                             </div>
                         ))}
@@ -124,7 +127,7 @@ export default function LandingPage() {
                         <div className="order-1 lg:order-2">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-green-500/10 border border-emerald-100 dark:border-green-500/20 text-emerald-700 dark:text-green-400 text-sm font-medium mb-6">
                                 <Leaf className="w-3.5 h-3.5" />
-                                Smart Sensor Hardware
+                                {t('landing.product.badge')}
                             </div>
                             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-slate-900 dark:text-white leading-tight">
                                 {t('landing.product.title')}
@@ -204,11 +207,80 @@ export default function LandingPage() {
                                     </div>
                                     <div>
                                         <p className="font-semibold text-white text-sm">{t(`landing.testimonials.${index}.author`)}</p>
-                                        <p className="text-emerald-300 dark:text-slate-500 text-xs">{t(`landing.testimonials.${index}.role`)}</p>
+                                        <p className="text-emerald-300 dark:text-slate-400 text-xs">{t(`landing.testimonials.${index}.role`)}</p>
                                     </div>
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* About / Creator */}
+            <section id="about" className="py-24 bg-white dark:bg-[#0F172A]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-green-500/10 border border-emerald-100 dark:border-green-500/20 text-emerald-700 dark:text-green-400 text-sm font-medium mb-6">
+                            <Code2 className="w-3.5 h-3.5" />
+                            {t('landing.about.badge')}
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">{t('landing.about.title')}</h2>
+                    </div>
+
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-slate-50 dark:bg-[#1E293B]/60 rounded-3xl border border-slate-100 dark:border-white/[0.07] p-8 md:p-12">
+                            <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
+                                {/* Photo */}
+                                <div className="flex-shrink-0">
+                                    <div className="relative">
+                                        <div className="absolute -inset-3 bg-gradient-to-br from-green-500/30 to-emerald-600/20 rounded-2xl blur-2xl" />
+                                        <div className="relative w-48 md:w-56 rounded-2xl overflow-hidden shadow-2xl shadow-green-500/10 ring-1 ring-white/[0.08]">
+                                            <img
+                                                src={creatorPhoto}
+                                                alt={t('landing.about.name')}
+                                                className="w-full h-full object-cover object-top"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex-1 text-center md:text-left">
+                                    <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                                        {t('landing.about.name')}
+                                    </h3>
+                                    <p className="text-emerald-600 dark:text-green-400 font-semibold text-sm mb-5">
+                                        {t('landing.about.role')}
+                                    </p>
+                                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6 text-sm md:text-base">
+                                        {t('landing.about.bio')}
+                                    </p>
+                                    <p className="text-slate-500 dark:text-slate-400 text-xs italic mb-8">
+                                        "{t('landing.about.tagline')}"
+                                    </p>
+
+                                    {/* Tech badges */}
+                                    <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-8">
+                                        {['React', 'Node.js', 'Arduino', 'Socket.io', 'PostgreSQL', 'Tailwind CSS'].map((tech) => (
+                                            <span key={tech} className="px-3 py-1 rounded-full bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 text-xs font-medium">
+                                                {tech}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Action buttons */}
+                                    <div className="flex flex-wrap justify-center md:justify-start gap-3">
+                                        <a
+                                            href="mailto:georgidimitrovvv07@gmail.com"
+                                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 dark:bg-green-500 hover:bg-emerald-700 dark:hover:bg-green-400 text-white rounded-lg font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20 dark:shadow-green-500/20"
+                                        >
+                                            <Mail className="w-4 h-4" />
+                                            {t('landing.about.contact')}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

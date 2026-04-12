@@ -55,7 +55,7 @@ function SensorTile({ sensor, reading, hasData }) {
     <div className={`${c.bg} rounded-lg p-2.5 flex flex-col h-full border border-black/[0.04] dark:border-white/[0.04]`}>
       <div className="flex items-center justify-between mb-1.5">
         <Icon className={`w-3 h-3 ${c.icon} flex-shrink-0`} />
-        <span className={`text-[10px] font-bold ${hasData ? c.text : 'text-slate-300 dark:text-slate-600'} truncate ml-1 text-right`}>
+        <span className={`text-[10px] font-bold ${hasData ? c.text : 'text-slate-300 dark:text-slate-400'} truncate ml-1 text-right`}>
           {hasData ? `${value}${sensor.unit}` : '—'}
         </span>
       </div>
@@ -64,7 +64,7 @@ function SensorTile({ sensor, reading, hasData }) {
           <div className={`h-full rounded-full ${c.bar} transition-all duration-700`} style={{ width: `${pct}%` }} />
         )}
       </div>
-      <p className="text-[9px] text-slate-400 dark:text-slate-600 leading-none mt-auto">{sensor.label}</p>
+      <p className="text-[9px] text-slate-400 dark:text-slate-400 leading-none mt-auto">{sensor.label}</p>
     </div>
   );
 }
@@ -219,17 +219,17 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-xl font-bold text-white dark:text-white leading-none">{devices.length}</p>
-              <p className="text-xs text-emerald-100 dark:text-slate-500 mt-0.5">{t('dashboard.stats.totalPlants')}</p>
+              <p className="text-xs text-emerald-100 dark:text-slate-400 mt-0.5">{t('dashboard.stats.totalPlants')}</p>
             </div>
           </div>
 
           <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${liveCount > 0 ? 'bg-gradient-to-br from-blue-500 to-indigo-600 dark:bg-blue-500/10 border-transparent dark:border-blue-500/20 shadow-lg shadow-blue-200 dark:shadow-none' : 'bg-white dark:bg-white/[0.04] border-slate-100 dark:border-white/[0.07]'}`}>
             <div className={`p-2 rounded-lg ${liveCount > 0 ? 'bg-white/20 dark:bg-blue-500/10' : 'bg-slate-100 dark:bg-white/[0.05]'}`}>
-              <Radio className={`w-4 h-4 ${liveCount > 0 ? 'text-white dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'}`} />
+              <Radio className={`w-4 h-4 ${liveCount > 0 ? 'text-white dark:text-blue-400' : 'text-slate-400 dark:text-slate-400'}`} />
             </div>
             <div>
-              <p className={`text-xl font-bold leading-none ${liveCount > 0 ? 'text-white' : 'text-slate-400 dark:text-slate-600'}`}>{liveCount}</p>
-              <p className={`text-xs mt-0.5 ${liveCount > 0 ? 'text-blue-100 dark:text-slate-400' : 'text-slate-400 dark:text-slate-600'}`}>{t('dashboard.stats.liveNow')}</p>
+              <p className={`text-xl font-bold leading-none ${liveCount > 0 ? 'text-white' : 'text-slate-400 dark:text-slate-400'}`}>{liveCount}</p>
+              <p className={`text-xs mt-0.5 ${liveCount > 0 ? 'text-blue-100 dark:text-slate-400' : 'text-slate-400 dark:text-slate-400'}`}>{t('dashboard.stats.liveNow')}</p>
             </div>
           </div>
 
@@ -242,7 +242,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <p className="text-xl font-bold text-white leading-none">{offlineCount}</p>
-                  <p className="text-xs text-amber-100 dark:text-slate-500 mt-0.5">{t('dashboard.stats.noDataYet')}</p>
+                  <p className="text-xs text-amber-100 dark:text-slate-400 mt-0.5">{t('dashboard.stats.noDataYet')}</p>
                 </div>
               </div>
             ) : null;

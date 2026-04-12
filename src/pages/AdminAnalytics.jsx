@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 const PERIOD_VALUES = ['day', 'week', 'month', 'year'];
 
 function StatCell({ value, unit, noData = '—' }) {
-    if (value == null) return <span className="text-slate-400 dark:text-slate-500 text-xs">{noData}</span>;
+    if (value == null) return <span className="text-slate-400 dark:text-slate-400 text-xs">{noData}</span>;
     return (
         <div>
             <span className="font-semibold text-slate-800 dark:text-white">
@@ -243,7 +243,7 @@ export default function AdminAnalytics() {
                 </div>
             ) : !data?.deviceAnalytics?.length ? (
                 <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
-                    <CardContent className="p-12 text-center text-slate-400 dark:text-slate-500">
+                    <CardContent className="p-12 text-center text-slate-400 dark:text-slate-400">
                         {t('admin.analytics.noData')}
                     </CardContent>
                 </Card>
@@ -296,7 +296,7 @@ export default function AdminAnalytics() {
                                                             {item.device.plantName || 'Unnamed Plant'}
                                                         </p>
                                                         {item.device.plantSpecies && (
-                                                            <p className="text-xs text-slate-400 dark:text-slate-500 italic">{item.device.plantSpecies}</p>
+                                                            <p className="text-xs text-slate-400 dark:text-slate-400 italic">{item.device.plantSpecies}</p>
                                                         )}
                                                     </div>
                                                 </div>
@@ -304,7 +304,7 @@ export default function AdminAnalytics() {
                                             {/* Owner */}
                                             <td className="px-4 py-3">
                                                 <p className="text-slate-700 dark:text-slate-300 font-medium text-sm">{item.user.fullName || '—'}</p>
-                                                <p className="text-xs text-slate-400 dark:text-slate-500">{item.user.email}</p>
+                                                <p className="text-xs text-slate-400 dark:text-slate-400">{item.user.email}</p>
                                             </td>
                                             {/* Location */}
                                             <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-sm">

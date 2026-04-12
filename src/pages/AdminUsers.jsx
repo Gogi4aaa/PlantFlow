@@ -93,7 +93,7 @@ export default function AdminUsers() {
             {/* Filters */}
             <div className="flex flex-col md:flex-row gap-3 p-4 rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none">
                 <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 w-4 h-4" />
                     <Input
                         placeholder={t('admin.users.searchPlaceholder')}
                         value={searchTerm}
@@ -111,7 +111,7 @@ export default function AdminUsers() {
                         <SelectItem value="ADMIN">{t('admin.users.filters.admins')}</SelectItem>
                     </SelectContent>
                 </Select>
-                <span className="hidden md:flex items-center text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">
+                <span className="hidden md:flex items-center text-sm text-slate-400 dark:text-slate-400 whitespace-nowrap">
                     {t('admin.users.totalCount', { count: totalUsers })}
                 </span>
             </div>
@@ -127,7 +127,7 @@ export default function AdminUsers() {
                         <div className="w-8 h-8 border-4 border-emerald-500 dark:border-green-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : users.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
+                    <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-400">
                         <Users className="w-12 h-12 mb-3 opacity-30" />
                         <p className="font-medium text-slate-600 dark:text-slate-400">{t('admin.users.noUsers')}</p>
                     </div>
@@ -136,12 +136,12 @@ export default function AdminUsers() {
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03]">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.users.table.name')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.users.table.email')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.users.table.role')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.users.table.devices')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.users.table.created')}</th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.users.table.actions')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.users.table.name')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.users.table.email')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.users.table.role')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.users.table.devices')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.users.table.created')}</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.users.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-white/[0.04]">
@@ -156,7 +156,7 @@ export default function AdminUsers() {
                                                         {initials}
                                                     </div>
                                                     <span className="font-medium text-slate-800 dark:text-slate-200">
-                                                        {user.fullName || <span className="text-slate-400 dark:text-slate-600 italic">{t('admin.users.noName')}</span>}
+                                                        {user.fullName || <span className="text-slate-400 dark:text-slate-400 italic">{t('admin.users.noName')}</span>}
                                                     </span>
                                                 </div>
                                             </td>
@@ -179,13 +179,13 @@ export default function AdminUsers() {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button onClick={() => setEditUser(user)} className="p-2 hover:bg-blue-100 dark:hover:bg-blue-500/10 rounded-lg transition-colors group cursor-pointer" title={t('admin.users.actions.edit')}>
-                                                        <Edit className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
+                                                        <Edit className="w-4 h-4 text-slate-400 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
                                                     </button>
                                                     <button onClick={() => setChangeRoleUser(user)} className="p-2 hover:bg-emerald-100 dark:hover:bg-green-500/10 rounded-lg transition-colors group cursor-pointer" title={t('admin.users.actions.changeRole')}>
-                                                        <Shield className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
+                                                        <Shield className="w-4 h-4 text-slate-400 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
                                                     </button>
                                                     <button onClick={() => setDeleteUser(user)} className="p-2 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer" title={t('admin.users.actions.delete')}>
-                                                        <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 dark:group-hover:text-red-400" />
+                                                        <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400" />
                                                     </button>
                                                 </div>
                                             </td>

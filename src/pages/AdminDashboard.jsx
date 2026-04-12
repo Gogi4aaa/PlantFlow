@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Users, Leaf, AlertTriangle, Activity, ArrowRight, Shield, Zap, CheckCircle2 } from 'lucide-react';
+import { Users, Leaf, AlertTriangle, Activity, ArrowRight, Shield, Zap, CheckCircle2, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { adminApi } from '@/api/admin';
@@ -72,9 +72,10 @@ export default function AdminDashboard() {
     const activeAlerts = liveAlertCount ?? stats.activeAlerts ?? 0;
 
     const quickLinks = [
-        { titleKey: 'admin.dashboard.links.users.title',   descKey: 'admin.dashboard.links.users.desc',   path: '/admin/users',   icon: Users,         border: 'border-blue-100 dark:border-blue-500/20',    hover: 'hover:bg-blue-50 dark:hover:bg-blue-500/5',    iconBg: 'bg-blue-100 dark:bg-blue-500/10',    iconColor: 'text-blue-500 dark:text-blue-400' },
-        { titleKey: 'admin.dashboard.links.devices.title', descKey: 'admin.dashboard.links.devices.desc', path: '/admin/devices', icon: Leaf,          border: 'border-emerald-100 dark:border-green-500/20', hover: 'hover:bg-emerald-50 dark:hover:bg-green-500/5', iconBg: 'bg-emerald-100 dark:bg-green-500/10', iconColor: 'text-emerald-600 dark:text-green-400' },
-        { titleKey: 'admin.dashboard.links.alerts.title',  descKey: 'admin.dashboard.links.alerts.desc',  path: '/admin/alerts',  icon: AlertTriangle, border: 'border-amber-100 dark:border-amber-500/20',   hover: 'hover:bg-amber-50 dark:hover:bg-amber-500/5',  iconBg: 'bg-amber-100 dark:bg-amber-500/10',  iconColor: 'text-amber-600 dark:text-amber-400' },
+        { titleKey: 'admin.dashboard.links.users.title',     descKey: 'admin.dashboard.links.users.desc',     path: '/admin/users',     icon: Users,         border: 'border-blue-100 dark:border-blue-500/20',      hover: 'hover:bg-blue-50 dark:hover:bg-blue-500/5',      iconBg: 'bg-blue-100 dark:bg-blue-500/10',      iconColor: 'text-blue-500 dark:text-blue-400' },
+        { titleKey: 'admin.dashboard.links.devices.title',   descKey: 'admin.dashboard.links.devices.desc',   path: '/admin/devices',   icon: Leaf,          border: 'border-emerald-100 dark:border-green-500/20',   hover: 'hover:bg-emerald-50 dark:hover:bg-green-500/5',   iconBg: 'bg-emerald-100 dark:bg-green-500/10',   iconColor: 'text-emerald-600 dark:text-green-400' },
+        { titleKey: 'admin.dashboard.links.alerts.title',    descKey: 'admin.dashboard.links.alerts.desc',    path: '/admin/alerts',    icon: AlertTriangle, border: 'border-amber-100 dark:border-amber-500/20',     hover: 'hover:bg-amber-50 dark:hover:bg-amber-500/5',     iconBg: 'bg-amber-100 dark:bg-amber-500/10',     iconColor: 'text-amber-600 dark:text-amber-400' },
+        { titleKey: 'admin.dashboard.links.analytics.title', descKey: 'admin.dashboard.links.analytics.desc', path: '/admin/analytics', icon: BarChart3,     border: 'border-purple-100 dark:border-purple-500/20',   hover: 'hover:bg-purple-50 dark:hover:bg-purple-500/5',   iconBg: 'bg-purple-100 dark:bg-purple-500/10',   iconColor: 'text-purple-600 dark:text-purple-400' },
     ];
 
     return (
@@ -103,7 +104,7 @@ export default function AdminDashboard() {
             {/* Quick Actions + This Week */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-4">
-                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('admin.dashboard.quickActions.title')}</h2>
+                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-widest">{t('admin.dashboard.quickActions.title')}</h2>
                     <div className="space-y-3">
                         {quickLinks.map((link, i) => (
                             <motion.div key={link.path} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.05 }}>
@@ -114,10 +115,10 @@ export default function AdminDashboard() {
                                         </div>
                                         <div>
                                             <p className="font-semibold text-slate-800 dark:text-slate-200">{t(link.titleKey)}</p>
-                                            <p className="text-sm text-slate-500 dark:text-slate-500">{t(link.descKey)}</p>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">{t(link.descKey)}</p>
                                         </div>
                                     </div>
-                                    <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 group-hover:translate-x-1 transition-all" />
+                                    <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-400 group-hover:translate-x-1 transition-all" />
                                 </Link>
                             </motion.div>
                         ))}
@@ -125,7 +126,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-4">
-                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('admin.dashboard.thisWeek')}</h2>
+                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-widest">{t('admin.dashboard.thisWeek')}</h2>
                     <div className="rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm p-5 space-y-3">
                         {[
                             { labelKey: 'admin.dashboard.recentActivity.newUsers',   subKey: 'admin.dashboard.recentActivity.lastWeek', value: stats.recentActivity?.newUsers ?? 0,   icon: Users, bg: 'bg-blue-50 dark:bg-blue-500/[0.08]',    border: 'border-blue-100 dark:border-blue-500/20',    ibg: 'bg-blue-100 dark:bg-blue-500/10',    icon2: 'text-blue-500 dark:text-blue-400',    vcolor: 'text-blue-600 dark:text-blue-400' },
@@ -138,7 +139,7 @@ export default function AdminDashboard() {
                                     </div>
                                     <div>
                                         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t(row.labelKey)}</p>
-                                        <p className="text-xs text-slate-400 dark:text-slate-500">{t(row.subKey)}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-400">{t(row.subKey)}</p>
                                     </div>
                                 </div>
                                 <span className={`text-xl font-bold ${row.vcolor}`}>{row.value}</span>
@@ -151,7 +152,7 @@ export default function AdminDashboard() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('admin.dashboard.uptime.label')}</p>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500">{t('admin.dashboard.uptime.sub')}</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-400">{t('admin.dashboard.uptime.sub')}</p>
                                 </div>
                             </div>
                             <span className="text-sm font-bold text-green-600 dark:text-emerald-400">{t('admin.dashboard.uptime.status')}</span>

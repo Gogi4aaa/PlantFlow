@@ -27,13 +27,26 @@ export default function SignIn() {
 
       if (response && (response.success || response.token)) {
         const token = response.token || (response.data && response.data.token);
-        const user = response.user || (response.data && response.data.user);
+        const basicUser = response.user || (response.data && response.data.user);
 
-        localStorage.setItem('plantpulse_user', JSON.stringify(user));
+        // Store token first so the /me request is authenticated
         localStorage.setItem('auth_token', token);
 
+        // Fetch full profile (includes profile_picture) after login
+        let fullUser = basicUser;
+        try {
+          const meResponse = await api.auth.me();
+          if (meResponse?.success && meResponse?.data) {
+            fullUser = { ...basicUser, ...meResponse.data };
+          }
+        } catch {
+          // Fall back to basic user data if /me fails
+        }
+
+        localStorage.setItem('plantpulse_user', JSON.stringify(fullUser));
+
         toast.success(t('auth.login.success'));
-        if (user.role === 'ADMIN') {
+        if (fullUser.role === 'ADMIN') {
           navigate('/admin');
         } else {
           navigate(createPageUrl('Dashboard'));
@@ -110,7 +123,7 @@ export default function SignIn() {
                   {t('auth.login.email')}
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
                   <Input
                     id="email"
                     type="email"
@@ -128,7 +141,7 @@ export default function SignIn() {
                   {t('auth.login.password')}
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -141,7 +154,7 @@ export default function SignIn() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -164,7 +177,7 @@ export default function SignIn() {
               </Button>
 
               <div className="text-center pt-4 border-t border-slate-100 dark:border-white/[0.06]">
-                <p className="text-sm text-slate-600 dark:text-slate-500">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   {t('auth.login.noAccount')}{' '}
                   <Link
                     to={createPageUrl('Register')}

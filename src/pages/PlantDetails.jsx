@@ -101,7 +101,7 @@ function SensorGaugeCard({ sensor, value, range, hasData, t }) {
   const displayValue = hasData && value != null ? sensor.displayFn(value) : '—';
 
   let statusLabel = t('plantDetails.gauge.noData');
-  let statusColor = 'text-slate-400 dark:text-slate-500';
+  let statusColor = 'text-slate-400 dark:text-slate-400';
   if (hasData && value != null && range) {
     if (value >= range.min && value <= range.max) { statusLabel = t('plantDetails.gauge.optimal'); statusColor = 'text-emerald-600 dark:text-green-400'; }
     else if (value < range.min) { statusLabel = t('plantDetails.gauge.tooLow'); statusColor = 'text-amber-600 dark:text-amber-400'; }
@@ -122,7 +122,7 @@ function SensorGaugeCard({ sensor, value, range, hasData, t }) {
           {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Icon className="w-4 h-4 mb-0.5" style={{ color: sensor.color }} />
-            <span className={`text-lg font-bold ${hasData ? 'text-slate-800 dark:text-white' : 'text-slate-300 dark:text-slate-600'}`}>
+            <span className={`text-lg font-bold ${hasData ? 'text-slate-800 dark:text-white' : 'text-slate-300 dark:text-slate-400'}`}>
               {displayValue}
             </span>
           </div>
@@ -133,7 +133,7 @@ function SensorGaugeCard({ sensor, value, range, hasData, t }) {
           <p className="font-semibold text-slate-700 dark:text-slate-300 text-sm">{sensor.label}</p>
           <p className={`text-xs mt-0.5 font-medium ${statusColor}`}>{statusLabel}</p>
           {range && (
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+            <p className="text-[10px] text-slate-400 dark:text-slate-400 mt-0.5">
               {t('plantDetails.gauge.optimalRange', { min: range.min, max: range.max, unit: sensor.unit })}
             </p>
           )}
@@ -148,11 +148,11 @@ function NoDataState({ message = 'No sensor data yet', sub = 'Readings will appe
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
       <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/[0.06] flex items-center justify-center">
-        <WifiOff className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+        <WifiOff className="w-8 h-8 text-slate-300 dark:text-slate-400" />
       </div>
       <div>
         <p className="font-semibold text-slate-600 dark:text-slate-400">{message}</p>
-        <p className="text-sm text-slate-400 dark:text-slate-500 mt-1 max-w-xs">{sub}</p>
+        <p className="text-sm text-slate-400 dark:text-slate-400 mt-1 max-w-xs">{sub}</p>
       </div>
     </div>
   );
@@ -375,7 +375,7 @@ export default function PlantDetails() {
       {/* ── Back button ── */}
       <button
         onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/dashboard')}
-        className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
+        className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
         {t('plantDetails.back')}
@@ -486,7 +486,7 @@ export default function PlantDetails() {
 
           {/* Last reading time */}
           {hasData && plant.currentReadings?.timestamp && (
-            <p className="text-xs text-slate-400 dark:text-slate-500 text-center flex items-center justify-center gap-1.5">
+            <p className="text-xs text-slate-400 dark:text-slate-400 text-center flex items-center justify-center gap-1.5">
               <Clock className="w-3 h-3" />
               {t('plantDetails.lastReading', { time: new Date(plant.currentReadings.timestamp).toLocaleTimeString() })}
             </p>

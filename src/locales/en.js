@@ -36,6 +36,8 @@ export const en = {
                 howItWorks: 'How it Works',
                 pricing: 'Pricing',
                 testimonials: 'Testimonials',
+                product: 'Product',
+                about: 'About',
                 login: 'Login',
                 getStarted: 'Get Started',
             },
@@ -45,6 +47,11 @@ export const en = {
                 earlyAccess: 'Now available in Early Access',
                 cta: 'Start Free Trial',
                 learnMore: 'See How It Works',
+                stats: {
+                    uptime: 'Uptime',
+                    latency: 'Real-time latency',
+                    plants: 'Plants monitored',
+                },
             },
             features: {
                 title: 'Why Choose PlantFlow?',
@@ -63,6 +70,7 @@ export const en = {
                 },
             },
             product: {
+                badge: 'Smart Sensor Hardware',
                 title: 'The Brain Behind the Bloom',
                 description: 'Connect your plants to the digital world with our precision sensors. Measure soil moisture, light levels, temperature, and humidity with lab-grade accuracy.',
                 list: {
@@ -130,6 +138,16 @@ export const en = {
                     },
                     cta: 'Contact Us'
                 }
+            },
+            about: {
+                badge: 'The Creator',
+                title: 'Built with passion for plants & technology',
+                name: 'Georgi Atanasov',
+                role: 'Full-Stack Developer & IoT Engineer',
+                bio: 'PlantFlow was born from watching the houseplants at home die simply because we forget about them. I decided there had to be a smarter way to prevent that from happening. My passion for programming and my desire to automate processes were the foundation that pushed me to build something that could change this situation. That’s how the idea came to life, something that truly connects the physical world with the digital one. I started from designing Arduino-based sensors that monitor the condition of the plants, all the way to building the architecture of the cloud backend. Every part of PlantFlow has been carefully thought out and built with attention, not just to work, but to be meaningful and useful.',
+                contact: 'Get in Touch',
+                github: 'GitHub',
+                tagline: 'From the soil to the cloud.',
             },
             cta: {
                 title: 'Ready to Transform Your Garden?',
@@ -393,6 +411,7 @@ export const en = {
                     users: { title: 'User Management', desc: 'View and manage all registered users' },
                     devices: { title: 'Device Management', desc: 'Oversee all plant monitoring devices' },
                     alerts: { title: 'Alert Management', desc: 'Monitor and resolve system alerts' },
+                    analytics: { title: 'Plant Analytics', desc: 'Aggregate sensor data across all plants and users' },
                 },
                 recentActivity: {
                     title: 'Recent Activity (7 Days)',

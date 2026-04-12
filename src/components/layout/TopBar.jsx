@@ -106,13 +106,13 @@ export default function TopBar({ onMenuClick }) {
                 <React.Fragment key={crumb.path}>
                   {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />}
                   {isLast || !crumb.linkable ? (
-                    <span className={isLast ? 'font-semibold text-slate-800 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'}>
+                    <span className={isLast ? 'font-semibold text-slate-800 dark:text-slate-200' : 'text-slate-400 dark:text-slate-400'}>
                       {crumb.label}
                     </span>
                   ) : (
                     <Link
                       to={crumb.path}
-                      className="text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors"
+                      className="text-slate-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors"
                     >
                       {crumb.label}
                     </Link>
@@ -136,7 +136,7 @@ export default function TopBar({ onMenuClick }) {
         {/* Right */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-end">
           {/* Clock */}
-          <div className="hidden md:flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500">
+          <div className="hidden md:flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-400">
             <Clock className="w-3.5 h-3.5" />
             <span className="font-mono">
               {currentTime.toLocaleTimeString(i18n.language, {
@@ -191,7 +191,7 @@ export default function TopBar({ onMenuClick }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-slate-800 dark:text-slate-100">{user?.full_name || 'User'}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-500">{user?.email || ''}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email || ''}</p>
                   </div>
                   {user?.role === 'ADMIN' && (
                     <span className="px-2 py-1 bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 text-[10px] font-bold rounded border border-transparent dark:border-green-500/20 uppercase">

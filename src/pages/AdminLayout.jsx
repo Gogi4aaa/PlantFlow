@@ -38,8 +38,13 @@ export default function AdminLayout({ children }) {
     }, []);
 
     useEffect(() => {
-        const userStr = localStorage.getItem('plantpulse_user');
-        if (userStr) { try { setUser(JSON.parse(userStr)); } catch { } }
+        const loadUser = () => {
+            const userStr = localStorage.getItem('plantpulse_user');
+            if (userStr) { try { setUser(JSON.parse(userStr)); } catch { } }
+        };
+        loadUser();
+        window.addEventListener('plantflow:profileUpdate', loadUser);
+        return () => window.removeEventListener('plantflow:profileUpdate', loadUser);
     }, []);
 
     const handleLogout = () => {
@@ -90,7 +95,7 @@ export default function AdminLayout({ children }) {
                         </div>
                         <div>
                             <h1 className="font-bold text-slate-800 dark:text-white text-base tracking-tight">{t('admin.layout.brand')}</h1>
-                            <p className="text-xs text-slate-400 dark:text-slate-500">{t('admin.layout.brandSub')}</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-400">{t('admin.layout.brandSub')}</p>
                         </div>
                     </div>
                 </div>
@@ -109,7 +114,7 @@ export default function AdminLayout({ children }) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{user?.full_name || user?.fullName || t('admin.layout.brand')}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-500 truncate">{user?.email || ''}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email || ''}</p>
                         </div>
                         <span className="px-1.5 py-0.5 bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 text-[10px] font-bold rounded border border-transparent dark:border-green-500/20 uppercase tracking-wider">
                             {t('admin.layout.adminLabel')}
@@ -119,7 +124,7 @@ export default function AdminLayout({ children }) {
 
                 {/* Navigation */}
                 <nav className="flex-1 p-4 space-y-1 mt-2">
-                    <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-widest px-3 mb-3">{t('admin.layout.management')}</p>
+                    <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-widest px-3 mb-3">{t('admin.layout.management')}</p>
                     {adminNavItems.map((item) => {
                         const active = isActive(item);
                         return (
@@ -134,7 +139,7 @@ export default function AdminLayout({ children }) {
                                         : 'text-slate-600 dark:text-slate-400 hover:bg-emerald-50/50 dark:hover:bg-white/[0.05] hover:text-slate-800 dark:hover:text-slate-200'
                                 )}
                             >
-                                <item.icon className={cn('w-5 h-5 flex-shrink-0 transition-colors', active ? 'text-emerald-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-600 group-hover:text-emerald-600 dark:group-hover:text-slate-300')} />
+                                <item.icon className={cn('w-5 h-5 flex-shrink-0 transition-colors', active ? 'text-emerald-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-slate-300')} />
                                 <span className="font-medium text-sm">{t(item.nameKey)}</span>
                                 {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-green-400" />}
                             </Link>
@@ -144,11 +149,11 @@ export default function AdminLayout({ children }) {
 
                 {/* Footer */}
                 <div className="p-4 border-t border-slate-100 dark:border-white/[0.06] space-y-1">
-                    <Link to="/dashboard" className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-white/[0.05] hover:text-slate-700 dark:hover:text-slate-300 transition-all duration-200 group text-sm cursor-pointer">
+                    <Link to="/dashboard" className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05] hover:text-slate-700 dark:hover:text-slate-300 transition-all duration-200 group text-sm cursor-pointer">
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                         <span className="font-medium">{t('admin.layout.backToDashboard')}</span>
                     </Link>
-                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 group text-sm cursor-pointer">
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 group text-sm cursor-pointer">
                         <LogOut className="w-4 h-4 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors" />
                         <span className="font-medium">{t('admin.layout.signOut')}</span>
                     </button>
@@ -169,7 +174,7 @@ export default function AdminLayout({ children }) {
                                 <Menu className="w-5 h-5" />
                             </Button>
                             <nav className="hidden sm:flex items-center gap-1.5 text-sm">
-                                <Link to="/admin" className="text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors flex items-center gap-1">
+                                <Link to="/admin" className="text-slate-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors flex items-center gap-1">
                                     <Shield className="w-3.5 h-3.5" />
                                     {t('admin.layout.adminLabel')}
                                 </Link>
@@ -183,7 +188,7 @@ export default function AdminLayout({ children }) {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <div className="hidden md:flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500">
+                            <div className="hidden md:flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-400">
                                 <Clock className="w-3.5 h-3.5" />
                                 <span className="font-mono">
                                     {currentTime.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit', hour12: true })}
@@ -210,16 +215,13 @@ export default function AdminLayout({ children }) {
                                         <div className="flex items-center justify-between">
                                             <div>
                                                 <p className="font-semibold text-slate-800 dark:text-slate-100">{user?.full_name || 'Admin'}</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-500">{user?.email || ''}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email || ''}</p>
                                             </div>
                                             <span className="px-2 py-1 bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 text-[10px] font-bold rounded border border-transparent dark:border-green-500/20 uppercase">{t('admin.layout.adminLabel')}</span>
                                         </div>
                                     </div>
                                     <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-white/[0.05] focus:bg-slate-50 dark:focus:bg-white/[0.05]" onClick={() => navigate('/profile')}>
                                         <User className="w-4 h-4 mr-2" />{t('admin.layout.profile')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-white/[0.05] focus:bg-slate-50 dark:focus:bg-white/[0.05]" onClick={() => navigate('/dashboard')}>
-                                        <ArrowLeft className="w-4 h-4 mr-2" />{t('admin.layout.backToDashboard')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/[0.06]" />
                                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 focus:bg-red-50 dark:focus:bg-red-500/10">

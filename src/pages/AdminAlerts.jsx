@@ -94,7 +94,7 @@ export default function AdminAlerts() {
 
             {/* Filter */}
             <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none">
-                <Filter className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                <Filter className="w-4 h-4 text-slate-400 dark:text-slate-400" />
                 <Select value={statusFilter || 'ALL'} onValueChange={(v) => setStatusFilter(v === 'ALL' ? '' : v)}>
                     <SelectTrigger className="w-48 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
                         <SelectValue />
@@ -105,7 +105,7 @@ export default function AdminAlerts() {
                         <SelectItem value="resolved">{t('admin.alerts.filters.resolved')}</SelectItem>
                     </SelectContent>
                 </Select>
-                <span className="text-sm text-slate-400 dark:text-slate-500 ml-auto">{t('admin.alerts.totalCount', { count: totalAlerts })}</span>
+                <span className="text-sm text-slate-400 dark:text-slate-400 ml-auto">{t('admin.alerts.totalCount', { count: totalAlerts })}</span>
             </div>
 
             {/* Alerts Table */}
@@ -119,7 +119,7 @@ export default function AdminAlerts() {
                         <div className="w-8 h-8 border-4 border-emerald-500 dark:border-green-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : alerts.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
+                    <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-400">
                         <CheckCircle className="w-12 h-12 mb-3 text-emerald-400 dark:text-green-500/50" />
                         <p className="font-medium text-slate-600 dark:text-slate-400">{t('admin.alerts.noAlerts')}</p>
                         <p className="text-sm">{t('admin.alerts.systemSmooth')}</p>
@@ -129,13 +129,13 @@ export default function AdminAlerts() {
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03]">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.device')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.owner')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.type')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.message')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.status')}</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.created')}</th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.actions')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.device')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.owner')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.type')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.message')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.status')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.created')}</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t('admin.alerts.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-white/[0.04]">
@@ -183,7 +183,7 @@ export default function AdminAlerts() {
                                                         className="p-2 hover:bg-emerald-100 dark:hover:bg-green-500/10 rounded-lg transition-colors group cursor-pointer"
                                                         title={t('admin.alerts.actions.resolve')}
                                                     >
-                                                        <CheckCircle className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
+                                                        <CheckCircle className="w-4 h-4 text-slate-400 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
                                                     </button>
                                                 )}
                                                 <button
@@ -191,7 +191,7 @@ export default function AdminAlerts() {
                                                     className="p-2 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer"
                                                     title={t('admin.alerts.actions.delete')}
                                                 >
-                                                    <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 dark:group-hover:text-red-400" />
+                                                    <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400" />
                                                 </button>
                                             </div>
                                         </td>
