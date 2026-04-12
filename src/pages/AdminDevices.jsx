@@ -8,6 +8,7 @@ import {
     Dialog, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '@/api/admin';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
@@ -19,6 +20,7 @@ function isOnline(lastSeenAt) {
 }
 
 export default function AdminDevices() {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1);
@@ -39,9 +41,9 @@ export default function AdminDevices() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-devices'] });
             setDeleteDevice(null);
-            toast.success('Device deleted successfully');
+            toast.success(t('admin.devices.deleteSuccess'));
         },
-        onError: (e) => toast.error('Failed to delete device: ' + e.message)
+        onError: (e) => toast.error(t('admin.devices.deleteError') + ': ' + e.message)
     });
 
     return (
@@ -53,8 +55,8 @@ export default function AdminDevices() {
                         <Leaf className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Device Management</h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm">Manage all registered plant monitoring devices</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('admin.devices.title')}</h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">{t('admin.devices.subtitle')}</p>
                     </div>
                 </div>
             </motion.div>
@@ -64,21 +66,21 @@ export default function AdminDevices() {
                 <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
                     <Input
-                        placeholder="Search devices by name or ID..."
+                        placeholder={t('admin.devices.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
                         className="pl-10 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600"
                     />
                 </div>
                 <span className="hidden md:flex items-center text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">
-                    {totalDevices} devices total
+                    {t('admin.devices.totalCount', { count: totalDevices })}
                 </span>
             </div>
 
             {/* Devices Table */}
             <div className="rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.06]">
-                    <h2 className="font-semibold text-slate-800 dark:text-slate-200">All Devices ({totalDevices})</h2>
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200">{t('admin.devices.allCount', { count: totalDevices })}</h2>
                 </div>
 
                 {isLoading ? (
@@ -88,19 +90,19 @@ export default function AdminDevices() {
                 ) : devices.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
                         <Leaf className="w-12 h-12 mb-3 opacity-30" />
-                        <p className="font-medium text-slate-600 dark:text-slate-400">No devices found</p>
+                        <p className="font-medium text-slate-600 dark:text-slate-400">{t('admin.devices.noDevices')}</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03]">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Device</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Owner</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Location</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Status</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Last Seen</th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Actions</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.devices.table.device')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.devices.table.owner')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.devices.table.location')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.devices.table.status')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.devices.table.lastSeen')}</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.devices.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-white/[0.04]">
@@ -120,7 +122,7 @@ export default function AdminDevices() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">
-                                                {device.user?.fullName || device.user?.email || <span className="text-slate-400 dark:text-slate-600 italic">No owner</span>}
+                                                {device.user?.fullName || device.user?.email || <span className="text-slate-400 dark:text-slate-600 italic">{t('admin.devices.noOwner')}</span>}
                                             </td>
                                             <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">
                                                 {device.location || <span className="text-slate-300 dark:text-slate-600">—</span>}
@@ -129,19 +131,19 @@ export default function AdminDevices() {
                                                 {online ? (
                                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 border border-emerald-200 dark:border-green-500/20">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-green-400" />
-                                                        Online
+                                                        {t('admin.devices.status.online')}
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/[0.08]">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
-                                                        Offline
+                                                        {t('admin.devices.status.offline')}
                                                     </span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm">
                                                 <div className="flex items-center gap-1.5">
                                                     <Clock className="w-3.5 h-3.5" />
-                                                    {device.lastSeenAt ? new Date(device.lastSeenAt).toLocaleString() : <span className="text-slate-400 dark:text-slate-600">Never</span>}
+                                                    {device.lastSeenAt ? new Date(device.lastSeenAt).toLocaleString() : <span className="text-slate-400 dark:text-slate-600">{t('admin.devices.never')}</span>}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -149,14 +151,14 @@ export default function AdminDevices() {
                                                     <Link
                                                         to={createPageUrl('plant-details') + `/${device.id}`}
                                                         className="p-2 hover:bg-emerald-100 dark:hover:bg-green-500/10 rounded-lg transition-colors group"
-                                                        title="View Details"
+                                                        title={t('admin.devices.actions.view')}
                                                     >
                                                         <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
                                                     </Link>
                                                     <button
                                                         onClick={() => setDeleteDevice(device)}
                                                         className="p-2 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer"
-                                                        title="Delete Device"
+                                                        title={t('admin.devices.actions.delete')}
                                                     >
                                                         <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 dark:group-hover:text-red-400" />
                                                     </button>
@@ -177,7 +179,7 @@ export default function AdminDevices() {
                             className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
-                        <span className="text-sm text-slate-500 dark:text-slate-400">Page {page} of {totalPages}</span>
+                        <span className="text-sm text-slate-500 dark:text-slate-400">{t('admin.devices.page', { current: page, total: totalPages })}</span>
                         <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
                             className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                             <ChevronRight className="w-4 h-4" />
@@ -190,16 +192,16 @@ export default function AdminDevices() {
             <Dialog open={!!deleteDevice} onOpenChange={() => setDeleteDevice(null)}>
                 <DialogContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08]">
                     <DialogHeader>
-                        <DialogTitle className="text-red-600 dark:text-red-400">Delete Device</DialogTitle>
+                        <DialogTitle className="text-red-600 dark:text-red-400">{t('admin.devices.deleteDialog.title')}</DialogTitle>
                         <DialogDescription className="text-slate-500 dark:text-slate-400">
-                            Are you sure you want to delete <strong>{deleteDevice?.plantName}</strong> ({deleteDevice?.id})? This will delete all associated sensor data and alerts.
+                            {t('admin.devices.deleteDialog.description', { name: deleteDevice?.plantName || 'Unnamed Plant', id: deleteDevice?.id })}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setDeleteDevice(null)}
-                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Cancel</Button>
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">{t('common.cancel')}</Button>
                         <Button variant="destructive" onClick={() => deleteMutation.mutate(deleteDevice.id)} disabled={deleteMutation.isPending}>
-                            {deleteMutation.isPending ? 'Deleting...' : 'Delete Device'}
+                            {deleteMutation.isPending ? t('admin.devices.deleting') : t('common.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

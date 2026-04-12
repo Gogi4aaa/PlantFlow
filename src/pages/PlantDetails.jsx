@@ -20,6 +20,7 @@ import {
   Cpu,
   X
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,11 +38,11 @@ const DEFAULT_RANGES = {
   light: { min: 5000, max: 15000 }
 };
 
-const SENSORS = [
-  { key: 'soil_moisture', label: 'Soil Moisture', icon: Droplets, color: '#3B82F6', bg: 'bg-blue-50', unit: '%', displayFn: v => `${Math.round(v)}%` },
-  { key: 'temperature', label: 'Temperature', icon: Thermometer, color: '#EF4444', bg: 'bg-red-50', unit: '°C', displayFn: v => `${v.toFixed(1)}°` },
-  { key: 'air_humidity', label: 'Air Humidity', icon: Wind, color: '#8B5CF6', bg: 'bg-purple-50', unit: '%', displayFn: v => `${Math.round(v)}%` },
-  { key: 'light', label: 'Light', icon: Sun, color: '#F59E0B', bg: 'bg-amber-50', unit: 'lux', displayFn: v => `${Math.round(v)} lux` },
+const SENSOR_DEFS = [
+  { key: 'soil_moisture', labelKey: 'plantDetails.sensors.soilMoisture', icon: Droplets, color: '#3B82F6', bg: 'bg-blue-50', unit: '%', displayFn: v => `${Math.round(v)}%` },
+  { key: 'temperature',   labelKey: 'plantDetails.sensors.temperature',  icon: Thermometer, color: '#EF4444', bg: 'bg-red-50', unit: '°C', displayFn: v => `${v.toFixed(1)}°` },
+  { key: 'air_humidity',  labelKey: 'plantDetails.sensors.airHumidity',  icon: Wind, color: '#8B5CF6', bg: 'bg-purple-50', unit: '%', displayFn: v => `${Math.round(v)}%` },
+  { key: 'light',         labelKey: 'plantDetails.sensors.light',        icon: Sun, color: '#F59E0B', bg: 'bg-amber-50', unit: 'lux', displayFn: v => `${Math.round(v)} lux` },
 ];
 
 // ── SVG Ring Gauge ────────────────────────────────────────────────────────────
@@ -95,16 +96,16 @@ function RingGauge({ value, range, color, size = 120 }) {
 }
 
 // ── Sensor Gauge Card ─────────────────────────────────────────────────────────
-function SensorGaugeCard({ sensor, value, range, hasData }) {
+function SensorGaugeCard({ sensor, value, range, hasData, t }) {
   const Icon = sensor.icon;
   const displayValue = hasData && value != null ? sensor.displayFn(value) : '—';
 
-  let statusLabel = 'No data';
+  let statusLabel = t('plantDetails.gauge.noData');
   let statusColor = 'text-slate-400 dark:text-slate-500';
   if (hasData && value != null && range) {
-    if (value >= range.min && value <= range.max) { statusLabel = 'Optimal'; statusColor = 'text-emerald-600 dark:text-green-400'; }
-    else if (value < range.min) { statusLabel = 'Too low'; statusColor = 'text-amber-600 dark:text-amber-400'; }
-    else { statusLabel = 'Too high'; statusColor = 'text-red-600 dark:text-red-400'; }
+    if (value >= range.min && value <= range.max) { statusLabel = t('plantDetails.gauge.optimal'); statusColor = 'text-emerald-600 dark:text-green-400'; }
+    else if (value < range.min) { statusLabel = t('plantDetails.gauge.tooLow'); statusColor = 'text-amber-600 dark:text-amber-400'; }
+    else { statusLabel = t('plantDetails.gauge.tooHigh'); statusColor = 'text-red-600 dark:text-red-400'; }
   }
 
   return (
@@ -133,7 +134,7 @@ function SensorGaugeCard({ sensor, value, range, hasData }) {
           <p className={`text-xs mt-0.5 font-medium ${statusColor}`}>{statusLabel}</p>
           {range && (
             <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-              Optimal: {range.min}–{range.max}{sensor.unit}
+              {t('plantDetails.gauge.optimalRange', { min: range.min, max: range.max, unit: sensor.unit })}
             </p>
           )}
         </div>
@@ -159,6 +160,7 @@ function NoDataState({ message = 'No sensor data yet', sub = 'Readings will appe
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function PlantDetails() {
+  const { t } = useTranslation();
   const [pumpOn, setPumpOn] = useState(false);
   const [deviceAlerts, setDeviceAlerts] = useState([]);
   const [isOnline, setIsOnline] = useState(false);
@@ -252,7 +254,7 @@ export default function PlantDetails() {
     const handleAlertResolved = (data) => {
       if (data.deviceId !== deviceId) return;
       setDeviceAlerts(prev => prev.filter(alert => alert.id !== data.alertId));
-      toast.success(`Alert resolved: ${data.code}`);
+      toast.success(t('plantDetails.alertResolved', { code: data.code }));
     };
 
     const handleDeviceStatus = (data) => {
@@ -288,9 +290,9 @@ export default function PlantDetails() {
     try {
       setPumpOn(newState);
       await api.devices.togglePump(deviceId, newState ? 'ON' : 'OFF');
-      toast.success(`Pump turned ${newState ? 'ON' : 'OFF'}`);
+      toast.success(newState ? t('plantDetails.pump.on') : t('plantDetails.pump.off'));
     } catch (err) {
-      toast.error('Failed to toggle pump');
+      toast.error(t('plantDetails.pump.error'));
       setPumpOn(!newState);
     }
   };
@@ -336,11 +338,11 @@ export default function PlantDetails() {
           <AlertTriangle className="w-8 h-8 text-red-500 dark:text-red-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Failed to load plant</h3>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">{error?.message || 'Connection error'}</p>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">{t('plantDetails.failedToLoad')}</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{error?.message || t('plantDetails.connectionError')}</p>
         </div>
         <Button onClick={() => navigate('/dashboard')} variant="outline"
-          className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Back to Plants</Button>
+          className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">{t('plantDetails.backToPlants')}</Button>
       </div>
     );
   }
@@ -354,16 +356,18 @@ export default function PlantDetails() {
           <AlertTriangle className="w-8 h-8 text-amber-500 dark:text-amber-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Plant not found</h3>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">This device may have been removed.</p>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">{t('plantDetails.notFound')}</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{t('plantDetails.notFoundSub')}</p>
         </div>
         <Button onClick={() => navigate('/dashboard')} variant="outline"
-          className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Back to Plants</Button>
+          className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">{t('plantDetails.backToPlants')}</Button>
       </div>
     );
   }
 
   const hasData = !!plant.currentReadings;
+
+  const SENSORS = SENSOR_DEFS.map(s => ({ ...s, label: t(s.labelKey) }));
 
   return (
     <div className="space-y-6 w-full mx-auto">
@@ -374,7 +378,7 @@ export default function PlantDetails() {
         className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-        Back
+        {t('plantDetails.back')}
       </button>
 
       {/* ── Hero Banner ── */}
@@ -401,17 +405,17 @@ export default function PlantDetails() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
               </span>
-              Online
+              {t('plantDetails.status.online')}
             </Badge>
           ) : (
             <Badge className="bg-slate-700/80 backdrop-blur-sm text-slate-300 border-0 gap-1.5">
               <WifiOff className="w-3 h-3" />
-              Offline
+              {t('plantDetails.status.offline')}
             </Badge>
           )}
           <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 gap-1">
             <Heart className="w-3 h-3 fill-emerald-400 text-emerald-400" />
-            Healthy
+            {t('plantDetails.status.healthy')}
           </Badge>
         </div>
 
@@ -426,7 +430,7 @@ export default function PlantDetails() {
               <MapPin className="w-3.5 h-3.5" /> {plant.location}
             </span>
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" /> Added {plant.addedDate}
+              <Calendar className="w-3.5 h-3.5" /> {t('plantDetails.addedDate', { date: plant.addedDate })}
             </span>
             <span className="flex items-center gap-1.5">
               <Cpu className="w-3.5 h-3.5" /> {plant.id}
@@ -439,10 +443,10 @@ export default function PlantDetails() {
       <Tabs defaultValue="readings" className="w-full">
         <TabsList className="bg-slate-100 dark:bg-white/[0.05] p-1 rounded-xl border-0">
           <TabsTrigger value="readings" className="rounded-lg gap-1.5 data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.08] data-[state=active]:text-slate-900 dark:data-[state=active]:text-white text-slate-600 dark:text-slate-400">
-            <Activity className="w-3.5 h-3.5" /> Live Readings
+            <Activity className="w-3.5 h-3.5" /> {t('plantDetails.tabs.readings')}
           </TabsTrigger>
           <TabsTrigger value="history" className="rounded-lg gap-1.5 data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.08] data-[state=active]:text-slate-900 dark:data-[state=active]:text-white text-slate-600 dark:text-slate-400">
-            <Clock className="w-3.5 h-3.5" /> History
+            <Clock className="w-3.5 h-3.5" /> {t('plantDetails.tabs.history')}
           </TabsTrigger>
         </TabsList>
 
@@ -464,6 +468,7 @@ export default function PlantDetails() {
                     value={plant.currentReadings?.[sensor.key]}
                     range={plant.optimalRanges[sensor.key]}
                     hasData={hasData}
+                    t={t}
                   />
                 </motion.div>
               ))}
@@ -472,8 +477,8 @@ export default function PlantDetails() {
             <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
               <CardContent className="p-0">
                 <NoDataState
-                  message="Waiting for sensor data"
-                  sub="Your device hasn't sent any readings yet. Make sure it's powered on and connected."
+                  message={t('plantDetails.noData.waiting')}
+                  sub={t('plantDetails.noData.waitingSub')}
                 />
               </CardContent>
             </Card>
@@ -483,7 +488,7 @@ export default function PlantDetails() {
           {hasData && plant.currentReadings?.timestamp && (
             <p className="text-xs text-slate-400 dark:text-slate-500 text-center flex items-center justify-center gap-1.5">
               <Clock className="w-3 h-3" />
-              Last reading: {new Date(plant.currentReadings.timestamp).toLocaleTimeString()}
+              {t('plantDetails.lastReading', { time: new Date(plant.currentReadings.timestamp).toLocaleTimeString() })}
             </p>
           )}
 
@@ -493,7 +498,7 @@ export default function PlantDetails() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 text-red-700 dark:text-red-400">
                   <AlertTriangle className="w-4 h-4" />
-                  Active Alerts ({deviceAlerts.length})
+                  {t('plantDetails.activeAlerts', { count: deviceAlerts.length })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
@@ -521,7 +526,7 @@ export default function PlantDetails() {
           <PumpControl
             isOn={pumpOn}
             onToggle={() => handlePumpToggle(!pumpOn)}
-            lastActivated="Unknown"
+            lastActivated={t('common.unknown')}
           />
         </TabsContent>
 
@@ -530,10 +535,10 @@ export default function PlantDetails() {
           {historyData.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {[
-                { key: 'soil_moisture', label: 'Moisture History (24h)', icon: Droplets, color: '#3B82F6', gradId: 'moistureH', unit: '%' },
-                { key: 'temperature', label: 'Temperature History (24h)', icon: Thermometer, color: '#EF4444', gradId: 'tempH', unit: '°C' },
-                { key: 'air_humidity', label: 'Humidity History (24h)', icon: Wind, color: '#8B5CF6', gradId: 'humidH', unit: '%' },
-                { key: 'light', label: 'Light History (24h)', icon: Sun, color: '#F59E0B', gradId: 'lightH', unit: ' lux' },
+                { key: 'soil_moisture', label: t('plantDetails.history.moisture'), icon: Droplets, color: '#3B82F6', gradId: 'moistureH', unit: '%' },
+                { key: 'temperature', label: t('plantDetails.history.temperature'), icon: Thermometer, color: '#EF4444', gradId: 'tempH', unit: '°C' },
+                { key: 'air_humidity', label: t('plantDetails.history.humidity'), icon: Wind, color: '#8B5CF6', gradId: 'humidH', unit: '%' },
+                { key: 'light', label: t('plantDetails.history.light'), icon: Sun, color: '#F59E0B', gradId: 'lightH', unit: ' lux' },
               ].map((chart, i) => {
                 const Icon = chart.icon;
                 return (
@@ -564,8 +569,8 @@ export default function PlantDetails() {
             <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
               <CardContent className="p-0">
                 <NoDataState
-                  message="No historical data yet"
-                  sub="Readings will appear here once your sensor starts sending data. Charts update every hour."
+                  message={t('plantDetails.noData.noHistory')}
+                  sub={t('plantDetails.noData.noHistorySub')}
                 />
               </CardContent>
             </Card>

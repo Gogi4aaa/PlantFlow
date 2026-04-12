@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Users, Leaf, AlertTriangle, Activity, ArrowRight, Shield, Zap, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '@/api/admin';
 import { useSocket } from '@/hooks/useSocket';
 
@@ -45,6 +46,7 @@ function StatCard({ title, value, icon: Icon, color, subtitle, isLoading, delay 
 }
 
 export default function AdminDashboard() {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const socketRef = useSocket();
     const [liveAlertCount, setLiveAlertCount] = useState(null);
@@ -70,9 +72,9 @@ export default function AdminDashboard() {
     const activeAlerts = liveAlertCount ?? stats.activeAlerts ?? 0;
 
     const quickLinks = [
-        { title: 'User Management',   desc: 'View and manage all registered users',       path: '/admin/users',   icon: Users,         border: 'border-blue-100 dark:border-blue-500/20',    hover: 'hover:bg-blue-50 dark:hover:bg-blue-500/5',    iconBg: 'bg-blue-100 dark:bg-blue-500/10',    iconColor: 'text-blue-500 dark:text-blue-400' },
-        { title: 'Device Management', desc: 'Oversee all plant monitoring devices',       path: '/admin/devices', icon: Leaf,          border: 'border-emerald-100 dark:border-green-500/20', hover: 'hover:bg-emerald-50 dark:hover:bg-green-500/5', iconBg: 'bg-emerald-100 dark:bg-green-500/10', iconColor: 'text-emerald-600 dark:text-green-400' },
-        { title: 'Alert Management',  desc: 'Monitor and resolve system alerts',          path: '/admin/alerts',  icon: AlertTriangle, border: 'border-amber-100 dark:border-amber-500/20',   hover: 'hover:bg-amber-50 dark:hover:bg-amber-500/5',  iconBg: 'bg-amber-100 dark:bg-amber-500/10',  iconColor: 'text-amber-600 dark:text-amber-400' },
+        { titleKey: 'admin.dashboard.links.users.title',   descKey: 'admin.dashboard.links.users.desc',   path: '/admin/users',   icon: Users,         border: 'border-blue-100 dark:border-blue-500/20',    hover: 'hover:bg-blue-50 dark:hover:bg-blue-500/5',    iconBg: 'bg-blue-100 dark:bg-blue-500/10',    iconColor: 'text-blue-500 dark:text-blue-400' },
+        { titleKey: 'admin.dashboard.links.devices.title', descKey: 'admin.dashboard.links.devices.desc', path: '/admin/devices', icon: Leaf,          border: 'border-emerald-100 dark:border-green-500/20', hover: 'hover:bg-emerald-50 dark:hover:bg-green-500/5', iconBg: 'bg-emerald-100 dark:bg-green-500/10', iconColor: 'text-emerald-600 dark:text-green-400' },
+        { titleKey: 'admin.dashboard.links.alerts.title',  descKey: 'admin.dashboard.links.alerts.desc',  path: '/admin/alerts',  icon: AlertTriangle, border: 'border-amber-100 dark:border-amber-500/20',   hover: 'hover:bg-amber-50 dark:hover:bg-amber-500/5',  iconBg: 'bg-amber-100 dark:bg-amber-500/10',  iconColor: 'text-amber-600 dark:text-amber-400' },
     ];
 
     return (
@@ -84,24 +86,24 @@ export default function AdminDashboard() {
                         <Shield className="w-6 h-6 text-white dark:text-green-400" />
                     </div>
                     <div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">System Overview</h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm">Real-time administration dashboard</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('admin.dashboard.overview')}</h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">{t('admin.dashboard.realtimeSubtitle')}</p>
                     </div>
                 </div>
             </motion.div>
 
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard title="Total Users"   value={stats.totalUsers ?? 0}   icon={Users}         color="blue"   subtitle={`+${stats.recentActivity?.newUsers ?? 0} this week`}   isLoading={isLoading} delay={0} />
-                <StatCard title="Total Devices" value={stats.totalDevices ?? 0} icon={Leaf}          color="emerald" subtitle={`+${stats.recentActivity?.newDevices ?? 0} this week`} isLoading={isLoading} delay={0.05} />
-                <StatCard title="Active Alerts" value={activeAlerts}            icon={AlertTriangle} color={activeAlerts > 0 ? 'amber' : 'emerald'} subtitle={activeAlerts > 0 ? 'Requires attention' : 'All clear'} isLoading={isLoading} delay={0.1} />
-                <StatCard title="System Health" value={activeAlerts === 0 ? 'Healthy' : 'Warning'} icon={activeAlerts === 0 ? CheckCircle2 : Activity} color={activeAlerts === 0 ? 'green' : 'amber'} subtitle={activeAlerts === 0 ? 'No issues detected' : `${activeAlerts} alert(s) active`} isLoading={isLoading} delay={0.15} />
+                <StatCard title={t('admin.dashboard.stats.totalUsers')}   value={stats.totalUsers ?? 0}   icon={Users}         color="blue"   subtitle={t('admin.dashboard.stats.thisWeekSuffix', { count: stats.recentActivity?.newUsers ?? 0 })}   isLoading={isLoading} delay={0} />
+                <StatCard title={t('admin.dashboard.stats.totalDevices')} value={stats.totalDevices ?? 0} icon={Leaf}          color="emerald" subtitle={t('admin.dashboard.stats.thisWeekSuffix', { count: stats.recentActivity?.newDevices ?? 0 })} isLoading={isLoading} delay={0.05} />
+                <StatCard title={t('admin.dashboard.stats.activeAlerts')} value={activeAlerts}            icon={AlertTriangle} color={activeAlerts > 0 ? 'amber' : 'emerald'} subtitle={activeAlerts > 0 ? t('admin.dashboard.stats.requiresAttention') : t('admin.dashboard.stats.allClear')} isLoading={isLoading} delay={0.1} />
+                <StatCard title={t('admin.dashboard.stats.systemHealth')} value={activeAlerts === 0 ? t('admin.dashboard.stats.healthy') : t('admin.dashboard.stats.warning')} icon={activeAlerts === 0 ? CheckCircle2 : Activity} color={activeAlerts === 0 ? 'green' : 'amber'} subtitle={activeAlerts === 0 ? t('admin.dashboard.stats.noIssues') : t('admin.dashboard.stats.alertsActive', { count: activeAlerts })} isLoading={isLoading} delay={0.15} />
             </div>
 
             {/* Quick Actions + This Week */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-4">
-                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Quick Actions</h2>
+                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('admin.dashboard.quickActions.title')}</h2>
                     <div className="space-y-3">
                         {quickLinks.map((link, i) => (
                             <motion.div key={link.path} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.05 }}>
@@ -111,8 +113,8 @@ export default function AdminDashboard() {
                                             <link.icon className={`w-5 h-5 ${link.iconColor}`} />
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-slate-800 dark:text-slate-200">{link.title}</p>
-                                            <p className="text-sm text-slate-500 dark:text-slate-500">{link.desc}</p>
+                                            <p className="font-semibold text-slate-800 dark:text-slate-200">{t(link.titleKey)}</p>
+                                            <p className="text-sm text-slate-500 dark:text-slate-500">{t(link.descKey)}</p>
                                         </div>
                                     </div>
                                     <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 group-hover:translate-x-1 transition-all" />
@@ -123,20 +125,20 @@ export default function AdminDashboard() {
                 </div>
 
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-4">
-                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">This Week</h2>
+                    <h2 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('admin.dashboard.thisWeek')}</h2>
                     <div className="rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm p-5 space-y-3">
                         {[
-                            { label: 'New Users', sub: 'Last 7 days', value: stats.recentActivity?.newUsers ?? 0, icon: Users, bg: 'bg-blue-50 dark:bg-blue-500/[0.08]', border: 'border-blue-100 dark:border-blue-500/20', ibg: 'bg-blue-100 dark:bg-blue-500/10', icon2: 'text-blue-500 dark:text-blue-400', vcolor: 'text-blue-600 dark:text-blue-400' },
-                            { label: 'New Devices', sub: 'Last 7 days', value: stats.recentActivity?.newDevices ?? 0, icon: Leaf, bg: 'bg-emerald-50 dark:bg-green-500/[0.08]', border: 'border-emerald-100 dark:border-green-500/20', ibg: 'bg-emerald-100 dark:bg-green-500/10', icon2: 'text-emerald-600 dark:text-green-400', vcolor: 'text-emerald-600 dark:text-green-400' },
+                            { labelKey: 'admin.dashboard.recentActivity.newUsers',   subKey: 'admin.dashboard.recentActivity.lastWeek', value: stats.recentActivity?.newUsers ?? 0,   icon: Users, bg: 'bg-blue-50 dark:bg-blue-500/[0.08]',    border: 'border-blue-100 dark:border-blue-500/20',    ibg: 'bg-blue-100 dark:bg-blue-500/10',    icon2: 'text-blue-500 dark:text-blue-400',    vcolor: 'text-blue-600 dark:text-blue-400' },
+                            { labelKey: 'admin.dashboard.recentActivity.newDevices', subKey: 'admin.dashboard.recentActivity.lastWeek', value: stats.recentActivity?.newDevices ?? 0, icon: Leaf,  bg: 'bg-emerald-50 dark:bg-green-500/[0.08]', border: 'border-emerald-100 dark:border-green-500/20', ibg: 'bg-emerald-100 dark:bg-green-500/10', icon2: 'text-emerald-600 dark:text-green-400', vcolor: 'text-emerald-600 dark:text-green-400' },
                         ].map((row) => (
-                            <div key={row.label} className={`flex items-center justify-between p-3 rounded-xl ${row.bg} border ${row.border}`}>
+                            <div key={row.labelKey} className={`flex items-center justify-between p-3 rounded-xl ${row.bg} border ${row.border}`}>
                                 <div className="flex items-center gap-3">
                                     <div className={`p-1.5 rounded-lg ${row.ibg}`}>
                                         <row.icon className={`w-4 h-4 ${row.icon2}`} />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{row.label}</p>
-                                        <p className="text-xs text-slate-400 dark:text-slate-500">{row.sub}</p>
+                                        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t(row.labelKey)}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500">{t(row.subKey)}</p>
                                     </div>
                                 </div>
                                 <span className={`text-xl font-bold ${row.vcolor}`}>{row.value}</span>
@@ -148,11 +150,11 @@ export default function AdminDashboard() {
                                     <Zap className="w-4 h-4 text-green-600 dark:text-emerald-400" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">System Uptime</p>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500">Current session</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('admin.dashboard.uptime.label')}</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500">{t('admin.dashboard.uptime.sub')}</p>
                                 </div>
                             </div>
-                            <span className="text-sm font-bold text-green-600 dark:text-emerald-400">Online</span>
+                            <span className="text-sm font-bold text-green-600 dark:text-emerald-400">{t('admin.dashboard.uptime.status')}</span>
                         </div>
                     </div>
                 </motion.div>

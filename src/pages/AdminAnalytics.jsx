@@ -14,16 +14,12 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { adminApi } from '@/api/admin';
+import { useTranslation } from 'react-i18next';
 
-const PERIODS = [
-    { value: 'day',   label: 'Today' },
-    { value: 'week',  label: 'This Week' },
-    { value: 'month', label: 'This Month' },
-    { value: 'year',  label: 'This Year' },
-];
+const PERIOD_VALUES = ['day', 'week', 'month', 'year'];
 
-function StatCell({ value, unit, label }) {
-    if (value == null) return <span className="text-slate-400 text-xs">No data</span>;
+function StatCell({ value, unit, noData = '—' }) {
+    if (value == null) return <span className="text-slate-400 dark:text-slate-500 text-xs">{noData}</span>;
     return (
         <div>
             <span className="font-semibold text-slate-800 dark:text-white">
@@ -34,10 +30,8 @@ function StatCell({ value, unit, label }) {
     );
 }
 
-function exportReport(data, period) {
+function exportReport(data, periodLabel) {
     if (!data?.deviceAnalytics?.length) return;
-
-    const periodLabel = PERIODS.find(p => p.value === period)?.label || period;
     const exportDate = format(new Date(), 'MMMM d, yyyy – HH:mm');
 
     const rows = data.deviceAnalytics.map(item => {
@@ -152,9 +146,12 @@ function exportReport(data, period) {
 }
 
 export default function AdminAnalytics() {
+    const { t } = useTranslation();
     const [period, setPeriod] = useState('week');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);
+
+    const PERIODS = PERIOD_VALUES.map(v => ({ value: v, label: t(`admin.analytics.periods.${v}`) }));
 
     const fetchData = async () => {
         setLoading(true);
@@ -162,7 +159,7 @@ export default function AdminAnalytics() {
             const res = await adminApi.getAdminAnalytics(period);
             if (res.success) setData(res.data);
         } catch (err) {
-            toast.error('Failed to load analytics: ' + err.message);
+            toast.error(t('analytics.fetchError') + ': ' + err.message);
         } finally {
             setLoading(false);
         }
@@ -174,6 +171,8 @@ export default function AdminAnalytics() {
     const uniqueUsers = data ? new Set(data.deviceAnalytics.map(d => d.user.id)).size : 0;
     const withData = data?.deviceAnalytics?.filter(d => d.stats?.count > 0).length ?? 0;
 
+    const currentPeriodLabel = PERIODS.find(p => p.value === period)?.label || period;
+
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header */}
@@ -181,10 +180,10 @@ export default function AdminAnalytics() {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
                         <BarChart3 className="w-6 h-6 text-emerald-500 dark:text-green-400" />
-                        Plant Analytics
+                        {t('admin.analytics.title')}
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">
-                        All plants across all users — aggregate sensor report
+                        {t('admin.analytics.subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -203,11 +202,11 @@ export default function AdminAnalytics() {
                         className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
-                    <Button variant="outline" onClick={() => { exportReport(data, period); toast.success('Report opened for printing'); }}
+                    <Button variant="outline" onClick={() => { exportReport(data, currentPeriodLabel); toast.success(t('admin.analytics.exportSuccess')); }}
                         disabled={!data}
                         className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
                         <Download className="w-4 h-4 mr-2" />
-                        Export PDF
+                        {t('admin.analytics.exportPDF')}
                     </Button>
                 </div>
             </div>
@@ -217,10 +216,10 @@ export default function AdminAnalytics() {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                     className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                        { label: 'Total Plants', value: data.totalDevices, icon: Leaf, color: 'emerald' },
-                        { label: 'Online Now', value: onlineCount, icon: Wifi, color: 'green' },
-                        { label: 'Active Users', value: uniqueUsers, icon: User, color: 'blue' },
-                        { label: 'Reporting Plants', value: withData, icon: BarChart3, color: 'purple' },
+                        { label: t('admin.analytics.summary.totalPlants'),    value: data.totalDevices, icon: Leaf,     color: 'emerald' },
+                        { label: t('admin.analytics.summary.onlineNow'),      value: onlineCount,       icon: Wifi,     color: 'green' },
+                        { label: t('admin.analytics.summary.activeUsers'),    value: uniqueUsers,       icon: User,     color: 'blue' },
+                        { label: t('admin.analytics.summary.reportingPlants'),value: withData,          icon: BarChart3, color: 'purple' },
                     ].map(card => (
                         <Card key={card.label} className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
                             <CardContent className="p-4 flex items-center gap-4">
@@ -245,14 +244,14 @@ export default function AdminAnalytics() {
             ) : !data?.deviceAnalytics?.length ? (
                 <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07]">
                     <CardContent className="p-12 text-center text-slate-400 dark:text-slate-500">
-                        No plants registered in the system yet.
+                        {t('admin.analytics.noData')}
                     </CardContent>
                 </Card>
             ) : (
                 <Card className="bg-white dark:bg-[#1E293B]/60 border-slate-100 dark:border-white/[0.07] overflow-hidden">
                     <CardHeader className="pb-0">
                         <CardTitle className="text-sm text-slate-800 dark:text-white">
-                            Plant-by-Plant Analytics — {PERIODS.find(p => p.value === period)?.label}
+                            {t('admin.analytics.table.title', { period: currentPeriodLabel })}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 mt-4">
@@ -260,7 +259,17 @@ export default function AdminAnalytics() {
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-slate-100 dark:border-white/[0.06]">
-                                        {['Plant', 'Owner', 'Location', 'Avg Temp', 'Avg Humidity', 'Avg Moisture', 'Avg Light', 'Status', 'Readings'].map(h => (
+                                        {[
+                                            t('admin.analytics.table.plant'),
+                                            t('admin.analytics.table.owner'),
+                                            t('admin.analytics.table.location'),
+                                            t('admin.analytics.table.avgTemp'),
+                                            t('admin.analytics.table.avgHumidity'),
+                                            t('admin.analytics.table.avgMoisture'),
+                                            t('admin.analytics.table.avgLight'),
+                                            t('admin.analytics.table.status'),
+                                            t('admin.analytics.table.readings'),
+                                        ].map(h => (
                                             <th key={h} className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-4 py-3 first:pl-6 last:pr-6">
                                                 {h}
                                             </th>
@@ -321,8 +330,8 @@ export default function AdminAnalytics() {
                                                     : 'bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/[0.08]'
                                                 }>
                                                     {item.device.isOnline
-                                                        ? <><Wifi className="w-3 h-3 mr-1" />Online</>
-                                                        : <><WifiOff className="w-3 h-3 mr-1" />Offline</>
+                                                        ? <><Wifi className="w-3 h-3 mr-1" />{t('admin.analytics.status.online')}</>
+                                                        : <><WifiOff className="w-3 h-3 mr-1" />{t('admin.analytics.status.offline')}</>
                                                     }
                                                 </Badge>
                                             </td>

@@ -12,11 +12,13 @@ import {
     Dialog, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '@/api/admin';
 import { toast } from 'sonner';
 import { useSocket } from '@/hooks/useSocket';
 
 export default function AdminAlerts() {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const socketRef = useSocket();
     const [statusFilter, setStatusFilter] = useState('');
@@ -41,11 +43,11 @@ export default function AdminAlerts() {
 
         const handleNewAlert = (data) => {
             queryClient.invalidateQueries({ queryKey: ['admin-alerts'] });
-            toast.warning(`New alert: ${data.alert?.message || 'System alert triggered'}`);
+            toast.warning(`${t('admin.alerts.status.active')}: ${data.alert?.message || 'System alert triggered'}`);
         };
         const handleResolved = (data) => {
             queryClient.invalidateQueries({ queryKey: ['admin-alerts'] });
-            toast.success(`Alert resolved: ${data.code || 'Alert cleared'}`);
+            toast.success(`${t('admin.alerts.status.resolved')}: ${data.code || ''}`);
         };
 
         socket.on('alert', handleNewAlert);
@@ -54,15 +56,15 @@ export default function AdminAlerts() {
             socket.off('alert', handleNewAlert);
             socket.off('alert-resolved', handleResolved);
         };
-    }, [socketRef, queryClient]);
+    }, [socketRef, queryClient, t]);
 
     const resolveMutation = useMutation({
         mutationFn: (id) => adminApi.resolveAlert(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-alerts'] });
-            toast.success('Alert resolved successfully');
+            toast.success(t('admin.alerts.resolveSuccess'));
         },
-        onError: (e) => toast.error('Failed to resolve alert: ' + e.message)
+        onError: (e) => toast.error(t('admin.alerts.resolveError') + ': ' + e.message)
     });
 
     const deleteMutation = useMutation({
@@ -70,9 +72,9 @@ export default function AdminAlerts() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-alerts'] });
             setDeleteAlert(null);
-            toast.success('Alert deleted successfully');
+            toast.success(t('admin.alerts.deleteSuccess'));
         },
-        onError: (e) => toast.error('Failed to delete alert: ' + e.message)
+        onError: (e) => toast.error(t('admin.alerts.deleteError') + ': ' + e.message)
     });
 
     return (
@@ -84,8 +86,8 @@ export default function AdminAlerts() {
                         <AlertTriangle className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Alert Management</h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm">Monitor and resolve system alerts in real-time</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('admin.alerts.title')}</h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">{t('admin.alerts.subtitle')}</p>
                     </div>
                 </div>
             </motion.div>
@@ -95,21 +97,21 @@ export default function AdminAlerts() {
                 <Filter className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                 <Select value={statusFilter || 'ALL'} onValueChange={(v) => setStatusFilter(v === 'ALL' ? '' : v)}>
                     <SelectTrigger className="w-48 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
-                        <SelectValue placeholder="All Alerts" />
+                        <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08] text-slate-800 dark:text-slate-200">
-                        <SelectItem value="ALL">All Alerts</SelectItem>
-                        <SelectItem value="active">Active Only</SelectItem>
-                        <SelectItem value="resolved">Resolved Only</SelectItem>
+                        <SelectItem value="ALL">{t('admin.alerts.filters.all')}</SelectItem>
+                        <SelectItem value="active">{t('admin.alerts.filters.active')}</SelectItem>
+                        <SelectItem value="resolved">{t('admin.alerts.filters.resolved')}</SelectItem>
                     </SelectContent>
                 </Select>
-                <span className="text-sm text-slate-400 dark:text-slate-500 ml-auto">{totalAlerts} total alerts</span>
+                <span className="text-sm text-slate-400 dark:text-slate-500 ml-auto">{t('admin.alerts.totalCount', { count: totalAlerts })}</span>
             </div>
 
             {/* Alerts Table */}
             <div className="rounded-2xl border border-slate-100 dark:border-white/[0.07] bg-white dark:bg-[#1E293B]/60 shadow-sm dark:shadow-none overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.06]">
-                    <h2 className="font-semibold text-slate-800 dark:text-slate-200">All Alerts</h2>
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200">{t('admin.alerts.tableTitle')}</h2>
                 </div>
 
                 {isLoading ? (
@@ -119,21 +121,21 @@ export default function AdminAlerts() {
                 ) : alerts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
                         <CheckCircle className="w-12 h-12 mb-3 text-emerald-400 dark:text-green-500/50" />
-                        <p className="font-medium text-slate-600 dark:text-slate-400">No alerts found</p>
-                        <p className="text-sm">System is running smoothly</p>
+                        <p className="font-medium text-slate-600 dark:text-slate-400">{t('admin.alerts.noAlerts')}</p>
+                        <p className="text-sm">{t('admin.alerts.systemSmooth')}</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03]">
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Device</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Owner</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Type</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Message</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Status</th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Time</th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Actions</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.device')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.owner')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.type')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.message')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.status')}</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.created')}</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{t('admin.alerts.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 dark:divide-white/[0.04]">
@@ -157,12 +159,12 @@ export default function AdminAlerts() {
                                             {alert.isActive ? (
                                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
                                                     <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400" />
-                                                    Active
+                                                    {t('admin.alerts.status.active')}
                                                 </span>
                                             ) : (
                                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 border border-emerald-200 dark:border-green-500/20">
                                                     <CheckCircle className="w-3 h-3" />
-                                                    Resolved
+                                                    {t('admin.alerts.status.resolved')}
                                                 </span>
                                             )}
                                         </td>
@@ -179,7 +181,7 @@ export default function AdminAlerts() {
                                                         onClick={() => resolveMutation.mutate(alert.id)}
                                                         disabled={resolveMutation.isPending}
                                                         className="p-2 hover:bg-emerald-100 dark:hover:bg-green-500/10 rounded-lg transition-colors group cursor-pointer"
-                                                        title="Resolve Alert"
+                                                        title={t('admin.alerts.actions.resolve')}
                                                     >
                                                         <CheckCircle className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-green-400" />
                                                     </button>
@@ -187,7 +189,7 @@ export default function AdminAlerts() {
                                                 <button
                                                     onClick={() => setDeleteAlert(alert)}
                                                     className="p-2 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors group cursor-pointer"
-                                                    title="Delete Alert"
+                                                    title={t('admin.alerts.actions.delete')}
                                                 >
                                                     <Trash2 className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 dark:group-hover:text-red-400" />
                                                 </button>
@@ -205,12 +207,12 @@ export default function AdminAlerts() {
                     <div className="flex justify-center gap-2 p-4 border-t border-slate-100 dark:border-white/[0.06]">
                         <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
                             className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
-                            Previous
+                            {t('admin.alerts.previous')}
                         </Button>
-                        <span className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">Page {page} of {totalPages}</span>
+                        <span className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">{t('admin.alerts.page', { current: page, total: totalPages })}</span>
                         <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
                             className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">
-                            Next
+                            {t('admin.alerts.next')}
                         </Button>
                     </div>
                 )}
@@ -220,17 +222,17 @@ export default function AdminAlerts() {
             <Dialog open={!!deleteAlert} onOpenChange={() => setDeleteAlert(null)}>
                 <DialogContent className="bg-white dark:bg-[#1E293B] border-slate-100 dark:border-white/[0.08]">
                     <DialogHeader>
-                        <DialogTitle className="text-red-600 dark:text-red-400">Delete Alert</DialogTitle>
-                        <DialogDescription className="text-slate-500 dark:text-slate-400">Are you sure you want to delete this alert? This action cannot be undone.</DialogDescription>
+                        <DialogTitle className="text-red-600 dark:text-red-400">{t('admin.alerts.deleteDialog.title')}</DialogTitle>
+                        <DialogDescription className="text-slate-500 dark:text-slate-400">{t('admin.alerts.deleteDialog.description')}</DialogDescription>
                     </DialogHeader>
                     <div className="py-4">
                         <p className="text-sm text-slate-600 dark:text-slate-400">{deleteAlert?.message}</p>
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setDeleteAlert(null)}
-                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">Cancel</Button>
+                            className="border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.05]">{t('common.cancel')}</Button>
                         <Button variant="destructive" onClick={() => deleteMutation.mutate(deleteAlert.id)} disabled={deleteMutation.isPending}>
-                            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                            {deleteMutation.isPending ? t('admin.alerts.deleting') : t('common.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

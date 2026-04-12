@@ -99,14 +99,14 @@ function PlantCard({ device, index, isLive }) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white dark:bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white dark:bg-green-400" />
               </span>
-              Live
+              {t('dashboard.plants.live')}
             </div>
           )}
 
           {!hasData && !isLive && (
             <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-700/70 backdrop-blur-sm text-slate-300 text-xs font-medium border border-white/10">
               <WifiOff className="w-3 h-3" />
-              Offline
+              {t('dashboard.plants.offline')}
             </div>
           )}
 
@@ -179,7 +179,7 @@ export default function Dashboard() {
       });
     };
     const handleDeviceStatus = (data) => { if (data.deviceId && data.status === 'ONLINE') markLive(data.deviceId); };
-    const handleAlert = (data) => { toast.warning(data.alert?.message || 'New alert received', { description: `Device: ${data.deviceId}` }); };
+    const handleAlert = (data) => { toast.warning(data.alert?.message || t('dashboard.newAlert'), { description: t('dashboard.deviceLabel', { id: data.deviceId }) }); };
     socket.on('sensor-update', handleSensorUpdate);
     socket.on('device-status', handleDeviceStatus);
     socket.on('alert', handleAlert);
@@ -229,7 +229,7 @@ export default function Dashboard() {
             </div>
             <div>
               <p className={`text-xl font-bold leading-none ${liveCount > 0 ? 'text-white' : 'text-slate-400 dark:text-slate-600'}`}>{liveCount}</p>
-              <p className={`text-xs mt-0.5 ${liveCount > 0 ? 'text-blue-100 dark:text-slate-400' : 'text-slate-400 dark:text-slate-600'}`}>Live now</p>
+              <p className={`text-xs mt-0.5 ${liveCount > 0 ? 'text-blue-100 dark:text-slate-400' : 'text-slate-400 dark:text-slate-600'}`}>{t('dashboard.stats.liveNow')}</p>
             </div>
           </div>
 
@@ -242,7 +242,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <p className="text-xl font-bold text-white leading-none">{offlineCount}</p>
-                  <p className="text-xs text-amber-100 dark:text-slate-500 mt-0.5">No data yet</p>
+                  <p className="text-xs text-amber-100 dark:text-slate-500 mt-0.5">{t('dashboard.stats.noDataYet')}</p>
                 </div>
               </div>
             ) : null;
