@@ -6,6 +6,19 @@ import { verifyToken, JWT_SECRET } from '../middleware/auth.js';
 const router = express.Router();
 
 /**
+ * Validate password strength.
+ * Returns an error string, or null if valid.
+ */
+function validatePassword(password) {
+    if (!password || password.length < 8) return 'Password must be at least 8 characters';
+    if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter';
+    if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter';
+    if (!/[0-9]/.test(password)) return 'Password must contain at least one number';
+    if (!/[^A-Za-z0-9]/.test(password)) return 'Password must contain at least one special character';
+    return null;
+}
+
+/**
  * Register a new user
  * POST /api/auth/register
  */
@@ -15,6 +28,11 @@ router.post('/register', async (req, res, next) => {
 
         if (!email || !password) {
             return res.status(400).json({ success: false, error: 'Email and password are required' });
+        }
+
+        const passwordError = validatePassword(password);
+        if (passwordError) {
+            return res.status(400).json({ success: false, error: passwordError });
         }
 
         // Check if user exists
@@ -131,8 +149,11 @@ router.put('/me', verifyToken, async (req, res, next) => {
             return res.status(400).json({ success: false, error: 'Email cannot be empty' });
         }
 
-        if (password && password.length < 6) {
-            return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
+        if (password) {
+            const passwordError = validatePassword(password);
+            if (passwordError) {
+                return res.status(400).json({ success: false, error: passwordError });
+            }
         }
 
         // Check if email is taken by another user

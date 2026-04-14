@@ -107,7 +107,7 @@ export default function LandingPage() {
                     <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-500/[0.04] dark:bg-green-500/[0.06] rounded-full blur-3xl" />
                 </div>
                 <div className="absolute inset-0 z-0">
-                    <img src={heroBg} alt="" className="w-full h-full object-cover opacity-10 dark:opacity-10" />
+                    <img src={heroBg} alt="" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-b from-white/60 dark:from-[#0F172A]/60 via-white/80 dark:via-[#0F172A]/80 to-white dark:to-[#0F172A]" />
                 </div>
 
@@ -145,19 +145,19 @@ export default function LandingPage() {
                     </div>
 
                     {/* Stats row */}
-                    <div className="flex flex-wrap justify-center gap-8 mt-16">
+                    <div className="flex flex-wrap justify-center gap-6 mt-16">
                         {[
                             { icon: Wifi, value: '99.9%', label: t('landing.hero.stats.uptime') },
                             { icon: Activity, value: '<5s', label: t('landing.hero.stats.latency') },
                             { icon: Sprout, value: '500+', label: t('landing.hero.stats.plants') },
                         ].map((stat, i) => (
-                            <div key={i} className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-green-500/10 border border-emerald-100 dark:border-green-500/20">
+                            <div key={i} className="flex items-center gap-3 min-w-[140px]">
+                                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-green-500/10 border border-emerald-100 dark:border-green-500/20 flex-shrink-0">
                                     <stat.icon className="w-4 h-4 text-emerald-600 dark:text-green-400" />
                                 </div>
-                                <div className="text-left">
+                                <div className="text-left min-w-0">
                                     <p className="text-slate-900 dark:text-white font-bold text-lg leading-none">{stat.value}</p>
-                                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{stat.label}</p>
+                                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 leading-tight">{stat.label}</p>
                                 </div>
                             </div>
                         ))}

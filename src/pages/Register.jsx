@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Sprout, Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { Sprout, Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle, AlertCircle, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,6 +23,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState('');
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -38,17 +39,49 @@ export default function Register() {
     }
   }, [navigate]);
 
+  const passwordChecks = {
+    minLength: formData.password.length >= 8,
+    uppercase: /[A-Z]/.test(formData.password),
+    lowercase: /[a-z]/.test(formData.password),
+    number: /[0-9]/.test(formData.password),
+    special: /[^A-Za-z0-9]/.test(formData.password),
+  };
+  const strengthScore = Object.values(passwordChecks).filter(Boolean).length;
+  const strengthLabel = strengthScore <= 2
+    ? t('auth.register.passwordWeak')
+    : strengthScore <= 4
+      ? t('auth.register.passwordFair')
+      : t('auth.register.passwordStrong');
+  const strengthColor = strengthScore <= 2
+    ? 'bg-red-500'
+    : strengthScore <= 4
+      ? 'bg-amber-400'
+      : 'bg-emerald-500';
+
+  const mapAuthError = (message) => {
+    if (!message) return t('common.error');
+    const m = message.toLowerCase();
+    if (m.includes('email already registered')) return t('auth.errors.emailAlreadyRegistered');
+    if (m.includes('email and password are required')) return t('auth.errors.emailRequired');
+    if (m.includes('at least 8')) return t('auth.errors.passwordMinLength');
+    if (m.includes('uppercase')) return t('auth.errors.passwordUppercase');
+    if (m.includes('lowercase')) return t('auth.errors.passwordLowercase');
+    if (m.includes('one number')) return t('auth.errors.passwordNumber');
+    if (m.includes('special character')) return t('auth.errors.passwordSpecial');
+    return message;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
 
-    // Validation
     if (formData.password !== formData.confirmPassword) {
-      toast.error(t('auth.register.passwordsMismatch'));
+      setFormError(t('auth.register.passwordsMismatch'));
       return;
     }
 
-    if (formData.password.length < 6) {
-      toast.error(t('auth.register.passwordTooShort'));
+    if (!Object.values(passwordChecks).every(Boolean)) {
+      setFormError(t('auth.register.passwordTooShort'));
       return;
     }
 
@@ -75,7 +108,7 @@ export default function Register() {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error(error.message || t('common.error'));
+      setFormError(mapAuthError(error.message));
     } finally {
       setIsLoading(false);
     }
@@ -194,6 +227,41 @@ export default function Register() {
                 </div>
               </div>
 
+              {formData.password.length > 0 && (
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                    <span>{t('auth.register.passwordStrengthLabel')}</span>
+                    <span className={strengthScore <= 2 ? 'text-red-500' : strengthScore <= 4 ? 'text-amber-500' : 'text-emerald-500'}>
+                      {strengthLabel}
+                    </span>
+                  </div>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= strengthScore ? strengthColor : 'bg-slate-200 dark:bg-white/10'}`} />
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-1 gap-1 pt-1">
+                    {[
+                      { key: 'minLength', label: t('auth.register.requirements.minLength') },
+                      { key: 'uppercase', label: t('auth.register.requirements.uppercase') },
+                      { key: 'lowercase', label: t('auth.register.requirements.lowercase') },
+                      { key: 'number', label: t('auth.register.requirements.number') },
+                      { key: 'special', label: t('auth.register.requirements.special') },
+                    ].map(({ key, label }) => (
+                      <div key={key} className="flex items-center gap-1.5">
+                        {passwordChecks[key]
+                          ? <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                          : <X className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 flex-shrink-0" />
+                        }
+                        <span className={`text-xs ${passwordChecks[key] ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-slate-700 dark:text-slate-300 text-sm font-medium">{t('auth.register.confirmPassword')}</Label>
                 <div className="relative">
@@ -216,6 +284,13 @@ export default function Register() {
                   </button>
                 </div>
               </div>
+
+              {formError && (
+                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{formError}</span>
+                </div>
+              )}
 
               <Button
                 type="submit"

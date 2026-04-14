@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Sprout, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Sprout, Mail, Lock, Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,10 +17,26 @@ export default function SignIn() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState('');
   const [formData, setFormData] = useState({ email: '', password: '' });
+
+  const mapAuthError = (message) => {
+    if (!message) return t('common.error');
+    const m = message.toLowerCase();
+    if (m.includes('invalid credentials')) return t('auth.errors.invalidCredentials');
+    if (m.includes('email already registered')) return t('auth.errors.emailAlreadyRegistered');
+    if (m.includes('email and password are required')) return t('auth.errors.emailRequired');
+    if (m.includes('at least 8')) return t('auth.errors.passwordMinLength');
+    if (m.includes('uppercase')) return t('auth.errors.passwordUppercase');
+    if (m.includes('lowercase')) return t('auth.errors.passwordLowercase');
+    if (m.includes('one number')) return t('auth.errors.passwordNumber');
+    if (m.includes('special character')) return t('auth.errors.passwordSpecial');
+    return message;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
     try {
       setIsLoading(true);
       const response = await api.auth.login({ email: formData.email, password: formData.password });
@@ -54,7 +70,7 @@ export default function SignIn() {
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.message || t('common.error'));
+      setFormError(mapAuthError(error.message));
     } finally {
       setIsLoading(false);
     }
@@ -160,6 +176,13 @@ export default function SignIn() {
                   </button>
                 </div>
               </div>
+
+              {formError && (
+                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{formError}</span>
+                </div>
+              )}
 
               <Button
                 type="submit"
