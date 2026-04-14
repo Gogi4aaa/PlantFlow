@@ -214,7 +214,7 @@ export default function Dashboard() {
       {/* Stats */}
       {devices.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="flex flex-wrap gap-3">
-          <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-emerald-500 to-green-600 dark:bg-green-500/10 dark:border dark:border-green-500/20 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none">
+          <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-emerald-500 to-green-600 dark:bg-none dark:bg-green-500/10 dark:border dark:border-green-500/20 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none">
             <div className="p-2 bg-white/20 dark:bg-green-500/10 rounded-lg">
               <Sprout className="w-4 h-4 text-white dark:text-green-400" />
             </div>
@@ -224,7 +224,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${liveCount > 0 ? 'bg-gradient-to-br from-blue-500 to-indigo-600 dark:bg-blue-500/10 border-transparent dark:border-blue-500/20 shadow-lg shadow-blue-200 dark:shadow-none' : 'bg-white dark:bg-white/[0.04] border-slate-100 dark:border-white/[0.07]'}`}>
+          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${liveCount > 0 ? 'bg-gradient-to-br from-blue-500 to-indigo-600 dark:bg-none dark:bg-blue-500/10 border-transparent dark:border-blue-500/20 shadow-lg shadow-blue-200 dark:shadow-none' : 'bg-white dark:bg-white/[0.04] border-slate-100 dark:border-white/[0.07]'}`}>
             <div className={`p-2 rounded-lg ${liveCount > 0 ? 'bg-white/20 dark:bg-blue-500/10' : 'bg-slate-100 dark:bg-white/[0.05]'}`}>
               <Radio className={`w-4 h-4 ${liveCount > 0 ? 'text-white dark:text-blue-400' : 'text-slate-400 dark:text-slate-400'}`} />
             </div>
@@ -237,7 +237,7 @@ export default function Dashboard() {
           {(() => {
             const offlineCount = devices.filter(d => !d.current_reading).length;
             return offlineCount > 0 ? (
-              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-amber-400 to-orange-500 dark:bg-amber-500/10 dark:border dark:border-amber-500/20 rounded-xl shadow-lg shadow-amber-200 dark:shadow-none">
+              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-amber-400 to-orange-500 dark:bg-none dark:bg-amber-500/10 dark:border dark:border-amber-500/20 rounded-xl shadow-lg shadow-amber-200 dark:shadow-none">
                 <div className="p-2 bg-white/20 dark:bg-amber-500/10 rounded-lg">
                   <AlertCircle className="w-4 h-4 text-white dark:text-amber-400" />
                 </div>
@@ -302,7 +302,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}>
             <Link to={createPageUrl('Analytics')}>
-              <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:bg-[#1E293B]/60 border-emerald-100 dark:border-white/[0.07] hover:border-emerald-200 dark:hover:border-green-500/20 hover:shadow-lg transition-all cursor-pointer group overflow-hidden">
+              <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:bg-none dark:bg-[#1E293B]/60 border-emerald-100 dark:border-white/[0.07] hover:border-emerald-200 dark:hover:border-green-500/20 hover:shadow-lg transition-all cursor-pointer group overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>

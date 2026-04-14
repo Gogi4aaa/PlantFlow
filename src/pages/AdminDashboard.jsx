@@ -83,7 +83,7 @@ export default function AdminDashboard() {
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-green-600 dark:bg-transparent dark:border dark:border-green-500/20 dark:bg-green-500/10 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none">
+                    <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-green-600 dark:bg-none dark:bg-green-500/10 dark:border dark:border-green-500/20 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none">
                         <Shield className="w-6 h-6 text-white dark:text-green-400" />
                     </div>
                     <div>

@@ -65,7 +65,7 @@ export default function AdminLayout({ children }) {
     const currentSection = breadcrumbMap[location.pathname] || t('admin.layout.adminLabel');
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50/40 via-white to-green-50/30 dark:bg-[#0F172A] overflow-x-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50/40 via-white to-green-50/30 dark:bg-none dark:bg-[#0F172A] overflow-x-hidden">
             {/* Mobile overlay */}
             <AnimatePresence>
                 {sidebarOpen && (

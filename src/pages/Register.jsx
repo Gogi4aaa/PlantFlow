@@ -82,7 +82,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 dark:bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 dark:bg-none dark:bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden">
       <Toaster position="top-center" richColors closeButton />
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none">
