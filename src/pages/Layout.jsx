@@ -43,12 +43,12 @@ export default function Layout({ children }) {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/40 dark:bg-[#0F172A]">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/40 dark:bg-[#0F172A] overflow-x-hidden">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      <div>
+      <div className="overflow-x-hidden">
         <TopBar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">
+        <main className="flex-1 p-4 lg:p-6 overflow-y-auto overflow-x-hidden">
           {children}
         </main>
       </div>

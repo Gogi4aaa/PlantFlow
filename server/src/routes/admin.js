@@ -364,16 +364,34 @@ router.get('/analytics', async (req, res, next) => {
             }
         });
 
+        // Latest sensor reading timestamp per device — single query, no N+1
+        const latestReadings = await prisma.sensorReading.groupBy({
+            by: ['deviceId'],
+            _max: { timestamp: true }
+        });
+        const latestReadingMap = Object.fromEntries(
+            latestReadings.map(r => [r.deviceId, r._max.timestamp])
+        );
+
         const deviceAnalytics = await Promise.all(
             devices.map(async (device) => {
                 const rawStats = await SensorReading.getStats(device.id, hours);
+                // Use the most recent of: latest sensor reading timestamp OR device.lastSeenAt.
+                // lastSeenAt is updated by ANY MQTT message (including status-only messages
+                // like pump control that don't create sensor readings), so it can be fresher
+                // than the reading map. ?? would silently ignore it whenever any old reading exists.
+                const readingTs = latestReadingMap[device.id] ?? null;
+                const seenTs    = device.lastSeenAt ?? null;
+                const lastActive = readingTs && seenTs
+                    ? (new Date(readingTs) > new Date(seenTs) ? readingTs : seenTs)
+                    : readingTs ?? seenTs;
                 return {
                     device: {
                         id: device.id,
                         plantName: device.plantName,
                         plantSpecies: device.plantSpecies,
                         location: device.location,
-                        isOnline: device.isOnline,
+                        lastSeenAt: lastActive,
                     },
                     user: {
                         id: device.user.id,

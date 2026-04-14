@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Shield, Smartphone, Zap, Sprout, Wifi, Activity, Leaf, Mail, Code2 } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Check, Shield, Smartphone, Zap, Sprout, Wifi, Activity, Leaf, Mail, Code2, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -9,8 +10,10 @@ import creatorPhoto from '../assets/creator.png';
 
 export default function LandingPage() {
     const { t } = useTranslation();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
     return (
-        <div className="min-h-screen bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 font-sans scroll-smooth">
+        <div className="min-h-screen bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 font-sans scroll-smooth overflow-x-hidden">
 
             {/* Navigation */}
             <nav className="fixed w-full z-50 bg-white/80 dark:bg-[#0F172A]/80 backdrop-blur-xl border-b border-slate-100 dark:border-white/[0.06]">
@@ -28,7 +31,7 @@ export default function LandingPage() {
                             <a href="#testimonials" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.testimonials')}</a>
                             <a href="#about" className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors text-sm font-medium">{t('landing.nav.about')}</a>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="hidden md:flex items-center gap-3">
                             <ThemeToggle />
                             <LanguageSwitcher />
                             <Link to="/signin" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium text-sm transition-colors">
@@ -42,8 +45,60 @@ export default function LandingPage() {
                                 <ArrowRight className="h-3.5 w-3.5" />
                             </Link>
                         </div>
+                        {/* Mobile: theme + burger */}
+                        <div className="flex md:hidden items-center gap-2">
+                            <ThemeToggle />
+                            <LanguageSwitcher />
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors"
+                                aria-label="Toggle menu"
+                            >
+                                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                {/* Mobile dropdown menu */}
+                {mobileMenuOpen && (
+                    <div className="md:hidden border-t border-slate-100 dark:border-white/[0.06] bg-white/95 dark:bg-[#0F172A]/95 backdrop-blur-xl">
+                        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1">
+                            {[
+                                { href: '#product', label: t('landing.nav.product') },
+                                { href: '#features', label: t('landing.nav.features') },
+                                { href: '#testimonials', label: t('landing.nav.testimonials') },
+                                { href: '#about', label: t('landing.nav.about') },
+                            ].map(({ href, label }) => (
+                                <a
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] font-medium text-sm transition-colors"
+                                >
+                                    {label}
+                                </a>
+                            ))}
+                            <div className="border-t border-slate-100 dark:border-white/[0.06] mt-2 pt-3 flex flex-col gap-2">
+                                <Link
+                                    to="/signin"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] font-medium text-sm transition-colors text-center"
+                                >
+                                    {t('landing.nav.login')}
+                                </Link>
+                                <Link
+                                    to="/register"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="bg-emerald-600 dark:bg-green-500 hover:bg-emerald-700 dark:hover:bg-green-400 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20 dark:shadow-green-500/20 flex items-center justify-center gap-1.5"
+                                >
+                                    {t('landing.nav.getStarted')}
+                                    <ArrowRight className="h-3.5 w-3.5" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </nav>
 
             {/* Hero Section */}

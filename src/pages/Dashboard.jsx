@@ -17,11 +17,11 @@ import { api } from '@/api/api';
 import { useSocket } from '@/hooks/useSocket';
 import plantBg from '@/assets/plant_bg.png';
 
-const SENSORS = [
-  { key: 'soil_moisture', label: 'Moisture', icon: Droplets, color: 'blue',   unit: '%',  max: 100   },
-  { key: 'temperature',   label: 'Temp',     icon: Thermometer, color: 'red',  unit: '°C', max: 50    },
-  { key: 'air_humidity',  label: 'Humidity', icon: Wind,        color: 'purple', unit: '%', max: 100  },
-  { key: 'light',         label: 'Light',    icon: Sun,         color: 'amber', unit: 'lx', max: 20000 },
+const SENSOR_DEFS = [
+  { key: 'soil_moisture', labelKey: 'common.metrics.moisture', icon: Droplets, color: 'blue',   unit: '%',  max: 100   },
+  { key: 'temperature',   labelKey: 'common.metrics.temperature', icon: Thermometer, color: 'red',  unit: '°C', max: 50    },
+  { key: 'air_humidity',  labelKey: 'common.metrics.humidity', icon: Wind,        color: 'purple', unit: '%', max: 100  },
+  { key: 'light',         labelKey: 'common.metrics.light',    icon: Sun,         color: 'amber', unit: 'lx', max: 20000 },
 ];
 
 const COLOR_MAP = {
@@ -71,6 +71,7 @@ function SensorTile({ sensor, reading, hasData }) {
 
 function PlantCard({ device, index, isLive }) {
   const { t } = useTranslation();
+  const SENSORS = SENSOR_DEFS.map(s => ({ ...s, label: t(s.labelKey) }));
   const hasData = !!device.current_reading;
 
   return (

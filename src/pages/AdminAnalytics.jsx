@@ -4,11 +4,10 @@ import { format } from 'date-fns';
 import {
     Calendar, Download, RefreshCw, Loader2,
     Thermometer, Droplets, Sun, Wind,
-    Leaf, User, Wifi, WifiOff, BarChart3,
+    Leaf, User, Wifi, BarChart3,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
@@ -17,6 +16,11 @@ import { adminApi } from '@/api/admin';
 import { useTranslation } from 'react-i18next';
 
 const PERIOD_VALUES = ['day', 'week', 'month', 'year'];
+
+function deviceIsOnline(lastSeenAt) {
+    if (!lastSeenAt) return false;
+    return Date.now() - new Date(lastSeenAt).getTime() < 5 * 60 * 1000;
+}
 
 function StatCell({ value, unit, noData = '—' }) {
     if (value == null) return <span className="text-slate-400 dark:text-slate-400 text-xs">{noData}</span>;
@@ -36,6 +40,7 @@ function exportReport(data, periodLabel) {
 
     const rows = data.deviceAnalytics.map(item => {
         const s = item.stats;
+        const online = deviceIsOnline(item.device.lastSeenAt);
         return `
         <tr>
             <td>${item.device.plantName || '—'}</td>
@@ -49,9 +54,9 @@ function exportReport(data, periodLabel) {
             <td style="text-align:center">${s ? Math.round(s.avgLight || 0) + ' lux' : '—'}</td>
             <td style="text-align:center">
                 <span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;
-                    background:${item.device.isOnline ? '#d1fae5' : '#fee2e2'};
-                    color:${item.device.isOnline ? '#065f46' : '#991b1b'}">
-                    ${item.device.isOnline ? 'Online' : 'Offline'}
+                    background:${online ? '#d1fae5' : '#fee2e2'};
+                    color:${online ? '#065f46' : '#991b1b'}">
+                    ${online ? 'Online' : 'Offline'}
                 </span>
             </td>
             <td style="text-align:center">${s?.count ?? 0}</td>
@@ -103,7 +108,7 @@ function exportReport(data, periodLabel) {
       <div class="lbl">Total Plants</div>
     </div>
     <div class="summary-card">
-      <div class="val">${data.deviceAnalytics.filter(d => d.device.isOnline).length}</div>
+      <div class="val">${data.deviceAnalytics.filter(d => deviceIsOnline(d.device.lastSeenAt)).length}</div>
       <div class="lbl">Online Now</div>
     </div>
     <div class="summary-card">
@@ -165,9 +170,13 @@ export default function AdminAnalytics() {
         }
     };
 
-    useEffect(() => { fetchData(); }, [period]);
+    useEffect(() => {
+        fetchData();
+        const interval = setInterval(fetchData, 30000);
+        return () => clearInterval(interval);
+    }, [period]);
 
-    const onlineCount = data?.deviceAnalytics?.filter(d => d.device.isOnline).length ?? 0;
+    const onlineCount = data?.deviceAnalytics?.filter(d => deviceIsOnline(d.device.lastSeenAt)).length ?? 0;
     const uniqueUsers = data ? new Set(data.deviceAnalytics.map(d => d.user.id)).size : 0;
     const withData = data?.deviceAnalytics?.filter(d => d.stats?.count > 0).length ?? 0;
 
@@ -325,15 +334,17 @@ export default function AdminAnalytics() {
                                             </td>
                                             {/* Status */}
                                             <td className="px-4 py-3">
-                                                <Badge className={item.device.isOnline
-                                                    ? 'bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 border-emerald-200 dark:border-green-500/20'
-                                                    : 'bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/[0.08]'
-                                                }>
-                                                    {item.device.isOnline
-                                                        ? <><Wifi className="w-3 h-3 mr-1" />{t('admin.analytics.status.online')}</>
-                                                        : <><WifiOff className="w-3 h-3 mr-1" />{t('admin.analytics.status.offline')}</>
-                                                    }
-                                                </Badge>
+                                                {deviceIsOnline(item.device.lastSeenAt) ? (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 border border-emerald-200 dark:border-green-500/20">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-green-400" />
+                                                        {t('admin.analytics.status.online')}
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/[0.08]">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
+                                                        {t('admin.analytics.status.offline')}
+                                                    </span>
+                                                )}
                                             </td>
                                             {/* Readings */}
                                             <td className="px-4 py-3 pr-6 text-slate-500 dark:text-slate-400 text-sm">

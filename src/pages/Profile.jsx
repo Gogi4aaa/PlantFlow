@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Mail, Lock, Save, Loader2, Eye, EyeOff, Camera, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,8 @@ function resizeImage(file, maxSize = 200) {
 export default function Profile() {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
+    const backPath = location.state?.from || '/dashboard';
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -145,11 +147,11 @@ export default function Profile() {
     return (
         <div className="max-w-2xl mx-auto p-6 space-y-6">
             <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(backPath)}
                 className="flex items-center gap-1.5 text-sm text-slate-400 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-green-400 transition-colors group cursor-pointer"
             >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                Back to Dashboard
+                {backPath.startsWith('/admin') ? t('profile.backToAdmin') : t('profile.backToDashboard')}
             </button>
 
             <div>

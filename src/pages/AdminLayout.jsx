@@ -65,7 +65,7 @@ export default function AdminLayout({ children }) {
     const currentSection = breadcrumbMap[location.pathname] || t('admin.layout.adminLabel');
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50/40 via-white to-green-50/30 dark:bg-[#0F172A]">
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50/40 via-white to-green-50/30 dark:bg-[#0F172A] overflow-x-hidden">
             {/* Mobile overlay */}
             <AnimatePresence>
                 {sidebarOpen && (
@@ -165,7 +165,7 @@ export default function AdminLayout({ children }) {
             </motion.aside>
 
             {/* Main content */}
-            <div>
+            <div className="overflow-x-hidden">
                 {/* Top bar */}
                 <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#0F172A]/80 backdrop-blur-xl border-b border-slate-100 dark:border-white/[0.06]">
                     <div className="flex items-center justify-between px-4 lg:px-6 h-16">
@@ -220,7 +220,7 @@ export default function AdminLayout({ children }) {
                                             <span className="px-2 py-1 bg-emerald-100 dark:bg-green-500/10 text-emerald-700 dark:text-green-400 text-[10px] font-bold rounded border border-transparent dark:border-green-500/20 uppercase">{t('admin.layout.adminLabel')}</span>
                                         </div>
                                     </div>
-                                    <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-white/[0.05] focus:bg-slate-50 dark:focus:bg-white/[0.05]" onClick={() => navigate('/profile')}>
+                                    <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-white/[0.05] focus:bg-slate-50 dark:focus:bg-white/[0.05]" onClick={() => navigate('/profile', { state: { from: '/admin' } })}>
                                         <User className="w-4 h-4 mr-2" />{t('admin.layout.profile')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/[0.06]" />
@@ -233,7 +233,7 @@ export default function AdminLayout({ children }) {
                     </div>
                 </header>
 
-                <main className="flex-1 p-4 lg:p-6">{children}</main>
+                <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">{children}</main>
             </div>
 
             <Toaster position="top-right" richColors closeButton />

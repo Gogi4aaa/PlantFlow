@@ -309,10 +309,10 @@ export default function PlantDetails() {
 
   const plant = device ? {
     id: device.id,
-    name: device.plant_name || 'Unnamed Plant',
-    species: device.plant_species || 'Unknown Species',
+    name: device.plant_name || t('plantDetails.unnamedPlant'),
+    species: device.plant_species || t('plantDetails.unknownSpecies'),
     image: device.plant_image,
-    location: device.location || 'Not specified',
+    location: device.location || t('plantDetails.locationNotSpecified'),
     addedDate: new Date(device.created_at).toLocaleDateString(),
     currentReadings: device.current_reading || null,
     optimalRanges: DEFAULT_RANGES,
@@ -324,7 +324,7 @@ export default function PlantDetails() {
       <div className="space-y-6 animate-pulse">
         <div className="h-8 w-32 bg-slate-200 dark:bg-white/[0.06] rounded-lg" />
         <div className="h-64 bg-slate-200 dark:bg-white/[0.06] rounded-3xl" />
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-slate-100 dark:bg-white/[0.04] rounded-2xl" />)}
         </div>
       </div>
@@ -425,15 +425,17 @@ export default function PlantDetails() {
             {plant.name}
           </h1>
           <p className="text-white/70 text-lg mt-1">{plant.species}</p>
-          <div className="flex items-center gap-4 mt-3 text-white/60 text-sm">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" /> {plant.location}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-white/60 text-sm">
+            <span className="flex items-center gap-1.5 min-w-0">
+              <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate max-w-[120px]">{plant.location}</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" /> {t('plantDetails.addedDate', { date: plant.addedDate })}
+              <Calendar className="w-3.5 h-3.5 flex-shrink-0" /> {t('plantDetails.addedDate', { date: plant.addedDate })}
             </span>
-            <span className="flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5" /> {plant.id}
+            <span className="hidden sm:flex items-center gap-1.5 min-w-0">
+              <Cpu className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate max-w-[140px] font-mono text-xs">{plant.id}</span>
             </span>
           </div>
         </div>
