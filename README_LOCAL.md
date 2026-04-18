@@ -7,7 +7,7 @@
 ---
 
 ## 1. Стартиране на backend
-
+Създава се .env file в /server директорията -> информацията, която трябва да въведете е в install.txt
 ```bash
 cd PlantFlow/server
 npm install
@@ -34,4 +34,3 @@ npm run dev
 
 - Файлът `PlantFlow/.env.local` насочва frontend-а към локалния backend (не към продукцията).
 - База данни и MQTT брокер са в облака (Supabase + HiveMQ) — не се налага локална инсталация.
-- За продукция се използва `npm run build` и `.env.production` — `.env.local` не влияе на build-а.
