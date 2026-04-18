@@ -14,6 +14,7 @@ import {
 import { toast } from 'sonner';
 import { adminApi } from '@/api/admin';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const PERIOD_VALUES = ['day', 'week', 'month', 'year'];
 
@@ -152,6 +153,7 @@ function exportReport(data, periodLabel) {
 
 export default function AdminAnalytics() {
     const { t } = useTranslation();
+    usePageTitle('pageTitles.adminAnalytics');
     const [period, setPeriod] = useState('week');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);

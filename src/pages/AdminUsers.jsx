@@ -14,6 +14,7 @@ import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { adminApi } from '@/api/admin';
 import { toast } from 'sonner';
 
@@ -34,6 +35,7 @@ function getAvatarColor(str) {
 
 export default function AdminUsers() {
     const { t } = useTranslation();
+    usePageTitle('pageTitles.adminUsers');
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');

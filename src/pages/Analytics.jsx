@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { format } from 'date-fns';
 import {
   BarChart,
@@ -154,6 +155,7 @@ const formatTimestamp = (timestamp, period) => {
 
 export default function Analytics() {
   const { t } = useTranslation();
+  usePageTitle('pageTitles.analytics');
   const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState('week');
   const [loading, setLoading] = useState(true);

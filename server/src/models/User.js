@@ -142,12 +142,12 @@ class User {
     }
 
     /**
-     * Delete user and all associated data (Admin only)
+     * Изтриване на Администратор и всички връзки към него (Само за Администратори)
      */
     static async delete(id) {
         const prisma = getDatabase();
-
-        // Prisma will cascade delete related devices, sensor readings, and alerts
+        //Призма автоматично се грижи при изтриване на потребител,
+        //да хване и да изтрие всички релационни връзки в другите таблици
         await prisma.user.delete({
             where: { id }
         });

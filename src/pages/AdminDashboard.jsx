@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Users, Leaf, AlertTriangle, Activity, ArrowRight, Shield, Zap, CheckCircle2, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { adminApi } from '@/api/admin';
 import { useSocket } from '@/hooks/useSocket';
 
@@ -47,6 +48,7 @@ function StatCard({ title, value, icon: Icon, color, subtitle, isLoading, delay 
 
 export default function AdminDashboard() {
     const { t } = useTranslation();
+    usePageTitle('pageTitles.admin');
     const queryClient = useQueryClient();
     const socketRef = useSocket();
     const [liveAlertCount, setLiveAlertCount] = useState(null);

@@ -9,6 +9,7 @@ import {
     DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { adminApi } from '@/api/admin';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
@@ -21,6 +22,7 @@ function isOnline(lastSeenAt) {
 
 export default function AdminDevices() {
     const { t } = useTranslation();
+    usePageTitle('pageTitles.adminDevices');
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1);

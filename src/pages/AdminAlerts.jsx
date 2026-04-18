@@ -13,12 +13,14 @@ import {
     DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { adminApi } from '@/api/admin';
 import { toast } from 'sonner';
 import { useSocket } from '@/hooks/useSocket';
 
 export default function AdminAlerts() {
     const { t } = useTranslation();
+    usePageTitle('pageTitles.adminAlerts');
     const queryClient = useQueryClient();
     const socketRef = useSocket();
     const [statusFilter, setStatusFilter] = useState('');

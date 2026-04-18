@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Leaf, Plus, BarChart3, TrendingUp,
@@ -136,6 +137,7 @@ function PlantCard({ device, index, isLive }) {
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  usePageTitle('pageTitles.dashboard');
   const [dialogOpen, setDialogOpen] = useState(false);
   const queryClient = useQueryClient();
   const socketRef = useSocket();

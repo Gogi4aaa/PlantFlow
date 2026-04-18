@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ArrowRight, Check, Shield, Smartphone, Zap, Sprout, Wifi, Activity, Leaf, Mail, Code2, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
 import heroBg from '../assets/station_in_field.png';
@@ -10,6 +11,7 @@ import creatorPhoto from '../assets/creator.png';
 
 export default function LandingPage() {
     const { t } = useTranslation();
+    usePageTitle('pageTitles.landing');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (

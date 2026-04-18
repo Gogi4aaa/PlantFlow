@@ -21,6 +21,7 @@ import {
   X
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -161,6 +162,7 @@ function NoDataState({ message = 'No sensor data yet', sub = 'Readings will appe
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function PlantDetails() {
   const { t } = useTranslation();
+  usePageTitle('pageTitles.plantDetails');
   const [pumpOn, setPumpOn] = useState(false);
   const [deviceAlerts, setDeviceAlerts] = useState([]);
   const [isOnline, setIsOnline] = useState(false);

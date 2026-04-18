@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { User, Mail, Lock, Save, Loader2, Eye, EyeOff, Camera, ArrowLeft } from 'lucide-react';
+import { User, Mail, Lock, Save, Loader2, Eye, EyeOff, Camera, ArrowLeft, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,14 +32,34 @@ function resizeImage(file, maxSize = 200) {
     });
 }
 
+function useMapProfileError() {
+    const { t } = useTranslation();
+    return (message) => {
+        if (!message) return t('profile.messages.error');
+        const m = message.toLowerCase();
+        if (m.includes('invalid credentials')) return t('auth.errors.invalidCredentials');
+        if (m.includes('email already registered') || m.includes('email already in use')) return t('auth.errors.emailAlreadyRegistered');
+        if (m.includes('email and password are required')) return t('auth.errors.emailRequired');
+        if (m.includes('at least 8')) return t('auth.errors.passwordMinLength');
+        if (m.includes('uppercase')) return t('auth.errors.passwordUppercase');
+        if (m.includes('lowercase')) return t('auth.errors.passwordLowercase');
+        if (m.includes('one number')) return t('auth.errors.passwordNumber');
+        if (m.includes('special character')) return t('auth.errors.passwordSpecial');
+        return t('profile.messages.error');
+    };
+}
+
 export default function Profile() {
     const { t } = useTranslation();
+    const mapError = useMapProfileError();
+    usePageTitle('pageTitles.profile');
     const navigate = useNavigate();
     const location = useLocation();
     const backPath = location.state?.from || '/dashboard';
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
@@ -78,7 +99,7 @@ export default function Profile() {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!file.type.startsWith('image/')) {
-            toast.error('Please select an image file');
+            toast.error(t('profile.photo.invalidFile'));
             return;
         }
         const base64 = await resizeImage(file, 200);
@@ -125,7 +146,7 @@ export default function Profile() {
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            toast.error(error.message || t('profile.messages.error'));
+            toast.error(mapError(error.message));
         } finally {
             setIsSaving(false);
         }
@@ -203,14 +224,14 @@ export default function Profile() {
                                     />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Profile Photo</p>
-                                    <p className="text-xs text-slate-400 dark:text-slate-400 mt-0.5">Click the photo to upload a new one</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('profile.photo.label')}</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-400 mt-0.5">{t('profile.photo.hint')}</p>
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
                                         className="mt-2 text-xs text-emerald-600 dark:text-green-400 hover:text-emerald-700 dark:hover:text-green-300 font-medium underline underline-offset-2 cursor-pointer"
                                     >
-                                        Change photo
+                                        {t('profile.photo.change')}
                                     </button>
                                 </div>
                             </div>
@@ -270,28 +291,85 @@ export default function Profile() {
                                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
                                         </div>
+                                        {formData.password && (() => {
+                                            const checks = {
+                                                minLength: formData.password.length >= 8,
+                                                uppercase: /[A-Z]/.test(formData.password),
+                                                lowercase: /[a-z]/.test(formData.password),
+                                                number: /[0-9]/.test(formData.password),
+                                                special: /[^A-Za-z0-9]/.test(formData.password),
+                                            };
+                                            const score = Object.values(checks).filter(Boolean).length;
+                                            const strengthLabel = score <= 2 ? t('auth.register.passwordWeak') : score <= 4 ? t('auth.register.passwordFair') : t('auth.register.passwordStrong');
+                                            const strengthColor = score <= 2 ? 'bg-red-500' : score <= 4 ? 'bg-amber-400' : 'bg-emerald-500';
+                                            return (
+                                                <div className="space-y-2 pt-1">
+                                                    <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                                        <span>{t('auth.register.passwordStrengthLabel')}</span>
+                                                        <span className={score <= 2 ? 'text-red-500' : score <= 4 ? 'text-amber-500' : 'text-emerald-500'}>{strengthLabel}</span>
+                                                    </div>
+                                                    <div className="flex gap-1">
+                                                        {[1, 2, 3, 4, 5].map((i) => (
+                                                            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= score ? strengthColor : 'bg-slate-200 dark:bg-white/10'}`} />
+                                                        ))}
+                                                    </div>
+                                                    <div className="grid grid-cols-1 gap-1 pt-1">
+                                                        {[
+                                                            { key: 'minLength', label: t('auth.register.requirements.minLength') },
+                                                            { key: 'uppercase', label: t('auth.register.requirements.uppercase') },
+                                                            { key: 'lowercase', label: t('auth.register.requirements.lowercase') },
+                                                            { key: 'number', label: t('auth.register.requirements.number') },
+                                                            { key: 'special', label: t('auth.register.requirements.special') },
+                                                        ].map(({ key, label }) => (
+                                                            <div key={key} className="flex items-center gap-1.5">
+                                                                {checks[key]
+                                                                    ? <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                                                                    : <X className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 flex-shrink-0" />
+                                                                }
+                                                                <span className={`text-xs ${checks[key] ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                                                    {label}
+                                                                </span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
 
-                                    {formData.password && (
-                                        <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            className="space-y-2"
-                                        >
-                                            <Label htmlFor="confirmPassword" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.confirmNewPassword')}</Label>
-                                            <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
-                                                <Input
-                                                    id="confirmPassword"
-                                                    type="password"
-                                                    value={formData.confirmPassword}
-                                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                                    className="pl-9 bg-slate-50 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-emerald-300 dark:focus:border-green-500/40"
-                                                    placeholder={t('profile.personalInfo.confirmNewPasswordPlaceholder')}
-                                                />
-                                            </div>
-                                        </motion.div>
-                                    )}
+                                    {formData.password && (() => {
+                                        const passwordMismatch = formData.confirmPassword.length > 0 && formData.password !== formData.confirmPassword;
+                                        return (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                className="space-y-2"
+                                            >
+                                                <Label htmlFor="confirmPassword" className="text-slate-700 dark:text-slate-300">{t('profile.personalInfo.confirmNewPassword')}</Label>
+                                                <div className="relative">
+                                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-400" />
+                                                    <Input
+                                                        id="confirmPassword"
+                                                        type={showConfirmPassword ? 'text' : 'password'}
+                                                        value={formData.confirmPassword}
+                                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                                        className={`pl-9 pr-9 bg-slate-50 dark:bg-white/[0.05] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 ${passwordMismatch ? 'border-red-400 dark:border-red-500 focus:border-red-400 dark:focus:border-red-500' : 'border-slate-200 dark:border-white/[0.08] focus:border-emerald-300 dark:focus:border-green-500/40'}`}
+                                                        placeholder={t('profile.personalInfo.confirmNewPasswordPlaceholder')}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
+                                                    >
+                                                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                    </button>
+                                                </div>
+                                                {passwordMismatch && (
+                                                    <p className="text-xs text-red-500 dark:text-red-400">{t('auth.register.passwordsMismatch')}</p>
+                                                )}
+                                            </motion.div>
+                                        );
+                                    })()}
                                 </div>
                             </div>
 

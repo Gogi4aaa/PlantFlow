@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Sprout, Mail, Lock, Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -14,6 +15,7 @@ import { toast, Toaster } from 'sonner';
 
 export default function SignIn() {
   const { t } = useTranslation();
+  usePageTitle('pageTitles.signIn');
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

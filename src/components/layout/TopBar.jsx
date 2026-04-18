@@ -24,11 +24,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const ROUTE_MAP = {
-  dashboard: { label: 'Dashboard', linkable: true },
-  analytics: { label: 'Analytics', linkable: true },
-  settings: { label: 'Settings', linkable: true },
-  profile: { label: 'Profile', linkable: true },
-  'plant-details': { label: 'Plant Details', linkable: false },
+  dashboard: { key: 'pageTitles.dashboard', linkable: true },
+  analytics: { key: 'pageTitles.analytics', linkable: true },
+  settings: { key: 'pageTitles.settings', linkable: true },
+  profile: { key: 'pageTitles.profile', linkable: true },
+  'plant-details': { key: 'pageTitles.plantDetails', linkable: false },
+  admin: { key: 'pageTitles.admin', linkable: true },
 };
 
 function looksLikeId(seg) {
@@ -37,9 +38,10 @@ function looksLikeId(seg) {
 
 function useBreadcrumbs() {
   const location = useLocation();
+  const { t, i18n } = useTranslation();
   const segments = location.pathname.split('/').filter(Boolean);
 
-  if (segments.length === 0) return [{ label: 'Home', path: '/', linkable: true }];
+  if (segments.length === 0) return [{ label: t('pageTitles.dashboard'), path: '/', linkable: true }];
 
   return segments
     .filter(seg => !looksLikeId(seg))
@@ -47,7 +49,7 @@ function useBreadcrumbs() {
       const path = '/' + arr.slice(0, i + 1).join('/');
       const route = ROUTE_MAP[seg];
       return {
-        label: route?.label || seg,
+        label: route ? t(route.key) : seg,
         path,
         linkable: route?.linkable ?? true,
       };
@@ -155,7 +157,7 @@ export default function TopBar({ onMenuClick }) {
                 className="hidden sm:flex items-center gap-1.5 text-xs border-emerald-200 dark:border-green-500/20 text-emerald-700 dark:text-green-400 hover:bg-emerald-50 dark:hover:bg-green-500/10 bg-transparent"
               >
                 <Shield className="w-3.5 h-3.5" />
-                Admin Panel
+                {t('admin.layout.brand')}
               </Button>
             </Link>
           )}
@@ -213,7 +215,7 @@ export default function TopBar({ onMenuClick }) {
                   onClick={() => navigate('/admin')}
                 >
                   <Shield className="w-4 h-4 mr-2" />
-                  Admin Panel
+                  {t('admin.layout.brand')}
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/[0.06]" />

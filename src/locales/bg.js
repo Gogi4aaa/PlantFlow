@@ -1,5 +1,20 @@
 export const bg = {
     translation: {
+        pageTitles: {
+            dashboard: 'Табло',
+            analytics: 'Анализи',
+            profile: 'Моят профил',
+            plantDetails: 'Детайли за растение',
+            admin: 'Админ табло',
+            adminUsers: 'Управление на потребители',
+            adminDevices: 'Управление на устройства',
+            adminAlerts: 'Управление на известия',
+            adminAnalytics: 'Анализи на растения',
+            settings: 'Настройки',
+            signIn: 'Вход',
+            register: 'Създай акаунт',
+            landing: 'IoT Монитор за растения',
+        },
         common: {
             appName: 'PlantFlow',
             appSubtitle: 'IoT Монитор за растения',
@@ -258,11 +273,11 @@ export const bg = {
             },
             header: {
                 title: 'Моята градина',
-                subtitle: 'Преглед на вашите свързани растения',
-                addPlant: 'Добави растение',
+                subtitle: 'Преглед на вашите свързани станции',
+                addPlant: 'Добави станция',
             },
             stats: {
-                totalPlants: 'Растения във вашата градина',
+                totalPlants: 'Станции във вашата градина',
                 liveNow: 'На живо',
                 noDataYet: 'Без данни',
             },
@@ -293,7 +308,7 @@ export const bg = {
                 editTitle: 'Редактиране на растение',
                 subtitle: 'Добавете ново IoT устройство за наблюдение на вашето растение. Всяко устройство наблюдава едно растение.',
                 editSubtitle: 'Актуализирайте информацията за растението и устройството по-долу.',
-                plantName: 'Ime на растението',
+                plantName: 'Име на растението',
                 plantNamePlaceholder: 'напр. Монстера',
                 plantSpecies: 'Вид на растението',
                 plantSpeciesPlaceholder: 'напр. Swiss Cheese Plant',
@@ -395,6 +410,12 @@ export const bg = {
                 loadError: 'Неуспешно зареждане на профила',
                 success: 'Профилът е актуализиран успешно',
                 error: 'Неуспешна актуализация на профила',
+            },
+            photo: {
+                label: 'Профилна снимка',
+                hint: 'Натиснете снимката, за да качите нова',
+                change: 'Смяна на снимката',
+                invalidFile: 'Моля, изберете файл с изображение',
             },
         },
         admin: {

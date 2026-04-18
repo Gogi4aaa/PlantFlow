@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Sprout, Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle, AlertCircle, Check, X } from 'lucide-react';
@@ -19,6 +20,7 @@ const avatarColors = [
 
 export default function Register() {
   const { t } = useTranslation();
+  usePageTitle('pageTitles.register');
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

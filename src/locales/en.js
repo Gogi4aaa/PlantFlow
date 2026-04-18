@@ -1,5 +1,20 @@
 export const en = {
     translation: {
+        pageTitles: {
+            dashboard: 'Dashboard',
+            analytics: 'Analytics',
+            profile: 'My Profile',
+            plantDetails: 'Plant Details',
+            admin: 'Admin Dashboard',
+            adminUsers: 'User Management',
+            adminDevices: 'Device Management',
+            adminAlerts: 'Alert Management',
+            adminAnalytics: 'Plant Analytics',
+            settings: 'Settings',
+            signIn: 'Sign In',
+            register: 'Create Account',
+            landing: 'IoT Plant Monitor',
+        },
         common: {
             appName: 'PlantFlow',
             appSubtitle: 'IoT Plant Monitor',
@@ -258,11 +273,11 @@ export const en = {
             },
             header: {
                 title: 'My Garden',
-                subtitle: 'Overview of your connected plants',
-                addPlant: 'Add Plant Device',
+                subtitle: 'Overview of your connected plant stations',
+                addPlant: 'Add Plant Station',
             },
             stats: {
-                totalPlants: 'Plants in Your Garden',
+                totalPlants: 'Plants in Your Garden Station',
                 liveNow: 'Live now',
                 noDataYet: 'No data yet',
             },
@@ -395,6 +410,12 @@ export const en = {
                 loadError: 'Failed to load profile',
                 success: 'Profile updated successfully',
                 error: 'Failed to update profile',
+            },
+            photo: {
+                label: 'Profile Photo',
+                hint: 'Click the photo to upload a new one',
+                change: 'Change photo',
+                invalidFile: 'Please select an image file',
             },
         },
         admin: {
