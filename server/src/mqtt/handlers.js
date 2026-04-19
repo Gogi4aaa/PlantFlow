@@ -70,15 +70,6 @@ export async function handleSensorData(topic, message, topicPrefix, io) {
         // Update Device Last Seen
         await Device.updateLastSeen(deviceId);
 
-        // Update Pump Status if present
-        if (data.pump !== undefined) {
-            const normalizedPump = normalizePumpStatus(data.pump);
-            if (normalizedPump) {
-                await Device.updatePumpStatus(deviceId, normalizedPump);
-                data.pump = normalizedPump; // Update so it emits correctly
-            }
-        }
-
         // Store sensor reading
         const reading = {
             device_id: deviceId,
@@ -98,14 +89,11 @@ export async function handleSensorData(topic, message, topicPrefix, io) {
         if (io) {
             io.emit('sensor-update', {
                 deviceId,
-                reading: savedReading,
-                pumpStatus: data.pump // Emit pump status with sensor update
+                reading: savedReading
             });
-            // Also emit device status update to show it's online
             io.emit('device-status', {
                 deviceId,
                 status: 'ONLINE',
-                pumpStatus: data.pump, // Emit pump status
                 lastSeen: new Date()
             });
         }
@@ -222,7 +210,7 @@ function isValidSensorData(data) {
  * Handle device status updates
  * Payload: { "deviceId":"...", "pump":"ON", "mode":"MANUAL" }
  */
-export async function handleDeviceStatus(topic, message, io) {
+export async function handleDeviceStatus(_topic, message, io) {
     try {
         const data = JSON.parse(message.toString());
         console.log('📱 Device status update:', data);
@@ -230,40 +218,30 @@ export async function handleDeviceStatus(topic, message, io) {
         const { deviceId, pump, mode } = data;
 
         if (deviceId) {
-            // Update last seen
             await Device.updateLastSeen(deviceId);
 
-            // Update Pump Status
-            if (pump !== undefined) {
-                const normalizedPump = normalizePumpStatus(pump);
-                if (normalizedPump) {
-                    await Device.updatePumpStatus(deviceId, normalizedPump);
-                    // Update the variable for emission if needed, though 'pump' is const in destructuring, 
-                    // we'll just use normalizedPump in emission if we were reconstructing the object, 
-                    // but strict 'pump' usage below suggests we might want to emit normalized values.
-                    // However, for handleDeviceStatus, we'll leave the emission as is or assume frontend handles it?
-                    // Better to just update DB strictly here.
-                }
-            }
+            const normalizedPump = normalizePumpStatus(pump);
+            if (normalizedPump) await Device.updatePumpStatus(deviceId, normalizedPump);
 
-            // Emit to frontend
             if (io) {
                 io.emit('device-status', {
                     deviceId,
                     status: 'ONLINE',
-                    pumpStatus: pump,
-                    mode: mode,
+                    pumpStatus: normalizedPump,
+                    mode,
                     lastSeen: new Date()
                 });
 
-                // Also emit as sensor-update-like event if needed for some UI components
-                if (pump) {
+                if (normalizedPump) {
                     io.emit('pump-update', {
                         deviceId,
-                        pumpStatus: pump
+                        pumpStatus: normalizedPump,
+                        mode
                     });
                 }
             }
+
+            console.log(`🔧 Pump state for '${deviceId}': ${normalizedPump} (${mode})`);
         }
     } catch (error) {
         console.error('❌ Error handling device status:', error);

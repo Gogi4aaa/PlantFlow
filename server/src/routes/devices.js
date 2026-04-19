@@ -229,12 +229,9 @@ router.post('/:id/pump', async (req, res, next) => {
                 error: `Device with ID '${id}' not found`
             });
         }
-        console.log("State:" + state)
-        // Publish to MQTT
-        // Topic: plant/{deviceId}/command/pump
         const topic = `plant/${id}/command/pump`;
-        console.log('📤 Publishing to MQTT:', topic, state);
         await publish(topic, state);
+        await Device.updatePumpStatus(id, state);
 
         res.json({
             success: true,

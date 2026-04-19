@@ -164,6 +164,7 @@ export default function PlantDetails() {
   const { t } = useTranslation();
   usePageTitle('pageTitles.plantDetails');
   const [pumpOn, setPumpOn] = useState(false);
+  const [liveReadings, setLiveReadings] = useState(null);
   const [deviceAlerts, setDeviceAlerts] = useState([]);
   const [isOnline, setIsOnline] = useState(false);
   const socketRef = useSocket();
@@ -239,12 +240,8 @@ export default function PlantDetails() {
 
     const handleSensorUpdate = (data) => {
       if (data.deviceId !== deviceId) return;
-      markOnline(); // sensor data = device is alive, reset 5-min timer
-      queryClient.setQueryData(['device', deviceId], (oldData) => {
-        if (!oldData?.data) return oldData;
-        return { ...oldData, data: { ...oldData.data, current_reading: { ...oldData.data.current_reading, ...data.reading } } };
-      });
-      if (data.pumpStatus) setPumpOn(data.pumpStatus === 'ON');
+      markOnline();
+      if (data.reading) setLiveReadings(prev => ({ ...prev, ...data.reading }));
     };
 
     const handleAlert = (data) => {
@@ -270,7 +267,8 @@ export default function PlantDetails() {
     };
 
     const handlePumpUpdate = (data) => {
-      if (data.deviceId === deviceId && data.pumpStatus) setPumpOn(data.pumpStatus === 'ON');
+      if (data.deviceId !== deviceId) return;
+      if (data.pumpStatus) setPumpOn(data.pumpStatus === 'ON');
     };
 
     socket.on('sensor-update', handleSensorUpdate);
@@ -316,7 +314,7 @@ export default function PlantDetails() {
     image: device.plant_image,
     location: device.location || t('plantDetails.locationNotSpecified'),
     addedDate: new Date(device.created_at).toLocaleDateString(),
-    currentReadings: device.current_reading || null,
+    currentReadings: liveReadings || device.current_reading || null,
     optimalRanges: DEFAULT_RANGES,
   } : null;
 

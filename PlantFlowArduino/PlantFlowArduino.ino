@@ -28,11 +28,16 @@ const char* mqtt_password = "Test_1234";
 #define SOIL_WET 1400
 
 /* ================= AUTOMATION ================= */
-int soilThreshold = 40;
-int soilStopThreshold  = 70; // % → stop watering
-const unsigned long telemetryIntervalMs = 30000UL; // publish sensors every 30s
+int soilThreshold     = 40;  // % → start watering
+int soilStopThreshold = 70;  // % → stop watering
+
+// Интервал за телеметрия:
+// - когато помпата работи → 1 сек (следим в реално време)
+// - когато помпата е спряна → 30 сек (нормален режим)
+const unsigned long TELEMETRY_PUMP_ON_MS  = 1000UL;   // 1 секунда
+const unsigned long TELEMETRY_PUMP_OFF_MS = 30000UL;  // 30 секунди
+
 // Optional: manual mode timeout (ms). Set to 0 to disable.
-// const unsigned long manualModeTimeoutMs = 5 * 60 * 1000UL; // 5 min
 const unsigned long manualModeTimeoutMs = 0;
 
 /* ================= OBJECTS ================= */
@@ -42,9 +47,9 @@ DHT dht(DHTPIN, DHTTYPE);
 BH1750 lightMeter;
 
 /* ================= STATE ================= */
-bool pumpState = false;     // ON / OFF
-bool manualMode = false;    // MANUAL / AUTO
-unsigned long lastTelemetry = 0;
+bool pumpState    = false;  // ON / OFF
+bool manualMode   = false;  // MANUAL / AUTO
+unsigned long lastTelemetry  = 0;
 unsigned long manualModeSince = 0;
 
 /* ================= HELPERS ================= */
@@ -57,9 +62,14 @@ int readSoil() {
   return int(sum / 10);
 }
 
-/* Проверка на стойностите, 
-според които контролираме стойността, 
-кога помпата да е включена и кога да бъде изключена
+// Връща активния интервал за телеметрия спрямо текущото
+// състояние на помпата.
+unsigned long activeTelemetryInterval() {
+  return pumpState ? TELEMETRY_PUMP_ON_MS : TELEMETRY_PUMP_OFF_MS;
+}
+
+/* Проверка на стойностите,
+   според които контролираме помпата.
    Accepts:
    - "ON"
    - "OFF"
@@ -69,10 +79,8 @@ int readSoil() {
 String extractAction(const String &payload) {
   String s = payload;
   s.trim();
-  // Check plain
-  if (s.equalsIgnoreCase("ON") || s.indexOf("\"ON\"") >= 0 || s.indexOf("ON") >= 0 && s.indexOf("OFF") == -1) return "ON";
-  if (s.equalsIgnoreCase("OFF") || s.indexOf("\"OFF\"") >= 0 || s.indexOf("OFF") >= 0 && s.indexOf("ON") == -1) return "OFF";
-  // JSON style naive parse
+  if (s.equalsIgnoreCase("ON") || s.indexOf("\"ON\"") >= 0 || (s.indexOf("ON") >= 0 && s.indexOf("OFF") == -1)) return "ON";
+  if (s.equalsIgnoreCase("OFF") || s.indexOf("\"OFF\"") >= 0 || (s.indexOf("OFF") >= 0 && s.indexOf("ON") == -1)) return "OFF";
   int idx = s.indexOf("\"action\"");
   if (idx >= 0) {
     int colon = s.indexOf(':', idx);
@@ -83,7 +91,7 @@ String extractAction(const String &payload) {
         if (quote2 > quote1) {
           String val = s.substring(quote1 + 1, quote2);
           val.trim();
-          if (val.equalsIgnoreCase("ON")) return "ON";
+          if (val.equalsIgnoreCase("ON"))  return "ON";
           if (val.equalsIgnoreCase("OFF")) return "OFF";
         }
       }
@@ -108,19 +116,22 @@ void mqttCallback(char* topic, byte* message, unsigned int length) {
   if (String(topic) == commandTopic) {
     String action = extractAction(payload);
     if (action == "ON") {
-      manualMode = true;
-      pumpState = true;
+      manualMode  = true;
+      pumpState   = true;
       digitalWrite(RELAY_PIN, LOW); // active LOW relay
       manualModeSince = millis();
-      Serial.println("[CMD] Pump ON (manual)");
+      // Нулираме таймера на телеметрията → изпращаме веднага
+      lastTelemetry = millis() - TELEMETRY_PUMP_ON_MS;
+      Serial.println("[CMD] Pump ON (manual) → telemetry @ 1s");
     } else if (action == "OFF") {
-      manualMode = true;
-      pumpState = false;
+      manualMode  = true;
+      pumpState   = false;
       digitalWrite(RELAY_PIN, HIGH);
       manualModeSince = millis();
-      Serial.println("[CMD] Pump OFF (manual)");
+      // Нулираме таймера → следващото изпращане след 30s
+      lastTelemetry = millis();
+      Serial.println("[CMD] Pump OFF (manual) → telemetry @ 30s");
     } else if (payload.equalsIgnoreCase("AUTO")) {
-      // optional: allow backend to force AUTO mode
       manualMode = false;
       Serial.println("[CMD] Switched to AUTO mode");
     } else {
@@ -132,7 +143,6 @@ void mqttCallback(char* topic, byte* message, unsigned int length) {
 
 /* ================= MQTT CONNECT ================= */
 void reconnectMQTT() {
-  // Use deviceId as client id to be unique
   String clientId = "esp32-" + deviceId;
   while (!client.connected()) {
     Serial.print("[MQTT] Connecting as ");
@@ -144,7 +154,6 @@ void reconnectMQTT() {
       client.subscribe(commandTopic.c_str());
       Serial.print("[MQTT] Subscribed to: ");
       Serial.println(commandTopic);
-      // publish an online LWT/state if you want (not implemented here)
     } else {
       Serial.print("failed rc=");
       Serial.print(client.state());
@@ -174,25 +183,36 @@ void publishPumpState() {
 /* ================= AUTO WATERING ================= */
 void handleAutoWatering(int soilPercent) {
 
-  // If soil is critically dry, force AUTO mode back
+  // Ако почвата е критично суха, форсираме AUTO режим
   if (manualMode && soilPercent <= soilThreshold) {
     manualMode = false;
-    Serial.println("[AUTO] Soil too dry -> forcing AUTO mode");
+    Serial.println("[AUTO] Soil too dry → forcing AUTO mode");
   }
 
-  if (manualMode) return;
+  if (manualMode && pumpState && soilPercent >= soilStopThreshold) {
+    pumpState  = false;
+    manualMode = false;
+    digitalWrite(RELAY_PIN, HIGH);
+    lastTelemetry = millis();
+    publishPumpState();
+    return;
+}
 
+  // Включваме помпата → нулираме таймера за бърз интервал
   if (soilPercent < soilThreshold && !pumpState) {
     pumpState = true;
     digitalWrite(RELAY_PIN, LOW);
-    Serial.println("[AUTO] Pump ON");
+    lastTelemetry = millis() - TELEMETRY_PUMP_ON_MS; // изпращаме веднага
+    Serial.println("[AUTO] Pump ON → telemetry @ 1s");
     publishPumpState();
   }
 
+  // Спираме помпата → превключваме към бавен интервал
   if (soilPercent >= soilStopThreshold && pumpState) {
     pumpState = false;
     digitalWrite(RELAY_PIN, HIGH);
-    Serial.println("[AUTO] Pump OFF");
+    lastTelemetry = millis(); // следващото изпращане след 30s
+    Serial.println("[AUTO] Pump OFF → telemetry @ 30s");
     publishPumpState();
   }
 }
@@ -200,7 +220,7 @@ void handleAutoWatering(int soilPercent) {
 /* ================= SETUP ================= */
 void setup() {
   Serial.begin(115200);
-  espClient.setInsecure(); // only for testing with HiveMQ cloud; replace in production
+  espClient.setInsecure(); // само за тестове с HiveMQ cloud; замени в продукция
 
   WiFiManager wifiManager;
   if (!wifiManager.autoConnect("ESP32_Setup", "12345678")) {
@@ -225,34 +245,33 @@ void setup() {
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(mqttCallback);
 
-  lastTelemetry = millis() - telemetryIntervalMs; // send immediate first sample
+  lastTelemetry = millis() - TELEMETRY_PUMP_OFF_MS; // изпращаме веднага при старт
 }
 
 /* ================= LOOP ================= */
 void loop() {
-  // Ensure MQTT connection and process incoming messages frequently
   if (!client.connected()) {
     reconnectMQTT();
   }
-  client.loop(); // MUST be called often to receive messages
+  client.loop(); // ЗАДЪЛЖИТЕЛНО се вика често за получаване на съобщения
 
   unsigned long now = millis();
 
-  // publish telemetry on interval (non-blocking)
-  if (now - lastTelemetry >= telemetryIntervalMs) {
+  // Динамичен интервал: 1s когато помпата работи, 30s когато е спряна
+  if (now - lastTelemetry >= activeTelemetryInterval()) {
     lastTelemetry = now;
 
     float temp = dht.readTemperature();
     float hum  = dht.readHumidity();
     float lux  = lightMeter.readLightLevel();
-    int soilRaw = readSoil();
+    int soilRaw     = readSoil();
     int soilPercent = map(soilRaw, SOIL_DRY, SOIL_WET, 0, 100);
-    soilPercent = constrain(soilPercent, 0, 100);
+    soilPercent     = constrain(soilPercent, 0, 100);
 
-    // run auto logic (will not override manualMode unless manual timeout expires)
+    // Авто логика → може да смени pumpState и да нулира lastTelemetry
     handleAutoWatering(soilPercent);
 
-    // publish telemetry
+    // Публикуваме телеметрия
     char payload[320];
     snprintf(payload, sizeof(payload),
       "{"
@@ -269,13 +288,12 @@ void loop() {
     );
 
     bool ok = client.publish("plant/sensors/data", payload);
-    Serial.print("[MQTT] Telemetry publish ");
+    Serial.print("[MQTT] Telemetry (interval=");
+    Serial.print(pumpState ? "1s" : "30s");
+    Serial.print(") publish ");
     Serial.print(ok ? "OK: " : "FAIL: ");
     Serial.println(payload);
   }
 
-  // small delay to avoid tight loop CPU hog (but keep responsive)
   delay(20);
 }
-
-
